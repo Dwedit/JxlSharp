@@ -1,11 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JxlSharp
 {
+	/// <summary>
+	/// Wrapper for JPEG XL library decoder functions.  Use SetInput, SubscribeEvents, and ProcessInput.
+	/// </summary>
+	/// <example>
+	/// Example of usage:
+	/// <code>
+	///using (JxlDecoder jxlDecoder = new JxlDecoder())
+	///{
+	///	bool canTranscodeToJpeg = false;
+	///	JxlBasicInfo basicInfo = null;
+	///	jxlDecoder.SetInput(input);
+	///	jxlDecoder.SubscribeEvents(JxlDecoderStatus.BasicInfo | JxlDecoderStatus.JpegReconstruction | JxlDecoderStatus.Frame | JxlDecoderStatus.FullImage);
+	///	bool proceed = true;
+	///	bool success = false;
+	///	while (proceed)
+	///	{
+	///		JxlDecoderStatus status = jxlDecoder.ProcessInput();
+	///		switch (status)
+	///		{
+	///			case JxlDecoderStatus.BasicInfo:
+	///				status = jxlDecoder.GetBasicInfo(out basicInfo);
+	///				break;
+	///			case JxlDecoderStatus.JpegReconstruction:
+	///				canTranscodeToJpeg = true;
+	///				break;
+	///			case JxlDecoderStatus.Frame:
+	///				//call jxlDecoder.SetImageOutBuffer here
+	///				break;
+	///			case JxlDecoderStatus.FullImage:
+	///				//post-process the image if necessary
+	///				break;
+	///			case JxlDecoderStatus.Success:
+	///				//handle a succesful case here
+	///				proceed = false;
+	///				success = true;
+	///				break;
+	///			case JxlDecoderStatus.Error:
+	///			default:
+	///				//handle a failure here
+	///				proceed = false;
+	///				break;
+	///		}
+	///	}
+	///}
+	/// </code>
+	/// </example>
 	public class JxlDecoder : IDisposable
 	{
 		UnsafeNativeJXL.JxlDecoderWrapper decoderWrapper;
@@ -17,6 +61,9 @@ namespace JxlSharp
 			decoderWrapper = new UnsafeNativeJXL.JxlDecoderWrapper();
 		}
 
+		/// <summary>
+		/// Disposes the JxlDecoder object.  Do not call any other methods after disposing this object.
+		/// </summary>
 		public void Dispose()
 		{
 			decoderWrapper.Dispose();
@@ -783,7 +830,7 @@ namespace JxlSharp
 		/// not be included, only the remaining bytes output must be set.
 		/// </summary>
 		/// <param name="data"> pointer to next bytes to write to</param>
-		/// <param name="size"> amount of bytes available starting from data</param>
+		/// <param name="outputPosition"> position within the output buffer</param>
 		/// <returns> JXL_DEC_ERROR if output buffer was already set and
 		/// JxlDecoderReleaseJPEGBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
 		public JxlDecoderStatus SetJPEGBuffer(byte[] data, int outputPosition = 0)
@@ -852,7 +899,6 @@ namespace JxlSharp
 		/// or final JXL_DEC_SUCCESS event to compute the size of the output box bytes.
 		/// </summary>
 		/// <param name="data"> pointer to next bytes to write to</param>
-		/// <param name="size"> amount of bytes available starting from data</param>
 		/// <returns> JXL_DEC_ERROR if output buffer was already set and
 		/// JxlDecoderReleaseBoxBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
 		public JxlDecoderStatus SetBoxBuffer(byte[] data)
@@ -905,7 +951,7 @@ namespace JxlSharp
 		/// box, this will return "brob" if the decompressed argument is JXL_FALSE, or
 		/// the underlying box type if the decompressed argument is JXL_TRUE.
 		/// </summary>
-		/// <param name="type"> buffer to copy the type into</param>
+		/// <param name="boxType"> buffer to copy the type into</param>
 		/// <param name="decompressed"> which box type to get: JXL_TRUE to get the raw box type,
 		/// which can be "brob", JXL_FALSE, get the underlying box type.</param>
 		/// <returns> JXL_DEC_SUCCESS if the value is available, JXL_DEC_ERROR if not, for

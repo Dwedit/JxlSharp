@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
@@ -47,12 +45,17 @@ namespace JxlSharp
         /// </summary>
         static UnsafeNativeJXL()
         {
-            string arch = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
-            string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string dllName = Path.Combine(assemblyPath, "lib", arch, "libjxl.dll");
+            var executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            string arch = executingAssembly.GetName().ProcessorArchitecture.ToString().ToLowerInvariant();
+            //string arch = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
+            string assemblyPath = Path.GetDirectoryName(executingAssembly.Location);
+            string libPath = Path.Combine(assemblyPath, "lib");
+            string archPath = Path.Combine(libPath, arch);
+            string dllName = Path.Combine(archPath, "libjxl.dll");
             if (!File.Exists(dllName))
             {
-                dllName = Path.Combine(assemblyPath, arch, "libjxl.dll");
+                archPath = Path.Combine(assemblyPath, arch);
+                dllName = Path.Combine(archPath, "libjxl.dll");
             }
             if (!File.Exists(dllName))
             {

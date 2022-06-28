@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JxlSharp
 {
@@ -80,6 +78,13 @@ namespace JxlSharp
     /// </summary>
     public struct JxlAnimationHeader
     {
+        /// <summary>
+        /// Construct a new JxlAnimationHeader object
+        /// </summary>
+        /// <param name="tpsNumerator">ticks per second numerator</param>
+        /// <param name="tpsDenominator">ticks per second denominator</param>
+        /// <param name="numLoops">number of loops</param>
+        /// <param name="haveTimecodes">whether or not there are timecodes</param>
         public JxlAnimationHeader(uint tpsNumerator, uint tpsDenominator, int numLoops, bool haveTimecodes)
         {
             this.TpsNumerator = tpsNumerator;
@@ -111,10 +116,10 @@ namespace JxlSharp
     }
 
     /// <summary>
-    /// Return value for <see cref="JxlDecoderProcessInput"/>.
-    /// The values from <see cref="BasicInfo"/> onwards are optional informative
+    /// Return value for <see cref="JxlDecoder.ProcessInput"/>.
+    /// The values from <see cref="JxlBasicInfo"/> onwards are optional informative
     /// events that can be subscribed to, they are never returned if they
-    /// have not been registered with <see cref="JxlDecoderSubscribeEvents"/>.
+    /// have not been registered with <see cref="JxlDecoder.SubscribeEvents"/>.
     /// </summary>
     [Flags]
     public enum JxlDecoderStatus
@@ -132,8 +137,10 @@ namespace JxlSharp
         Error = 1,
 
         /// <summary>
-        /// The decoder needs more input bytes to continue. Before the next <see cref="JxlDecoderProcessInput"/> call, more input data must be set, by calling <see cref="JxlDecoderReleaseInput"/> (if input was set previously) and then calling <see cref="JxlDecoderSetInput"/>. <see cref="JxlDecoderReleaseInput"/> returns how many bytes
-        /// are not yet processed, before a next call to <see cref="JxlDecoderProcessInput"/>
+        /// The decoder needs more input bytes to continue. Before the next <see cref="JxlDecoder.ProcessInput"/> call, 
+        /// more input data must be set, by calling <see cref="JxlDecoder.ReleaseInput"/> (if input was set previously) 
+        /// and then calling <see cref="JxlDecoder.SetInput"/>. <see cref="JxlDecoder.ReleaseInput"/> returns how many bytes
+        /// are not yet processed, before a next call to <see cref="JxlDecoder.ProcessInput"/>
         /// all unprocessed bytes must be provided again (the address need not match,
         /// but the contents must), and more bytes must be concatenated after the
         /// unprocessed bytes.
@@ -142,7 +149,7 @@ namespace JxlSharp
 
         /// <summary>
         /// The decoder is able to decode a preview image and requests setting a
-        /// preview output buffer using <see cref="JxlDecoderSetPreviewOutBuffer"/>. This occurs
+        /// preview output buffer using <see cref="JxlDecoder.SetPreviewOutBuffer"/>. This occurs
         /// if <see cref="PreviewImage"/> is requested and it is possible to decode a
         /// preview image from the codestream and the preview out buffer was not yet
         /// set. There is maximum one preview image in a codestream.
@@ -151,45 +158,45 @@ namespace JxlSharp
 
         /// <summary>
         /// The decoder is able to decode a DC image and requests setting a DC output
-        /// buffer using <see cref="JxlDecoderSetDCOutBuffer"/>. This occurs if <see cref="DcImage"/> is requested and it is possible to decode a DC image from
+        /// buffer using <see cref="JxlDecoder.SetDCOutBuffer"/>. This occurs if <see cref="DcImage"/> is requested and it is possible to decode a DC image from
         /// the codestream and the DC out buffer was not yet set. This event re-occurs
         /// for new frames if there are multiple animation frames.
         /// @deprecated The DC feature in this form will be removed. For progressive
-        /// rendering, <see cref="JxlDecoderFlushImage"/> should be used.
+        /// rendering, <see cref="JxlDecoder.FlushImage"/> should be used.
         /// </summary>
         NeedDcOutBuffer = 4,
 
         /// <summary>
         /// The decoder requests an output buffer to store the full resolution image,
-        /// which can be set with <see cref="JxlDecoderSetImageOutBuffer"/> or with <see cref="JxlDecoderSetImageOutCallback"/>. This event re-occurs for new frames if
+        /// which can be set with <see cref="JxlDecoder.SetImageOutBuffer"/> or with <see cref="JxlDecoder.SetImageOutCallback"/>. This event re-occurs for new frames if
         /// there are multiple animation frames and requires setting an output again.
         /// </summary>
         NeedImageOutBuffer = 5,
 
         /// <summary>
         /// The JPEG reconstruction buffer is too small for reconstructed JPEG
-        /// codestream to fit. <see cref="JxlDecoderSetJPEGBuffer"/> must be called again to
+        /// codestream to fit. <see cref="JxlDecoder.SetJPEGBuffer"/> must be called again to
         /// make room for remaining bytes. This event may occur multiple times
         /// after <see cref="JpegReconstruction"/>.
         /// </summary>
         JpegNeedMoreOutput = 6,
 
         /// <summary>
-        /// The box contents output buffer is too small. <see cref="JxlDecoderSetBoxBuffer"/>
+        /// The box contents output buffer is too small. <see cref="JxlDecoder.SetBoxBuffer"/>
         /// must be called again to make room for remaining bytes. This event may occur
         /// multiple times after <see cref="Box"/>.
         /// </summary>
         BoxNeedMoreOutput = 7,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": Basic information such as image dimensions and
         /// extra channels. This event occurs max once per image.
         /// </summary>
         BasicInfo = 0x40,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": User extensions of the codestream header. This
         /// event occurs max once per image and always later than <see cref="BasicInfo"/> and earlier than any pixel data.
         /// <br/><br/>
@@ -199,7 +206,7 @@ namespace JxlSharp
         Extensions = 0x80,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": Color encoding or ICC profile from the
         /// codestream header. This event occurs max once per image and always later
         /// than <see cref="BasicInfo"/> and earlier than any pixel data.
@@ -207,7 +214,7 @@ namespace JxlSharp
         ColorEncoding = 0x100,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": Preview image, a small frame, decoded. This
         /// event can only happen if the image has a preview frame encoded. This event
         /// occurs max once for the codestream and always later than <see cref="ColorEncoding"/> and before <see cref="Frame"/>.
@@ -215,11 +222,11 @@ namespace JxlSharp
         PreviewImage = 0x200,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
-        /// "JxlDecoderProcessInput": Beginning of a frame. <see cref="JxlDecoderGetFrameHeader"/> can be used at this point. A note on frames:
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+        /// "JxlDecoderProcessInput": Beginning of a frame. <see cref="JxlDecoder.GetFrameHeader"/> can be used at this point. A note on frames:
         /// a JPEG XL image can have internal frames that are not intended to be
         /// displayed (e.g. used for compositing a final frame), but this only returns
-        /// displayed frames, unless <see cref="JxlDecoderSetCoalescing"/> was set to false:
+        /// displayed frames, unless <see cref="JxlDecoder.SetCoalescing"/> was set to false:
         /// in that case, the individual layers are returned, without blending. Note
         /// that even when coalescing is disabled, only frames of type kRegularFrame
         /// are returned; frames of type kReferenceOnly and kLfFrame are always for
@@ -233,24 +240,24 @@ namespace JxlSharp
         Frame = 0x400,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": DC image, 8x8 sub-sampled frame, decoded. It is
         /// not guaranteed that the decoder will always return DC separately, but when
-        /// it does it will do so before outputting the full frame. <see cref="JxlDecoderSetDCOutBuffer"/> must be used after getting the basic image
+        /// it does it will do so before outputting the full frame. <see cref="JxlDecoder.SetDCOutBuffer"/> must be used after getting the basic image
         /// information to be able to get the DC pixels, if not this return status only
         /// indicates we're past this point in the codestream. This event occurs max
         /// once per frame and always later than <see cref="Frame"/> and other header
         /// events and earlier than full resolution pixel data.
         /// <br/><br/>
         /// @deprecated The DC feature in this form will be removed. For progressive
-        /// rendering, <see cref="JxlDecoderFlushImage"/> should be used.
+        /// rendering, <see cref="JxlDecoder.FlushImage"/> should be used.
         /// </summary>
         DcImage = 0x800,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": full frame (or layer, in case coalescing is
-        /// disabled) is decoded. <see cref="JxlDecoderSetImageOutBuffer"/> must be used after
+        /// disabled) is decoded. <see cref="JxlDecoder.SetImageOutBuffer"/> must be used after
         /// getting the basic image information to be able to get the image pixels, if
         /// not this return status only indicates we're past this point in the
         /// codestream. This event occurs max once per frame and always later than <see cref="DcImage"/>.
@@ -258,8 +265,8 @@ namespace JxlSharp
         FullImage = 0x1000,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
-        /// "JxlDecoderProcessInput": JPEG reconstruction data decoded. <see cref="JxlDecoderSetJPEGBuffer"/> may be used to set a JPEG reconstruction buffer
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+        /// "JxlDecoderProcessInput": JPEG reconstruction data decoded. <see cref="JxlDecoder.SetJPEGBuffer"/> may be used to set a JPEG reconstruction buffer
         /// after getting the JPEG reconstruction data. If a JPEG reconstruction buffer
         /// is set a byte stream identical to the JPEG codestream used to encode the
         /// image will be written to the JPEG reconstruction buffer instead of pixels
@@ -269,49 +276,49 @@ namespace JxlSharp
         JpegReconstruction = 0x2000,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": The header of a box of the container format
         /// (BMFF) is decoded. The following API functions related to boxes can be used
         /// after this event:
-        /// - <see cref="JxlDecoderSetBoxBuffer"/> and <see cref="JxlDecoderReleaseBoxBuffer"/>
+        /// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
         /// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
         /// data.
-        /// - <see cref="JxlDecoderGetBoxType"/> get the 4-character box typename.
-        /// - <see cref="JxlDecoderGetBoxSizeRaw"/> get the size of the box as it appears in
+        /// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
+        /// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
         /// the container file, not decompressed.
-        /// - <see cref="JxlDecoderSetDecompressBoxes"/> to configure whether to get the box
+        /// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
         /// data decompressed, or possibly compressed.
         /// <br/><br/>
         /// Boxes can be compressed. This is so when their box type is
         /// "brob". In that case, they have an underlying decompressed box
-        /// type and decompressed data. <see cref="JxlDecoderSetDecompressBoxes"/> allows
+        /// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
         /// configuring which data to get. Decompressing requires
-        /// Brotli. <see cref="JxlDecoderGetBoxType"/> has a flag to get the compressed box
+        /// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
         /// type, which can be "brob", or the decompressed box type. If a box
         /// is not compressed (its compressed type is not "brob"), then
         /// the output decompressed box type and data is independent of what
         /// setting is configured.
         /// <br/><br/>
-        /// The buffer set with <see cref="JxlDecoderSetBoxBuffer"/> must be set again for each
+        /// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
         /// next box to be obtained, or can be left unset to skip outputting this box.
         /// The output buffer contains the full box data when the next <see cref="Box"/>
         /// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
         /// boxes, including non-metadata boxes such as the signature box or codestream
         /// boxes. To check whether the box is a metadata type for respectively EXIF,
-        /// XMP or JUMBF, use <see cref="JxlDecoderGetBoxType"/> and check for types "Exif",
+        /// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
         /// "xml " and "jumb" respectively.
         /// </summary>
         Box = 0x4000,
 
         /// <summary>
-        /// Informative event by <see cref="JxlDecoderProcessInput"/>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
         /// "JxlDecoderProcessInput": a progressive step in decoding the frame is
-        /// reached. When calling <see cref="JxlDecoderFlushImage"/> at this point, the flushed
+        /// reached. When calling <see cref="JxlDecoder.FlushImage"/> at this point, the flushed
         /// image will correspond exactly to this point in decoding, and not yet
         /// contain partial results (such as partially more fine detail) of a next
         /// step. By default, this event will trigger maximum once per frame, when a
         /// 8x8th resolution (DC) image is ready (the image data is still returned at
-        /// full resolution, giving upscaled DC). Use <see cref="JxlDecoderSetProgressiveDetail"/> to configure more fine-grainedness. The
+        /// full resolution, giving upscaled DC). Use <see cref="JxlDecoder.SetProgressiveDetail"/> to configure more fine-grainedness. The
         /// event is not guaranteed to trigger, not all images have progressive steps
         /// or DC encoded.
         /// </summary>
@@ -968,16 +975,27 @@ namespace JxlSharp
     }
 
     /// <summary>
-    /// A point using double coordinates
+    /// CIE 1931 XY value (two doubles)
     /// </summary>
-    public struct XYPair
+    public struct XYValue
     {
-        public XYPair(double x, double y)
+        /// <summary>
+        /// Constructs a new XYPair object
+        /// </summary>
+        /// <param name="x">X value</param>
+        /// <param name="y">Y value</param>
+        public XYValue(double x, double y)
         {
             this.X = x;
             this.Y = y;
         }
+        /// <summary>
+        /// X value
+        /// </summary>
         public double X { get; set; }
+        /// <summary>
+        /// Y value
+        /// </summary>
         public double Y { get; set; }
     }
 
@@ -1019,15 +1037,15 @@ namespace JxlSharp
             }
         }
         /// <summary>
-        /// Numerical whitepoint values in CIE xy space.  Array size is 2.
+        /// Numerical whitepoint values in CIE xy space.
         /// </summary>
-        public XYPair WhitePointXY
+        public XYValue WhitePointXY
         {
             get
             {
                 unsafe
                 {
-                    return new XYPair(colorEncoding.white_point_xy[0], colorEncoding.white_point_xy[1]);
+                    return new XYValue(colorEncoding.white_point_xy[0], colorEncoding.white_point_xy[1]);
                 }
             }
             set
@@ -1059,15 +1077,15 @@ namespace JxlSharp
         }
 
         /// <summary>
-        /// Numerical red primary values in CIE xy space.  Array size is 2.
+        /// Numerical red primary values in CIE xy space.
         /// </summary>
-        public XYPair PrimariesRedXY
+        public XYValue PrimariesRedXY
         {
             get
             {
                 unsafe
                 {
-                    return new XYPair(colorEncoding.primaries_red_xy[0], colorEncoding.primaries_red_xy[1]);
+                    return new XYValue(colorEncoding.primaries_red_xy[0], colorEncoding.primaries_red_xy[1]);
                 }
             }
             set
@@ -1081,15 +1099,15 @@ namespace JxlSharp
         }
 
         /// <summary>
-        /// Numerical green primary values in CIE xy space.  Array size is 2.
+        /// Numerical green primary values in CIE xy space.
         /// </summary>
-        public XYPair PrimariesGreenXY
+        public XYValue PrimariesGreenXY
         {
             get
             {
                 unsafe
                 {
-                    return new XYPair(colorEncoding.primaries_green_xy[0], colorEncoding.primaries_green_xy[1]);
+                    return new XYValue(colorEncoding.primaries_green_xy[0], colorEncoding.primaries_green_xy[1]);
                 }
             }
             set
@@ -1103,15 +1121,15 @@ namespace JxlSharp
         }
 
         /// <summary>
-        /// Numerical blue primary values in CIE xy space.  Array size is 2.
+        /// Numerical blue primary values in CIE xy space.
         /// </summary>
-        public XYPair PrimariesBlueXY
+        public XYValue PrimariesBlueXY
         {
             get
             {
                 unsafe
                 {
-                    return new XYPair(colorEncoding.primaries_blue_xy[0], colorEncoding.primaries_blue_xy[1]);
+                    return new XYValue(colorEncoding.primaries_blue_xy[0], colorEncoding.primaries_blue_xy[1]);
                 }
             }
             set
@@ -1291,7 +1309,7 @@ namespace JxlSharp
         /// <summary>
         /// Indicates this is the last animation frame. This value is set by the
         /// decoder to indicate no further frames follow. For the encoder, it is not
-        /// required to set this value and it is ignored, <see cref="JxlEncoderCloseFrames"/> is
+        /// required to set this value and it is ignored, <see cref="JxlEncoder.CloseFrames"/> is
         /// used to indicate the last frame to the encoder instead.
         /// </summary>
         public bool IsLast;

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace JxlSharp
@@ -54,9 +52,9 @@ namespace JxlSharp
         /// </summary>
         internal struct JxlEncoderFrameSettings { }
 
-        /// <summary>
-        /// DEPRECATED: Use JxlEncoderFrameSettings instead.
-        /// </summary>
+        ///// <summary>
+        ///// DEPRECATED: Use JxlEncoderFrameSettings instead.
+        ///// </summary>
         //using JxlEncoderOptions = JxlEncoderFrameSettings;
 
         /// <summary>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace JxlSharp
@@ -263,11 +261,11 @@ namespace JxlSharp
 			{
                 colorEncoding.ColorSpace = (JxlSharp.JxlColorSpace)this.color_space;
                 colorEncoding.WhitePoint = (JxlSharp.JxlWhitePoint)this.white_point;
-                colorEncoding.WhitePointXY = new XYPair(this.white_point_xy[0], this.white_point_xy[1]);
+                colorEncoding.WhitePointXY = new XYValue(this.white_point_xy[0], this.white_point_xy[1]);
                 colorEncoding.Primaries = (JxlSharp.JxlPrimaries)this.primaries;
-                colorEncoding.PrimariesRedXY = new XYPair(this.primaries_red_xy[0], this.primaries_red_xy[1]);
-                colorEncoding.PrimariesGreenXY = new XYPair(this.primaries_green_xy[0], this.primaries_green_xy[1]);
-                colorEncoding.PrimariesBlueXY = new XYPair(this.primaries_blue_xy[0], this.primaries_blue_xy[1]);
+                colorEncoding.PrimariesRedXY = new XYValue(this.primaries_red_xy[0], this.primaries_red_xy[1]);
+                colorEncoding.PrimariesGreenXY = new XYValue(this.primaries_green_xy[0], this.primaries_green_xy[1]);
+                colorEncoding.PrimariesBlueXY = new XYValue(this.primaries_blue_xy[0], this.primaries_blue_xy[1]);
                 colorEncoding.TransferFunction = (JxlSharp.JxlTransferFunction)this.transfer_function;
                 colorEncoding.Gamma = this.gamma;
                 colorEncoding.RenderingIntent = (JxlSharp.JxlRenderingIntent)this.rendering_intent;

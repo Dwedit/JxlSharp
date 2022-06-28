@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 namespace JxlSharp
@@ -74,12 +72,12 @@ namespace JxlSharp
         /// <tt>size</tt> doesn't need to be a full image, only the beginning of the file.
         /// </summary>
         /// <returns> a flag indicating if a JPEG XL signature was found and what type.
-        /// - <see cref="JXL_SIG_NOT_ENOUGH_BYTES"/> if not enough bytes were passed to
+        /// - <see cref="JxlSignature.JXL_SIG_NOT_ENOUGH_BYTES"/> if not enough bytes were passed to
         /// determine if a valid signature is there.
-        /// - <see cref="JXL_SIG_INVALID"/> if no valid signature found for JPEG XL decoding.
-        /// - <see cref="JXL_SIG_CODESTREAM"/> if a valid JPEG XL codestream signature was
+        /// - <see cref="JxlSignature.JXL_SIG_INVALID"/> if no valid signature found for JPEG XL decoding.
+        /// - <see cref="JxlSignature.JXL_SIG_CODESTREAM"/> if a valid JPEG XL codestream signature was
         /// found.
-        /// - <see cref="JXL_SIG_CONTAINER"/> if a valid JPEG XL container signature was found.</returns>
+        /// - <see cref="JxlSignature.JXL_SIG_CONTAINER"/> if a valid JPEG XL container signature was found.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlSignature JxlSignatureCheck([In] uint8_t* buf, size_t len);
 
@@ -126,7 +124,7 @@ namespace JxlSharp
 
         /// <summary>
         /// Return value for <see cref="JxlDecoderProcessInput"/>.
-        /// The values from <see cref="JXL_DEC_BASIC_INFO"/> onwards are optional informative
+        /// The values from <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO"/> onwards are optional informative
         /// events that can be subscribed to, they are never returned if they
         /// have not been registered with <see cref="JxlDecoderSubscribeEvents"/>.
         /// </summary>
@@ -157,7 +155,7 @@ namespace JxlSharp
             /// <summary>
             /// The decoder is able to decode a preview image and requests setting a
             /// preview output buffer using <see cref="JxlDecoderSetPreviewOutBuffer"/>. This occurs
-            /// if <see cref="JXL_DEC_PREVIEW_IMAGE"/> is requested and it is possible to decode a
+            /// if <see cref="JxlDecoderStatus.JXL_DEC_PREVIEW_IMAGE"/> is requested and it is possible to decode a
             /// preview image from the codestream and the preview out buffer was not yet
             /// set. There is maximum one preview image in a codestream.
             /// </summary>
@@ -165,7 +163,7 @@ namespace JxlSharp
 
             /// <summary>
             /// The decoder is able to decode a DC image and requests setting a DC output
-            /// buffer using <see cref="JxlDecoderSetDCOutBuffer"/>. This occurs if <see cref="JXL_DEC_DC_IMAGE"/> is requested and it is possible to decode a DC image from
+            /// buffer using <see cref="JxlDecoderSetDCOutBuffer"/>. This occurs if <see cref="JxlDecoderStatus.JXL_DEC_DC_IMAGE"/> is requested and it is possible to decode a DC image from
             /// the codestream and the DC out buffer was not yet set. This event re-occurs
             /// for new frames if there are multiple animation frames.
             /// @deprecated The DC feature in this form will be removed. For progressive
@@ -184,14 +182,14 @@ namespace JxlSharp
             /// The JPEG reconstruction buffer is too small for reconstructed JPEG
             /// codestream to fit. <see cref="JxlDecoderSetJPEGBuffer"/> must be called again to
             /// make room for remaining bytes. This event may occur multiple times
-            /// after <see cref="JXL_DEC_JPEG_RECONSTRUCTION"/>.
+            /// after <see cref="JxlDecoderStatus.JXL_DEC_JPEG_RECONSTRUCTION"/>.
             /// </summary>
             JXL_DEC_JPEG_NEED_MORE_OUTPUT = 6,
 
             /// <summary>
             /// The box contents output buffer is too small. <see cref="JxlDecoderSetBoxBuffer"/>
             /// must be called again to make room for remaining bytes. This event may occur
-            /// multiple times after <see cref="JXL_DEC_BOX"/>.
+            /// multiple times after <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>.
             /// </summary>
             JXL_DEC_BOX_NEED_MORE_OUTPUT = 7,
 
@@ -205,7 +203,7 @@ namespace JxlSharp
             /// <summary>
             /// Informative event by <see cref="JxlDecoderProcessInput"/>
             /// "JxlDecoderProcessInput": User extensions of the codestream header. This
-            /// event occurs max once per image and always later than <see cref="JXL_DEC_BASIC_INFO"/> and earlier than any pixel data.
+            /// event occurs max once per image and always later than <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO"/> and earlier than any pixel data.
             /// <br/><br/>
             /// @deprecated The decoder no longer returns this, the header extensions,
             /// if any, are available at the JXL_DEC_BASIC_INFO event.
@@ -216,7 +214,7 @@ namespace JxlSharp
             /// Informative event by <see cref="JxlDecoderProcessInput"/>
             /// "JxlDecoderProcessInput": Color encoding or ICC profile from the
             /// codestream header. This event occurs max once per image and always later
-            /// than <see cref="JXL_DEC_BASIC_INFO"/> and earlier than any pixel data.
+            /// than <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO"/> and earlier than any pixel data.
             /// </summary>
             JXL_DEC_COLOR_ENCODING = 0x100,
 
@@ -224,7 +222,7 @@ namespace JxlSharp
             /// Informative event by <see cref="JxlDecoderProcessInput"/>
             /// "JxlDecoderProcessInput": Preview image, a small frame, decoded. This
             /// event can only happen if the image has a preview frame encoded. This event
-            /// occurs max once for the codestream and always later than <see cref="JXL_DEC_COLOR_ENCODING"/> and before <see cref="JXL_DEC_FRAME"/>.
+            /// occurs max once for the codestream and always later than <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING"/> and before <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/>.
             /// </summary>
             JXL_DEC_PREVIEW_IMAGE = 0x200,
 
@@ -239,7 +237,7 @@ namespace JxlSharp
             /// are returned; frames of type kReferenceOnly and kLfFrame are always for
             /// internal purposes only and cannot be accessed. A displayed frame either has
             /// an animation duration or is the only or last frame in the image. This event
-            /// occurs max once per displayed frame, always later than <see cref="JXL_DEC_COLOR_ENCODING"/>, and always earlier than any pixel data. While
+            /// occurs max once per displayed frame, always later than <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING"/>, and always earlier than any pixel data. While
             /// JPEG XL supports encoding a single frame as the composition of multiple
             /// internal sub-frames also called frames, this event is not indicated for the
             /// internal frames.
@@ -253,7 +251,7 @@ namespace JxlSharp
             /// it does it will do so before outputting the full frame. <see cref="JxlDecoderSetDCOutBuffer"/> must be used after getting the basic image
             /// information to be able to get the DC pixels, if not this return status only
             /// indicates we're past this point in the codestream. This event occurs max
-            /// once per frame and always later than <see cref="JXL_DEC_FRAME"/> and other header
+            /// once per frame and always later than <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> and other header
             /// events and earlier than full resolution pixel data.
             /// <br/><br/>
             /// @deprecated The DC feature in this form will be removed. For progressive
@@ -267,7 +265,7 @@ namespace JxlSharp
             /// disabled) is decoded. <see cref="JxlDecoderSetImageOutBuffer"/> must be used after
             /// getting the basic image information to be able to get the image pixels, if
             /// not this return status only indicates we're past this point in the
-            /// codestream. This event occurs max once per frame and always later than <see cref="JXL_DEC_DC_IMAGE"/>.
+            /// codestream. This event occurs max once per frame and always later than <see cref="JxlDecoderStatus.JXL_DEC_DC_IMAGE"/>.
             /// </summary>
             JXL_DEC_FULL_IMAGE = 0x1000,
 
@@ -278,7 +276,7 @@ namespace JxlSharp
             /// is set a byte stream identical to the JPEG codestream used to encode the
             /// image will be written to the JPEG reconstruction buffer instead of pixels
             /// to the image out buffer. This event occurs max once per image and always
-            /// before <see cref="JXL_DEC_FULL_IMAGE"/>.
+            /// before <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE"/>.
             /// </summary>
             JXL_DEC_JPEG_RECONSTRUCTION = 0x2000,
 
@@ -308,8 +306,8 @@ namespace JxlSharp
             /// <br/><br/>
             /// The buffer set with <see cref="JxlDecoderSetBoxBuffer"/> must be set again for each
             /// next box to be obtained, or can be left unset to skip outputting this box.
-            /// The output buffer contains the full box data when the next <see cref="JXL_DEC_BOX"/>
-            /// event or <see cref="JXL_DEC_SUCCESS"/> occurs. <see cref="JXL_DEC_BOX"/> occurs for all
+            /// The output buffer contains the full box data when the next <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>
+            /// event or <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> occurs. <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> occurs for all
             /// boxes, including non-metadata boxes such as the signature box or codestream
             /// boxes. To check whether the box is a metadata type for respectively EXIF,
             /// XMP or JUMBF, use <see cref="JxlDecoderGetBoxType"/> and check for types "Exif",
@@ -339,8 +337,8 @@ namespace JxlSharp
         /// keep state about the image, which it can use to skip to a requested frame
         /// more efficiently with <see cref="JxlDecoderSkipFrames"/>. Settings such as parallel
         /// runner or subscribed events are kept. After rewind, <see cref="JxlDecoderSubscribeEvents"/> can be used again, and it is feasible to leave out
-        /// events that were already handled before, such as <see cref="JXL_DEC_BASIC_INFO"/>
-        /// and <see cref="JXL_DEC_COLOR_ENCODING"/>, since they will provide the same information
+        /// events that were already handled before, such as <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO"/>
+        /// and <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING"/>, since they will provide the same information
         /// as before.
         /// </summary>
         /// <param name="dec"> decoder object</param>
@@ -351,14 +349,14 @@ namespace JxlSharp
         /// Makes the decoder skip the next `amount` frames. It still needs to process
         /// the input, but will not output the frame events. It can be more efficient
         /// when skipping frames, and even more so when using this after <see cref="JxlDecoderRewind"/>. If the decoder is already processing a frame (could
-        /// have emitted <see cref="JXL_DEC_FRAME"/> but not yet <see cref="JXL_DEC_FULL_IMAGE"/>), it
+        /// have emitted <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> but not yet <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE"/>), it
         /// starts skipping from the next frame. If the amount is larger than the amount
         /// of frames remaining in the image, all remaining frames are skipped. Calling
         /// this function multiple times adds the amount to skip to the already existing
         /// amount.
         /// <br/><br/>
         /// A frame here is defined as a frame that without skipping emits events such
-        /// as <see cref="JXL_DEC_FRAME"/> and <see cref="JXL_DEC_FULL_IMAGE"/>, frames that are internal
+        /// as <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> and <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE"/>, frames that are internal
         /// to the file format but are not rendered as part of an animation, or are not
         /// the final still frame of a still image, are not counted.
         /// </summary>
@@ -369,14 +367,14 @@ namespace JxlSharp
 
         /// <summary>
         /// Skips processing the current frame. Can be called after frame processing
-        /// already started, signaled by a <see cref="JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event,
-        /// but before the corrsponding <see cref="JXL_DEC_FULL_IMAGE"/> event. The next signaled
-        /// event will be another <see cref="JXL_DEC_FRAME"/>, or <see cref="JXL_DEC_SUCCESS"/> if there
+        /// already started, signaled by a <see cref="JxlDecoderStatus.JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event,
+        /// but before the corrsponding <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE"/> event. The next signaled
+        /// event will be another <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/>, or <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if there
         /// are no more frames. If pixel data is required from the already processed part
         /// of the frame, <see cref="JxlDecoderFlushImage"/> must be called before this.
         /// </summary>
         /// <param name="dec"> decoder object</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if there is a frame to skip, and <see cref="JXL_DEC_ERROR"/> if the function was not called during frame processing.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if there is a frame to skip, and <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if the function was not called during frame processing.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSkipCurrentFrame(JxlDecoder* dec);
 
@@ -389,8 +387,8 @@ namespace JxlSharp
         /// format.</param>
         /// <param name="format"> JxlPixelFormat to populate with the recommended settings for
         /// the data loaded into this decoder.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if no error, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if the
-        /// basic info isn't yet available, and <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if no error, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if the
+        /// basic info isn't yet available, and <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
         JxlDecoderDefaultPixelFormat([In] JxlDecoder* dec, out JxlPixelFormat format);
@@ -404,7 +402,7 @@ namespace JxlSharp
         /// be NULL to use the default, single-threaded, runner. A multithreaded
         /// runner should be set to reach fast performance.</param>
         /// <param name="parallel_runner_opaque"> opaque pointer for parallel_runner.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the runner was set, <see cref="JXL_DEC_ERROR"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the runner was set, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/>
         /// otherwise (the previous runner remains set).</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
@@ -428,7 +426,7 @@ namespace JxlSharp
         internal static extern size_t JxlDecoderSizeHintBasicInfo([In] JxlDecoder* dec);
 
         /// <summary>
-        /// Select for which informative events, i.e. <see cref="JXL_DEC_BASIC_INFO"/>, etc., the
+        /// Select for which informative events, i.e. <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO"/>, etc., the
         /// decoder should return with a status. It is not required to subscribe to any
         /// events, data can still be requested from the decoder as soon as it available.
         /// By default, the decoder is subscribed to no events (events_wanted == 0), and
@@ -438,7 +436,7 @@ namespace JxlSharp
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="events_wanted"> bitfield of desired events.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if no error, <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSubscribeEvents(JxlDecoder* dec,
                                                               int events_wanted);
@@ -473,7 +471,7 @@ namespace JxlSharp
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="skip_reorientation"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if no error, <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
         JxlDecoderSetKeepOrientation(JxlDecoder* dec, JXL_BOOL skip_reorientation);
@@ -487,7 +485,7 @@ namespace JxlSharp
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="render_spotcolors"> JXL_TRUE to enable (default), JXL_FALSE to disable.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if no error, <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
         JxlDecoderSetRenderSpotcolors(JxlDecoder* dec, JXL_BOOL render_spotcolors);
@@ -504,7 +502,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="coalescing"> JXL_TRUE to enable coalescing (default), JXL_FALSE to
         /// disable it.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if no error, <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetCoalescing(JxlDecoder* dec,
                                                             JXL_BOOL coalescing);
@@ -520,31 +518,31 @@ namespace JxlSharp
         /// <br/><br/>
         /// The returned status indicates whether the decoder needs more input bytes, or
         /// more output buffer for a certain type of output data. No matter what the
-        /// returned status is (other than <see cref="JXL_DEC_ERROR"/>), new information, such
+        /// returned status is (other than <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/>), new information, such
         /// as <see cref="JxlDecoderGetBasicInfo"/>, may have become available after this call.
-        /// When the return value is not <see cref="JXL_DEC_ERROR"/> or <see cref="JXL_DEC_SUCCESS"/>, the
+        /// When the return value is not <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> or <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>, the
         /// decoding requires more <see cref="JxlDecoderProcessInput"/> calls to continue.
         /// </summary>
         /// <param name="dec"> decoder object</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> when decoding finished and all events handled.
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> when decoding finished and all events handled.
         /// If you still have more unprocessed input data anyway, then you can still
-        /// continue by using <see cref="JxlDecoderSetInput"/> and calling <see cref="JxlDecoderProcessInput"/> again, similar to handling <see cref="JXL_DEC_NEED_MORE_INPUT"/>. <see cref="JXL_DEC_SUCCESS"/> can occur instead of <see cref="JXL_DEC_NEED_MORE_INPUT"/> when, for example, the input data ended right at
+        /// continue by using <see cref="JxlDecoderSetInput"/> and calling <see cref="JxlDecoderProcessInput"/> again, similar to handling <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/>. <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> can occur instead of <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> when, for example, the input data ended right at
         /// the boundary of a box of the container format, all essential codestream
         /// boxes were already decoded, but extra metadata boxes are still present in
         /// the next data. <see cref="JxlDecoderProcessInput"/> cannot return success if all
         /// codestream boxes have not been seen yet.</returns>
-        /// <returns> <see cref="JXL_DEC_ERROR"/> when decoding failed, e.g. invalid codestream.
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> when decoding failed, e.g. invalid codestream.
         /// TODO(lode): document the input data mechanism</returns>
-        /// <returns> <see cref="JXL_DEC_NEED_MORE_INPUT"/> when more input data is necessary.</returns>
-        /// <returns> <see cref="JXL_DEC_BASIC_INFO"/> when basic info such as image dimensions is
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> when more input data is necessary.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO"/> when basic info such as image dimensions is
         /// available and this informative event is subscribed to.</returns>
-        /// <returns> <see cref="JXL_DEC_COLOR_ENCODING"/> when color profile information is
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING"/> when color profile information is
         /// available and this informative event is subscribed to.</returns>
-        /// <returns> <see cref="JXL_DEC_PREVIEW_IMAGE"/> when preview pixel information is
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_PREVIEW_IMAGE"/> when preview pixel information is
         /// available and output in the preview buffer.</returns>
-        /// <returns> <see cref="JXL_DEC_DC_IMAGE"/> when DC pixel information (8x8 downscaled
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_DC_IMAGE"/> when DC pixel information (8x8 downscaled
         /// version of the image) is available and output is in the DC buffer.</returns>
-        /// <returns> <see cref="JXL_DEC_FULL_IMAGE"/> when all pixel information at highest detail
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE"/> when all pixel information at highest detail
         /// is available and has been output in the pixel buffer.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderProcessInput(JxlDecoder* dec);
@@ -558,7 +556,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="data"> pointer to next bytes to read from</param>
         /// <param name="size"> amount of bytes available starting from data</param>
-        /// <returns> <see cref="JXL_DEC_ERROR"/> if input was already set without releasing or <see cref="JxlDecoderCloseInput"/> was already called, <see cref="JXL_DEC_SUCCESS"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if input was already set without releasing or <see cref="JxlDecoderCloseInput"/> was already called, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetInput(JxlDecoder* dec,
                                                        [In] uint8_t* data,
@@ -586,9 +584,9 @@ namespace JxlSharp
         /// will be called. This function allows the decoder to determine correctly if it
         /// should return success, need more input or error in certain cases. For
         /// backwards compatibility with a previous version of the API, using this
-        /// function is optional when not using the <see cref="JXL_DEC_BOX"/> event (the decoder
+        /// function is optional when not using the <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event (the decoder
         /// is able to determine the end of the image frames without marking the end),
-        /// but using this function is required when using <see cref="JXL_DEC_BOX"/> for getting
+        /// but using this function is required when using <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> for getting
         /// metadata box contents. This function does not replace <see cref="JxlDecoderReleaseInput"/>, that function should still be called if its return
         /// value is needed.
         /// <br/><br/>
@@ -607,7 +605,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="info"> struct to copy the information into, or NULL to only check
         /// whether the information is available through the return value.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the value is available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/>
         /// in case of other error conditions.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetBasicInfo([In] JxlDecoder* dec,
@@ -621,7 +619,7 @@ namespace JxlSharp
         /// <param name="index"> index of the extra channel to query.</param>
         /// <param name="info"> struct to copy the information into, or NULL to only check
         /// whether the information is available through the return value.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the value is available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/>
         /// in case of other error conditions.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetExtraChannelInfo(
@@ -637,7 +635,7 @@ namespace JxlSharp
         /// <param name="index"> index of the extra channel to query.</param>
         /// <param name="name"> buffer to copy the name into</param>
         /// <param name="size"> size of the name buffer in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the value is available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/>
         /// in case of other error conditions.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetExtraChannelName([In] JxlDecoder* dec,
@@ -694,7 +692,7 @@ namespace JxlSharp
         /// or the color profile of the decoded pixels.</param>
         /// <param name="color_encoding"> struct to copy the information into, or NULL to only
         /// check whether the information is available through the return value.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the data is available and returned, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/> in
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the data is available and returned, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> in
         /// case the encoded structured color profile does not exist in the
         /// codestream.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -718,9 +716,9 @@ namespace JxlSharp
         /// or the color profile of the decoded pixels.</param>
         /// <param name="size"> variable to output the size into, or NULL to only check the
         /// return status.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the ICC profile is available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if the decoder has not yet received enough
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the ICC profile is available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if the decoder has not yet received enough
         /// input data to determine whether an ICC profile is available or what its
-        /// size is, <see cref="JXL_DEC_ERROR"/> in case the ICC profile is not available and
+        /// size is, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> in case the ICC profile is not available and
         /// cannot be generated.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
@@ -737,8 +735,8 @@ namespace JxlSharp
         /// or the color profile of the decoded pixels.</param>
         /// <param name="icc_profile"> buffer to copy the ICC profile into</param>
         /// <param name="size"> size of the icc_profile buffer in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the profile was successfully returned is
-        /// available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/> if the profile doesn't exist or the output size is not
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the profile was successfully returned is
+        /// available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if the profile doesn't exist or the output size is not
         /// large enough.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetColorAsICCProfile(
@@ -765,7 +763,7 @@ namespace JxlSharp
         /// The JXL decoder has no color management system built in, but can convert XYB
         /// color to any of the ones supported by JxlColorEncoding.
         /// <br/><br/>
-        /// Can only be set after the <see cref="JXL_DEC_COLOR_ENCODING"/> event occurred and
+        /// Can only be set after the <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING"/> event occurred and
         /// before any other event occurred, and can affect the result of <see cref="JXL_COLOR_PROFILE_TARGET_DATA"/> (but not of <see cref="JXL_COLOR_PROFILE_TARGET_ORIGINAL"/>), so should be used after getting <see cref="JXL_COLOR_PROFILE_TARGET_ORIGINAL"/> but before getting <see cref="JXL_COLOR_PROFILE_TARGET_DATA"/>. The color_encoding must be grayscale if
         /// num_color_channels from the basic info is 1, RGB if num_color_channels from
         /// the basic info is 3.
@@ -779,7 +777,7 @@ namespace JxlSharp
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="color_encoding"> the default color encoding to set</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the preference was set successfully, <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the preference was set successfully, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetPreferredColorProfile(
             JxlDecoder* dec, [In] JxlColorEncoding* color_encoding);
@@ -793,7 +791,7 @@ namespace JxlSharp
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="desired_intensity_target"> the intended target peak luminance</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the preference was set successfully, <see cref="JXL_DEC_ERROR"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the preference was set successfully, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetDesiredIntensityTarget(
             JxlDecoder* dec, float desired_intensity_target);
@@ -806,7 +804,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="format"> format of pixels</param>
         /// <param name="size"> output value, buffer size in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// information not available yet.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderPreviewOutBufferSize(
@@ -823,7 +821,7 @@ namespace JxlSharp
         /// copied internally.</param>
         /// <param name="buffer"> buffer type to output the pixel data to</param>
         /// <param name="size"> size of buffer in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// size too small.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetPreviewOutBuffer(
@@ -831,13 +829,13 @@ namespace JxlSharp
 
         /// <summary>
         /// Outputs the information from the frame, such as duration when have_animation.
-        /// This function can be called when <see cref="JXL_DEC_FRAME"/> occurred for the current
+        /// This function can be called when <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> occurred for the current
         /// frame, even when have_animation in the JxlBasicInfo is JXL_FALSE.
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="header"> struct to copy the information into, or NULL to only check
         /// whether the information is available through the return value.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the value is available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/> in
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> in
         /// case of other error conditions.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetFrameHeader([In] JxlDecoder* dec,
@@ -851,7 +849,7 @@ namespace JxlSharp
         /// <param name="name"> buffer to copy the name into</param>
         /// <param name="size"> size of the name buffer in bytes, including zero termination
         /// character, so this must be at least JxlFrameHeader.name_length + 1.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the value is available, <see cref="JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JXL_DEC_ERROR"/> in
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> in
         /// case of other error conditions.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetFrameName([In] JxlDecoder* dec,
@@ -859,7 +857,7 @@ namespace JxlSharp
 
         /// <summary>
         /// Outputs the blend information for the current frame for a specific extra
-        /// channel. This function can be called when <see cref="JXL_DEC_FRAME"/> occurred for the
+        /// channel. This function can be called when <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> occurred for the
         /// current frame, even when have_animation in the JxlBasicInfo is JXL_FALSE.
         /// This information is only useful if coalescing is disabled; otherwise the
         /// decoder will have performed blending already.
@@ -867,7 +865,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="index"> the index of the extra channel</param>
         /// <param name="blend_info"> struct to copy the information into</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetExtraChannelBlendInfo(
             [In] JxlDecoder* dec, size_t index, JxlBlendInfo* blend_info);
@@ -880,7 +878,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="format"> format of pixels</param>
         /// <param name="size"> output value, buffer size in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// information not available yet.
         /// <br/><br/>
         /// @deprecated The DC feature in this form will be removed. Use <see cref="JxlDecoderFlushImage"/> for progressive rendering.</returns>
@@ -900,7 +898,7 @@ namespace JxlSharp
         /// copied internally.</param>
         /// <param name="buffer"> buffer type to output the pixel data to</param>
         /// <param name="size"> size of buffer in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// size too small.
         /// <br/><br/>
         /// @deprecated The DC feature in this form will be removed. Use <see cref="JxlDecoderFlushImage"/> for progressive rendering.</returns>
@@ -914,14 +912,14 @@ namespace JxlSharp
         /// given format. This is the buffer for <see cref="JxlDecoderSetImageOutBuffer"/>.
         /// Requires that the basic image information is available in the decoder in the
         /// case of coalescing enabled (default). In case coalescing is disabled, this
-        /// can only be called after the <see cref="JXL_DEC_FRAME"/> event occurs. In that case,
+        /// can only be called after the <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> event occurs. In that case,
         /// it will return the size required to store the possibly cropped frame (which
         /// can be larger or smaller than the image dimensions).
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="format"> format of the pixels.</param>
         /// <param name="size"> output value, buffer size in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// information not available yet.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderImageOutBufferSize(
@@ -929,7 +927,7 @@ namespace JxlSharp
 
         /// <summary>
         /// Sets the buffer to write the full resolution image to. This can be set when
-        /// the <see cref="JXL_DEC_FRAME"/> event occurs, must be set when the <see cref="JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event occurs, and applies only for the
+        /// the <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> event occurs, must be set when the <see cref="JxlDecoderStatus.JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event occurs, and applies only for the
         /// current frame. The size of the buffer must be at least as large as given
         /// by <see cref="JxlDecoderImageOutBufferSize"/>. The buffer follows the format described
         /// by JxlPixelFormat. The buffer is owned by the caller.
@@ -939,7 +937,7 @@ namespace JxlSharp
         /// are copied internally.</param>
         /// <param name="buffer"> buffer type to output the pixel data to</param>
         /// <param name="size"> size of buffer in bytes</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// size too small.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetImageOutBuffer(
@@ -1008,8 +1006,8 @@ namespace JxlSharp
         internal delegate void JxlImageOutDestroyCallback(void* run_opaque);
 
         /// <summary>
-        /// Sets pixel output callback. This is an alternative to <see cref="JxlDecoderSetImageOutBuffer"/>. This can be set when the <see cref="JXL_DEC_FRAME"/>
-        /// event occurs, must be set when the <see cref="JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event
+        /// Sets pixel output callback. This is an alternative to <see cref="JxlDecoderSetImageOutBuffer"/>. This can be set when the <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/>
+        /// event occurs, must be set when the <see cref="JxlDecoderStatus.JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event
         /// occurs, and applies only for the current frame. Only one of <see cref="JxlDecoderSetImageOutBuffer"/> or <see cref="JxlDecoderSetImageOutCallback"/> may be used
         /// for the same frame, not both at the same time.
         /// <br/><br/>
@@ -1044,7 +1042,7 @@ namespace JxlSharp
         /// data.</param>
         /// <param name="opaque"> optional user data, which will be passed on to the callback,
         /// may be NULL.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such
         /// as <see cref="JxlDecoderSetImageOutBuffer"/> already set.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
@@ -1068,7 +1066,7 @@ namespace JxlSharp
         /// <param name="init_opaque"> optional user data passed to <tt>init_callback</tt>, may be NULL
         /// (unlike the return value from <tt>init_callback</tt> which may only be NULL if
         /// initialization failed).</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such
         /// as <see cref="JxlDecoderSetImageOutBuffer"/> having already been called.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetMultithreadedImageOutCallback(
@@ -1087,7 +1085,7 @@ namespace JxlSharp
         /// <param name="size"> output value, buffer size in bytes</param>
         /// <param name="index"> which extra channel to get, matching the index used in <see cref="JxlDecoderGetExtraChannelInfo"/>. Must be smaller than num_extra_channels in
         /// the associated JxlBasicInfo.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// information not available yet or invalid index.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderExtraChannelBufferSize(
@@ -1096,7 +1094,7 @@ namespace JxlSharp
 
         /// <summary>
         /// Sets the buffer to write an extra channel to. This can be set when
-        /// the <see cref="JXL_DEC_FRAME"/> or <see cref="JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event occurs,
+        /// the <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> or <see cref="JxlDecoderStatus.JXL_DEC_NEED_IMAGE_OUT_BUFFER"/> event occurs,
         /// and applies only for the current frame. The size of the buffer must be at
         /// least as large as given by <see cref="JxlDecoderExtraChannelBufferSize"/>. The buffer
         /// follows the format described by JxlPixelFormat, but where num_channels is 1.
@@ -1118,7 +1116,7 @@ namespace JxlSharp
         /// <param name="size"> size of buffer in bytes</param>
         /// <param name="index"> which extra channel to get, matching the index used in <see cref="JxlDecoderGetExtraChannelInfo"/>. Must be smaller than num_extra_channels in
         /// the associated JxlBasicInfo.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// size too small or invalid index.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
@@ -1137,7 +1135,7 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="data"> pointer to next bytes to write to</param>
         /// <param name="size"> amount of bytes available starting from data</param>
-        /// <returns> <see cref="JXL_DEC_ERROR"/> if output buffer was already set and <see cref="JxlDecoderReleaseJPEGBuffer"/> was not called on it, <see cref="JXL_DEC_SUCCESS"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if output buffer was already set and <see cref="JxlDecoderReleaseJPEGBuffer"/> was not called on it, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
         /// otherwise</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetJPEGBuffer(JxlDecoder* dec,
@@ -1167,14 +1165,14 @@ namespace JxlSharp
         /// If for the current box a box buffer was set before and released with <see cref="JxlDecoderReleaseBoxBuffer"/>, bytes that the decoder has already output
         /// should not be included, only the remaining bytes output must be set.
         /// <br/><br/>
-        /// The <see cref="JxlDecoderReleaseBoxBuffer"/> must be used at the next <see cref="JXL_DEC_BOX"/>
-        /// event or final <see cref="JXL_DEC_SUCCESS"/> event to compute the size of the output
+        /// The <see cref="JxlDecoderReleaseBoxBuffer"/> must be used at the next <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>
+        /// event or final <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> event to compute the size of the output
         /// box bytes.
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="data"> pointer to next bytes to write to</param>
         /// <param name="size"> amount of bytes available starting from data</param>
-        /// <returns> <see cref="JXL_DEC_ERROR"/> if output buffer was already set and <see cref="JxlDecoderReleaseBoxBuffer"/> was not called on it, <see cref="JXL_DEC_SUCCESS"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if output buffer was already set and <see cref="JxlDecoderReleaseBoxBuffer"/> was not called on it, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
         /// otherwise</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetBoxBuffer(JxlDecoder* dec,
@@ -1204,7 +1202,7 @@ namespace JxlSharp
         /// finished.
         /// <br/><br/>
         /// The default mode is raw. This setting can only be changed before decoding, or
-        /// directly after a <see cref="JXL_DEC_BOX"/> event, and is remembered until the decoder
+        /// directly after a <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event, and is remembered until the decoder
         /// is reset or destroyed.
         /// <br/><br/>
         /// Enabling decompressed mode requires Brotli support from the library.
@@ -1212,14 +1210,14 @@ namespace JxlSharp
         /// <param name="dec"> decoder object</param>
         /// <param name="decompress"> JXL_TRUE to transparently decompress, JXL_FALSE to get
         /// boxes in raw mode.</param>
-        /// <returns> <see cref="JXL_DEC_ERROR"/> if decompressed mode is set and Brotli is not
-        /// available, <see cref="JXL_DEC_SUCCESS"/> otherwise.</returns>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if decompressed mode is set and Brotli is not
+        /// available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderSetDecompressBoxes(JxlDecoder* dec,
                                                                  JXL_BOOL decompress);
 
         /// <summary>
-        /// Outputs the type of the current box, after a <see cref="JXL_DEC_BOX"/> event occured,
+        /// Outputs the type of the current box, after a <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event occured,
         /// as 4 characters without null termination character. In case of a compressed
         /// "brob" box, this will return "brob" if the decompressed argument is
         /// JXL_FALSE, or the underlying box type if the decompressed argument is
@@ -1280,7 +1278,7 @@ namespace JxlSharp
         /// <param name="type"> buffer to copy the type into</param>
         /// <param name="decompressed"> which box type to get: JXL_FALSE to get the raw box type,
         /// which can be "brob", JXL_TRUE, get the underlying box type.</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if the value is available, <see cref="JXL_DEC_ERROR"/> if
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if
         /// not, for example the JXL file does not use the container format.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetBoxType(JxlDecoder* dec,
@@ -1288,7 +1286,7 @@ namespace JxlSharp
                                                          JXL_BOOL decompressed);
 
         /// <summary>
-        /// Returns the size of a box as it appears in the container file, after the <see cref="JXL_DEC_BOX"/> event. For a non-compressed box, this is the size of the
+        /// Returns the size of a box as it appears in the container file, after the <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event. For a non-compressed box, this is the size of the
         /// contents, excluding the 4 bytes indicating the box type. For a compressed
         /// "brob" box, this is the size of the compressed box contents plus the
         /// additional 4 byte indicating the underlying box type, but excluding the 4
@@ -1300,19 +1298,19 @@ namespace JxlSharp
         /// </summary>
         /// <param name="dec"> decoder object</param>
         /// <param name="size"> raw size of the box in bytes</param>
-        /// <returns> <see cref="JXL_DEC_ERROR"/> if no box size is available, <see cref="JXL_DEC_SUCCESS"/>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if no box size is available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
         /// otherwise.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus JxlDecoderGetBoxSizeRaw([In] JxlDecoder* dec,
                                                             out uint64_t size);
 
         /// <summary>
-        /// Configures at which progressive steps in frame decoding these <see cref="JXL_DEC_FRAME_PROGRESSION"/> event occurs. The default value for the level
+        /// Configures at which progressive steps in frame decoding these <see cref="JxlDecoderStatus.JXL_DEC_FRAME_PROGRESSION"/> event occurs. The default value for the level
         /// of detail if this function is never called is `kDC`.
         /// </summary>
         /// <param name="dec"> decoder object</param>
-        /// <param name="detail"> at which level of detail to trigger <see cref="JXL_DEC_FRAME_PROGRESSION"/></param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> on success, <see cref="JXL_DEC_ERROR"/> on error, such as
+        /// <param name="detail"> at which level of detail to trigger <see cref="JxlDecoderStatus.JXL_DEC_FRAME_PROGRESSION"/></param>
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> on error, such as
         /// an invalid value for the progressive detail.</returns>
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern JxlDecoderStatus
@@ -1320,7 +1318,7 @@ namespace JxlSharp
 
         /// <summary>
         /// Returns the intended downsampling ratio for the progressive frame produced
-        /// by <see cref="JxlDecoderFlushImage"/> after the latest <see cref="JXL_DEC_FRAME_PROGRESSION"/>
+        /// by <see cref="JxlDecoderFlushImage"/> after the latest <see cref="JxlDecoderStatus.JXL_DEC_FRAME_PROGRESSION"/>
         /// event.
         /// </summary>
         /// <param name="dec"> decoder object</param>
@@ -1332,12 +1330,12 @@ namespace JxlSharp
         /// Outputs progressive step towards the decoded image so far when only partial
         /// input was received. If the flush was successful, the buffer set with <see cref="JxlDecoderSetImageOutBuffer"/> will contain partial image data.
         /// <br/><br/>
-        /// Can be called when <see cref="JxlDecoderProcessInput"/> returns <see cref="JXL_DEC_NEED_MORE_INPUT"/>, after the <see cref="JXL_DEC_FRAME"/> event already occurred
-        /// and before the <see cref="JXL_DEC_FULL_IMAGE"/> event occurred for a frame.
+        /// Can be called when <see cref="JxlDecoderProcessInput"/> returns <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT"/>, after the <see cref="JxlDecoderStatus.JXL_DEC_FRAME"/> event already occurred
+        /// and before the <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE"/> event occurred for a frame.
         /// </summary>
         /// <param name="dec"> decoder object</param>
-        /// <returns> <see cref="JXL_DEC_SUCCESS"/> if image data was flushed to the output buffer,
-        /// or <see cref="JXL_DEC_ERROR"/> when no flush was done, e.g. if not enough image
+        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if image data was flushed to the output buffer,
+        /// or <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> when no flush was done, e.g. if not enough image
         /// data was available yet even for flush, or no output buffer was set yet.
         /// This error is not fatal, it only indicates no flushed image is available
         /// right now. Regular decoding can still be performed.</returns>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
@@ -400,7 +398,6 @@ namespace JxlSharp
 			/// </summary>
 			/// <param name="index"> index of the extra channel to query.</param>
 			/// <param name="name"> buffer to copy the name into</param>
-			/// <param name="size"> size of the name buffer in bytes</param>
 			/// <returns> JXL_DEC_SUCCESS if the value is available,
 			/// JXL_DEC_NEED_MORE_INPUT if not yet available, JXL_DEC_ERROR in case
 			/// of other error conditions.</returns>
@@ -420,7 +417,7 @@ namespace JxlSharp
 						status = JxlDecoderGetExtraChannelName(dec, (size_t)index, pBuffer, (size_t)bufferSize);
 						if (status == JxlDecoderStatus.JXL_DEC_SUCCESS)
 						{
-							name = Encoding.UTF8.GetString(pBuffer, bufferSize - 1);
+							name = Encoding.UTF8.GetString(buffer, 0, bufferSize - 1);
 						}
 					}
 				}
@@ -505,7 +502,6 @@ namespace JxlSharp
 			/// <param name="target"> whether to get the original color profile from the metadata
 			/// or the color profile of the decoded pixels.</param>
 			/// <param name="icc_profile"> buffer to copy the ICC profile into</param>
-			/// <param name="size"> size of the icc_profile buffer in bytes</param>
 			/// <returns> JXL_DEC_SUCCESS if the profile was successfully returned is
 			/// available, JXL_DEC_NEED_MORE_INPUT if not yet available,
 			/// JXL_DEC_ERROR if the profile doesn't exist or the output size is not
@@ -626,6 +622,7 @@ namespace JxlSharp
 			/// </summary>
 			/// <param name="header"> struct to copy the information into, or NULL to only check
 			/// whether the information is available through the return value.</param>
+			/// <param name="name">string to copy the frame name into</param>
 			/// <returns> JXL_DEC_SUCCESS if the value is available,
 			/// JXL_DEC_NEED_MORE_INPUT if not yet available, JXL_DEC_ERROR in case
 			/// of other error conditions.</returns>
@@ -643,7 +640,7 @@ namespace JxlSharp
 						status = JxlDecoderGetFrameName(dec, pBuffer, (size_t)bufferSize);
 						if (status == JxlDecoderStatus.JXL_DEC_SUCCESS)
 						{
-							name = Encoding.UTF8.GetString(pBuffer, bufferSize - 1);
+							name = Encoding.UTF8.GetString(buffer, 0, bufferSize - 1);
 						}
 					}
 				}
@@ -897,7 +894,7 @@ namespace JxlSharp
 			/// not be included, only the remaining bytes output must be set.
 			/// </summary>
 			/// <param name="data"> pointer to next bytes to write to</param>
-			/// <param name="size"> amount of bytes available starting from data</param>
+			/// <param name="outputPosition">output position within the array to start at</param>
 			/// <returns> JXL_DEC_ERROR if output buffer was already set and
 			/// JxlDecoderReleaseJPEGBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
 			public JxlDecoderStatus SetJPEGBuffer(byte[] data, int outputPosition = 0)
@@ -985,7 +982,6 @@ namespace JxlSharp
 			/// or final JXL_DEC_SUCCESS event to compute the size of the output box bytes.
 			/// </summary>
 			/// <param name="data"> pointer to next bytes to write to</param>
-			/// <param name="size"> amount of bytes available starting from data</param>
 			/// <returns> JXL_DEC_ERROR if output buffer was already set and
 			/// JxlDecoderReleaseBoxBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
 			public JxlDecoderStatus SetBoxBuffer(byte[] data)
@@ -1059,7 +1055,7 @@ namespace JxlSharp
 			/// box, this will return "brob" if the decompressed argument is JXL_FALSE, or
 			/// the underlying box type if the decompressed argument is JXL_TRUE.
 			/// </summary>
-			/// <param name="type"> buffer to copy the type into</param>
+			/// <param name="boxType"> buffer to copy the type into</param>
 			/// <param name="decompressed"> which box type to get: JXL_TRUE to get the raw box type,
 			/// which can be "brob", JXL_FALSE, get the underlying box type.</param>
 			/// <returns> JXL_DEC_SUCCESS if the value is available, JXL_DEC_ERROR if not, for
@@ -1076,7 +1072,7 @@ namespace JxlSharp
 					{
 						if (buffer[len] == 0) break;
 					}
-					boxType = Encoding.UTF8.GetString(pBuffer, len);
+					boxType = Encoding.UTF8.GetString(buffer, 0, len);
 					return status;
 				}
 			}
