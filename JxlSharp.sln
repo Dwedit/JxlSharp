@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxlSharp", "JxlSharp\JxlSharp.csproj", "{54B86C0A-FE3D-470B-9F71-CCC3DEF58CB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxlExample", "JxlExample\JxlExample.csproj", "{A74E4428-2E90-41E6-8BDE-94A6893B1CB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54B86C0A-FE3D-470B-9F71-CCC3DEF58CB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54B86C0A-FE3D-470B-9F71-CCC3DEF58CB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54B86C0A-FE3D-470B-9F71-CCC3DEF58CB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54B86C0A-FE3D-470B-9F71-CCC3DEF58CB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A74E4428-2E90-41E6-8BDE-94A6893B1CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A74E4428-2E90-41E6-8BDE-94A6893B1CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A74E4428-2E90-41E6-8BDE-94A6893B1CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A74E4428-2E90-41E6-8BDE-94A6893B1CB5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B502E99E-94E3-4128-8DCD-207340BB924A}
+	EndGlobalSection
+EndGlobal
