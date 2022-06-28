@@ -80,7 +80,7 @@ namespace JxlSharp
             }
             else
             {
-                IntPtr moduleX86 = IntPtr.Zero;
+                IntPtr moduleX86 = TryLoadLibJXL("x86");
                 if (moduleX86 != IntPtr.Zero)
                 {
                     libJxlModule = moduleX86;
