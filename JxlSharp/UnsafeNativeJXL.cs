@@ -40,14 +40,9 @@ namespace JxlSharp
             public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
         }
 
-        /// <summary>
-        /// Loads the correct version of "libjxl.dll" for the executing architecture, this allows the DllImports to work
-        /// </summary>
-        static UnsafeNativeJXL()
+        static IntPtr TryLoadLibJXL(string arch)
         {
             var executingAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-            string arch = executingAssembly.GetName().ProcessorArchitecture.ToString().ToLowerInvariant();
-            //string arch = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
             string assemblyPath = Path.GetDirectoryName(executingAssembly.Location);
             string libPath = Path.Combine(assemblyPath, "lib");
             string archPath = Path.Combine(libPath, arch);
@@ -64,16 +59,42 @@ namespace JxlSharp
 
             if (File.Exists(dllName))
             {
-                libJxlModule = UnsafeNativeWin32.LoadLibraryW(dllName);
-                if (libJxlModule == IntPtr.Zero)
+                return UnsafeNativeWin32.LoadLibraryW(dllName);
+            }
+            else
+            {
+                return IntPtr.Zero;
+            }
+        }
+
+
+        /// <summary>
+        /// Loads the correct version of "libjxl.dll" for the executing architecture, this allows the DllImports to work
+        /// </summary>
+        static UnsafeNativeJXL()
+        {
+            IntPtr moduleX64 = TryLoadLibJXL("x64");
+            if (moduleX64 != IntPtr.Zero)
+            {
+                libJxlModule = moduleX64;
+            }
+            else
+            {
+                IntPtr moduleX86 = IntPtr.Zero;
+                if (moduleX86 != IntPtr.Zero)
                 {
-                    throw new DllNotFoundException("Failed to load LibJxl.dll - Possibly the wrong processor architecture");
+                    libJxlModule = moduleX86;
                 }
-                JxlThreadParallelRunner = UnsafeNativeWin32.GetProcAddress(libJxlModule, "JxlThreadParallelRunner");
-                if (JxlThreadParallelRunner == IntPtr.Zero)
-                {
-                    throw new EntryPointNotFoundException("Failed to find JxlThreadParallelRunner in LibJxl.dll, the DLL is a bad file");
-                }
+            }
+
+            if (libJxlModule == IntPtr.Zero)
+            {
+                throw new DllNotFoundException("Failed to load LibJxl.dll - Check that this file is not missing");
+            }
+            JxlThreadParallelRunner = UnsafeNativeWin32.GetProcAddress(libJxlModule, "JxlThreadParallelRunner");
+            if (JxlThreadParallelRunner == IntPtr.Zero)
+            {
+                throw new EntryPointNotFoundException("Failed to find JxlThreadParallelRunner in LibJxl.dll, the DLL is a bad file");
             }
         }
 

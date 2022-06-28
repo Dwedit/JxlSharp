@@ -91,21 +91,21 @@ namespace JxlExample
 			string ext = Path.GetExtension(fileName).ToLowerInvariant();
 			if (ext == ".jxl" && bitmap == null)
 			{
-				if (Debugger.IsAttached)
-				{
+				//if (Debugger.IsAttached)
+				//{
 					bitmap = JXL.LoadImage(fileData);
-				}
-				else
-				{
-					try
-					{
-						bitmap = JXL.LoadImage(fileData);
-					}
-					catch
-					{
+				//}
+				//else
+				//{
+				//	try
+				//	{
+				//		bitmap = JXL.LoadImage(fileData);
+				//	}
+				//	catch
+				//	{
 
-					}
-				}
+				//	}
+				//}
 			}
 			if (bitmap == null)
 			{
