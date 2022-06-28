@@ -73,20 +73,17 @@ namespace JxlSharp
         /// </summary>
         static UnsafeNativeJXL()
         {
-            IntPtr moduleX64 = TryLoadLibJXL("x64");
-            if (moduleX64 != IntPtr.Zero)
-            {
-                libJxlModule = moduleX64;
-            }
-            else
-            {
-                IntPtr moduleX86 = TryLoadLibJXL("x86");
-                if (moduleX86 != IntPtr.Zero)
-                {
-                    libJxlModule = moduleX86;
-                }
-            }
+            string arch = "x64";
 
+            if (Marshal.SizeOf(typeof(IntPtr)) == 8)
+            {
+                arch = "x64";
+            }
+            else if (Marshal.SizeOf(typeof(IntPtr)) == 4)
+            {
+                arch = "x86";
+            }
+            libJxlModule = TryLoadLibJXL(arch);
             if (libJxlModule == IntPtr.Zero)
             {
                 throw new DllNotFoundException("Failed to load LibJxl.dll - Check that this file is not missing");
