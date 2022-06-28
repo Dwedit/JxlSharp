@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("JxlExample")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Windows Forms example program for JPEG XL library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("JxlExample")]
