@@ -181,12 +181,12 @@ namespace JxlSharp
         /// </summary>
         JpegNeedMoreOutput = 6,
 
-        /// <summary>
-        /// The box contents output buffer is too small. <see cref="JxlDecoder.SetBoxBuffer"/>
-        /// must be called again to make room for remaining bytes. This event may occur
-        /// multiple times after <see cref="Box"/>.
-        /// </summary>
-        BoxNeedMoreOutput = 7,
+        ///// <summary>
+        ///// The box contents output buffer is too small. <see cref="JxlDecoder.SetBoxBuffer"/>
+        ///// must be called again to make room for remaining bytes. This event may occur
+        ///// multiple times after <see cref="Box"/>.
+        ///// </summary>
+        //BoxNeedMoreOutput = 7,
 
         /// <summary>
         /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
@@ -275,40 +275,40 @@ namespace JxlSharp
         /// </summary>
         JpegReconstruction = 0x2000,
 
-        /// <summary>
-        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
-        /// "JxlDecoderProcessInput": The header of a box of the container format
-        /// (BMFF) is decoded. The following API functions related to boxes can be used
-        /// after this event:
-        /// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
-        /// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
-        /// data.
-        /// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
-        /// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
-        /// the container file, not decompressed.
-        /// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
-        /// data decompressed, or possibly compressed.
-        /// <br/><br/>
-        /// Boxes can be compressed. This is so when their box type is
-        /// "brob". In that case, they have an underlying decompressed box
-        /// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
-        /// configuring which data to get. Decompressing requires
-        /// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
-        /// type, which can be "brob", or the decompressed box type. If a box
-        /// is not compressed (its compressed type is not "brob"), then
-        /// the output decompressed box type and data is independent of what
-        /// setting is configured.
-        /// <br/><br/>
-        /// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
-        /// next box to be obtained, or can be left unset to skip outputting this box.
-        /// The output buffer contains the full box data when the next <see cref="Box"/>
-        /// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
-        /// boxes, including non-metadata boxes such as the signature box or codestream
-        /// boxes. To check whether the box is a metadata type for respectively EXIF,
-        /// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
-        /// "xml " and "jumb" respectively.
-        /// </summary>
-        Box = 0x4000,
+        ///// <summary>
+        ///// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+        ///// "JxlDecoderProcessInput": The header of a box of the container format
+        ///// (BMFF) is decoded. The following API functions related to boxes can be used
+        ///// after this event:
+        ///// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
+        ///// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
+        ///// data.
+        ///// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
+        ///// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
+        ///// the container file, not decompressed.
+        ///// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
+        ///// data decompressed, or possibly compressed.
+        ///// <br/><br/>
+        ///// Boxes can be compressed. This is so when their box type is
+        ///// "brob". In that case, they have an underlying decompressed box
+        ///// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
+        ///// configuring which data to get. Decompressing requires
+        ///// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
+        ///// type, which can be "brob", or the decompressed box type. If a box
+        ///// is not compressed (its compressed type is not "brob"), then
+        ///// the output decompressed box type and data is independent of what
+        ///// setting is configured.
+        ///// <br/><br/>
+        ///// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
+        ///// next box to be obtained, or can be left unset to skip outputting this box.
+        ///// The output buffer contains the full box data when the next <see cref="Box"/>
+        ///// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
+        ///// boxes, including non-metadata boxes such as the signature box or codestream
+        ///// boxes. To check whether the box is a metadata type for respectively EXIF,
+        ///// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
+        ///// "xml " and "jumb" respectively.
+        ///// </summary>
+        //Box = 0x4000,
 
         /// <summary>
         /// Informative event by <see cref="JxlDecoder.ProcessInput"/>

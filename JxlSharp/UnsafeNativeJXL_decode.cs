@@ -186,12 +186,12 @@ namespace JxlSharp
             /// </summary>
             JXL_DEC_JPEG_NEED_MORE_OUTPUT = 6,
 
-            /// <summary>
-            /// The box contents output buffer is too small. <see cref="JxlDecoderSetBoxBuffer"/>
-            /// must be called again to make room for remaining bytes. This event may occur
-            /// multiple times after <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>.
-            /// </summary>
-            JXL_DEC_BOX_NEED_MORE_OUTPUT = 7,
+            ///// <summary>
+            ///// The box contents output buffer is too small. <see cref="JxlDecoderSetBoxBuffer"/>
+            ///// must be called again to make room for remaining bytes. This event may occur
+            ///// multiple times after <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>.
+            ///// </summary>
+            //JXL_DEC_BOX_NEED_MORE_OUTPUT = 7,
 
             /// <summary>
             /// Informative event by <see cref="JxlDecoderProcessInput"/>
@@ -280,40 +280,40 @@ namespace JxlSharp
             /// </summary>
             JXL_DEC_JPEG_RECONSTRUCTION = 0x2000,
 
-            /// <summary>
-            /// Informative event by <see cref="JxlDecoderProcessInput"/>
-            /// "JxlDecoderProcessInput": The header of a box of the container format
-            /// (BMFF) is decoded. The following API functions related to boxes can be used
-            /// after this event:
-            /// - <see cref="JxlDecoderSetBoxBuffer"/> and <see cref="JxlDecoderReleaseBoxBuffer"/>
-            /// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
-            /// data.
-            /// - <see cref="JxlDecoderGetBoxType"/> get the 4-character box typename.
-            /// - <see cref="JxlDecoderGetBoxSizeRaw"/> get the size of the box as it appears in
-            /// the container file, not decompressed.
-            /// - <see cref="JxlDecoderSetDecompressBoxes"/> to configure whether to get the box
-            /// data decompressed, or possibly compressed.
-            /// <br/><br/>
-            /// Boxes can be compressed. This is so when their box type is
-            /// "brob". In that case, they have an underlying decompressed box
-            /// type and decompressed data. <see cref="JxlDecoderSetDecompressBoxes"/> allows
-            /// configuring which data to get. Decompressing requires
-            /// Brotli. <see cref="JxlDecoderGetBoxType"/> has a flag to get the compressed box
-            /// type, which can be "brob", or the decompressed box type. If a box
-            /// is not compressed (its compressed type is not "brob"), then
-            /// the output decompressed box type and data is independent of what
-            /// setting is configured.
-            /// <br/><br/>
-            /// The buffer set with <see cref="JxlDecoderSetBoxBuffer"/> must be set again for each
-            /// next box to be obtained, or can be left unset to skip outputting this box.
-            /// The output buffer contains the full box data when the next <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>
-            /// event or <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> occurs. <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> occurs for all
-            /// boxes, including non-metadata boxes such as the signature box or codestream
-            /// boxes. To check whether the box is a metadata type for respectively EXIF,
-            /// XMP or JUMBF, use <see cref="JxlDecoderGetBoxType"/> and check for types "Exif",
-            /// "xml " and "jumb" respectively.
-            /// </summary>
-            JXL_DEC_BOX = 0x4000,
+            ///// <summary>
+            ///// Informative event by <see cref="JxlDecoderProcessInput"/>
+            ///// "JxlDecoderProcessInput": The header of a box of the container format
+            ///// (BMFF) is decoded. The following API functions related to boxes can be used
+            ///// after this event:
+            ///// - <see cref="JxlDecoderSetBoxBuffer"/> and <see cref="JxlDecoderReleaseBoxBuffer"/>
+            ///// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
+            ///// data.
+            ///// - <see cref="JxlDecoderGetBoxType"/> get the 4-character box typename.
+            ///// - <see cref="JxlDecoderGetBoxSizeRaw"/> get the size of the box as it appears in
+            ///// the container file, not decompressed.
+            ///// - <see cref="JxlDecoderSetDecompressBoxes"/> to configure whether to get the box
+            ///// data decompressed, or possibly compressed.
+            ///// <br/><br/>
+            ///// Boxes can be compressed. This is so when their box type is
+            ///// "brob". In that case, they have an underlying decompressed box
+            ///// type and decompressed data. <see cref="JxlDecoderSetDecompressBoxes"/> allows
+            ///// configuring which data to get. Decompressing requires
+            ///// Brotli. <see cref="JxlDecoderGetBoxType"/> has a flag to get the compressed box
+            ///// type, which can be "brob", or the decompressed box type. If a box
+            ///// is not compressed (its compressed type is not "brob"), then
+            ///// the output decompressed box type and data is independent of what
+            ///// setting is configured.
+            ///// <br/><br/>
+            ///// The buffer set with <see cref="JxlDecoderSetBoxBuffer"/> must be set again for each
+            ///// next box to be obtained, or can be left unset to skip outputting this box.
+            ///// The output buffer contains the full box data when the next <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>
+            ///// event or <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> occurs. <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> occurs for all
+            ///// boxes, including non-metadata boxes such as the signature box or codestream
+            ///// boxes. To check whether the box is a metadata type for respectively EXIF,
+            ///// XMP or JUMBF, use <see cref="JxlDecoderGetBoxType"/> and check for types "Exif",
+            ///// "xml " and "jumb" respectively.
+            ///// </summary>
+            //JXL_DEC_BOX = 0x4000,
 
             /// <summary>
             /// Informative event by <see cref="JxlDecoderProcessInput"/>
@@ -1156,153 +1156,153 @@ namespace JxlSharp
         [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal static extern size_t JxlDecoderReleaseJPEGBuffer(JxlDecoder* dec);
 
-        /// <summary>
-        /// Sets output buffer for box output codestream.
-        /// <br/><br/>
-        /// The data is owned by the caller and may be used by the decoder until <see cref="JxlDecoderReleaseBoxBuffer"/> is called or the decoder is destroyed or
-        /// reset so must be kept alive until then.
-        /// <br/><br/>
-        /// If for the current box a box buffer was set before and released with <see cref="JxlDecoderReleaseBoxBuffer"/>, bytes that the decoder has already output
-        /// should not be included, only the remaining bytes output must be set.
-        /// <br/><br/>
-        /// The <see cref="JxlDecoderReleaseBoxBuffer"/> must be used at the next <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>
-        /// event or final <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> event to compute the size of the output
-        /// box bytes.
-        /// </summary>
-        /// <param name="dec"> decoder object</param>
-        /// <param name="data"> pointer to next bytes to write to</param>
-        /// <param name="size"> amount of bytes available starting from data</param>
-        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if output buffer was already set and <see cref="JxlDecoderReleaseBoxBuffer"/> was not called on it, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
-        /// otherwise</returns>
-        [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal static extern JxlDecoderStatus JxlDecoderSetBoxBuffer(JxlDecoder* dec,
-                                                           uint8_t* data, size_t size);
+        ///// <summary>
+        ///// Sets output buffer for box output codestream.
+        ///// <br/><br/>
+        ///// The data is owned by the caller and may be used by the decoder until <see cref="JxlDecoderReleaseBoxBuffer"/> is called or the decoder is destroyed or
+        ///// reset so must be kept alive until then.
+        ///// <br/><br/>
+        ///// If for the current box a box buffer was set before and released with <see cref="JxlDecoderReleaseBoxBuffer"/>, bytes that the decoder has already output
+        ///// should not be included, only the remaining bytes output must be set.
+        ///// <br/><br/>
+        ///// The <see cref="JxlDecoderReleaseBoxBuffer"/> must be used at the next <see cref="JxlDecoderStatus.JXL_DEC_BOX"/>
+        ///// event or final <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> event to compute the size of the output
+        ///// box bytes.
+        ///// </summary>
+        ///// <param name="dec"> decoder object</param>
+        ///// <param name="data"> pointer to next bytes to write to</param>
+        ///// <param name="size"> amount of bytes available starting from data</param>
+        ///// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if output buffer was already set and <see cref="JxlDecoderReleaseBoxBuffer"/> was not called on it, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
+        ///// otherwise</returns>
+        //[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //internal static extern JxlDecoderStatus JxlDecoderSetBoxBuffer(JxlDecoder* dec,
+        //                                                   uint8_t* data, size_t size);
 
-        /// <summary>
-        /// Releases buffer which was provided with <see cref="JxlDecoderSetBoxBuffer"/>.
-        /// <br/><br/>
-        /// Calling <see cref="JxlDecoderReleaseBoxBuffer"/> is required whenever
-        /// a buffer is already set and a new buffer needs to be added with <see cref="JxlDecoderSetBoxBuffer"/>, but is not required before <see cref="JxlDecoderDestroy"/> or <see cref="JxlDecoderReset"/>.
-        /// <br/><br/>
-        /// Calling <see cref="JxlDecoderReleaseBoxBuffer"/> when no buffer is set is
-        /// not an error and returns 0.
-        /// </summary>
-        /// <param name="dec"> decoder object</param>
-        /// <returns> the amount of bytes the decoder has not yet written to of the data
-        /// set by <see cref="JxlDecoderSetBoxBuffer"/>, or 0 if no buffer is set or <see cref="JxlDecoderReleaseBoxBuffer"/> was already called.</returns>
-        [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal static extern size_t JxlDecoderReleaseBoxBuffer(JxlDecoder* dec);
+        ///// <summary>
+        ///// Releases buffer which was provided with <see cref="JxlDecoderSetBoxBuffer"/>.
+        ///// <br/><br/>
+        ///// Calling <see cref="JxlDecoderReleaseBoxBuffer"/> is required whenever
+        ///// a buffer is already set and a new buffer needs to be added with <see cref="JxlDecoderSetBoxBuffer"/>, but is not required before <see cref="JxlDecoderDestroy"/> or <see cref="JxlDecoderReset"/>.
+        ///// <br/><br/>
+        ///// Calling <see cref="JxlDecoderReleaseBoxBuffer"/> when no buffer is set is
+        ///// not an error and returns 0.
+        ///// </summary>
+        ///// <param name="dec"> decoder object</param>
+        ///// <returns> the amount of bytes the decoder has not yet written to of the data
+        ///// set by <see cref="JxlDecoderSetBoxBuffer"/>, or 0 if no buffer is set or <see cref="JxlDecoderReleaseBoxBuffer"/> was already called.</returns>
+        //[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //internal static extern size_t JxlDecoderReleaseBoxBuffer(JxlDecoder* dec);
 
-        /// <summary>
-        /// Configures whether to get boxes in raw mode or in decompressed mode. In raw
-        /// mode, boxes are output as their bytes appear in the container file, which may
-        /// be decompressed, or compressed if their type is "brob". In decompressed mode,
-        /// "brob" boxes are decompressed with Brotli before outputting them. The size of
-        /// the decompressed stream is not known before the decompression has already
-        /// finished.
-        /// <br/><br/>
-        /// The default mode is raw. This setting can only be changed before decoding, or
-        /// directly after a <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event, and is remembered until the decoder
-        /// is reset or destroyed.
-        /// <br/><br/>
-        /// Enabling decompressed mode requires Brotli support from the library.
-        /// </summary>
-        /// <param name="dec"> decoder object</param>
-        /// <param name="decompress"> JXL_TRUE to transparently decompress, JXL_FALSE to get
-        /// boxes in raw mode.</param>
-        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if decompressed mode is set and Brotli is not
-        /// available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> otherwise.</returns>
-        [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal static extern JxlDecoderStatus JxlDecoderSetDecompressBoxes(JxlDecoder* dec,
-                                                                 JXL_BOOL decompress);
+        ///// <summary>
+        ///// Configures whether to get boxes in raw mode or in decompressed mode. In raw
+        ///// mode, boxes are output as their bytes appear in the container file, which may
+        ///// be decompressed, or compressed if their type is "brob". In decompressed mode,
+        ///// "brob" boxes are decompressed with Brotli before outputting them. The size of
+        ///// the decompressed stream is not known before the decompression has already
+        ///// finished.
+        ///// <br/><br/>
+        ///// The default mode is raw. This setting can only be changed before decoding, or
+        ///// directly after a <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event, and is remembered until the decoder
+        ///// is reset or destroyed.
+        ///// <br/><br/>
+        ///// Enabling decompressed mode requires Brotli support from the library.
+        ///// </summary>
+        ///// <param name="dec"> decoder object</param>
+        ///// <param name="decompress"> JXL_TRUE to transparently decompress, JXL_FALSE to get
+        ///// boxes in raw mode.</param>
+        ///// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if decompressed mode is set and Brotli is not
+        ///// available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> otherwise.</returns>
+        //[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //internal static extern JxlDecoderStatus JxlDecoderSetDecompressBoxes(JxlDecoder* dec,
+        //                                                         JXL_BOOL decompress);
 
-        /// <summary>
-        /// Outputs the type of the current box, after a <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event occured,
-        /// as 4 characters without null termination character. In case of a compressed
-        /// "brob" box, this will return "brob" if the decompressed argument is
-        /// JXL_FALSE, or the underlying box type if the decompressed argument is
-        /// JXL_TRUE.
-        /// <br/><br/>
-        /// The following box types are currently described in ISO/IEC 18181-2:
-        /// - "Exif": a box with EXIF metadata.  Starts with a 4-byte tiff header offset
-        /// (big-endian uint32) that indicates the start of the actual EXIF data
-        /// (which starts with a tiff header). Usually the offset will be zero and the
-        /// EXIF data starts immediately after the offset field. The Exif orientation
-        /// should be ignored by applications; the JPEG XL codestream orientation
-        /// takes precedence and libjxl will by default apply the correct orientation
-        /// automatically (see <see cref="JxlDecoderSetKeepOrientation"/>).
-        /// - "xml ": a box with XML data, in particular XMP metadata.
-        /// - "jumb": a JUMBF superbox (JPEG Universal Metadata Box Format, ISO/IEC
-        /// 19566-5).
-        /// - "JXL ": mandatory signature box, must come first, 12 bytes long including
-        /// the box header
-        /// - "ftyp": a second mandatory signature box, must come second, 20 bytes long
-        /// including the box header
-        /// - "jxll": a JXL level box. This indicates if the codestream is level 5 or
-        /// level 10 compatible. If not present, it is level 5. Level 10 allows more
-        /// features such as very high image resolution and bit-depths above 16 bits
-        /// per channel. Added automatically by the encoder when
-        /// JxlEncoderSetCodestreamLevel is used
-        /// - "jxlc": a box with the image codestream, in case the codestream is not
-        /// split across multiple boxes. The codestream contains the JPEG XL image
-        /// itself, including the basic info such as image dimensions, ICC color
-        /// profile, and all the pixel data of all the image frames.
-        /// - "jxlp": a codestream box in case it is split across multiple boxes.
-        /// The contents are the same as in case of a jxlc box, when concatenated.
-        /// - "brob": a Brotli-compressed box, which otherwise represents an existing
-        /// type of box such as Exif or "xml ". When <see cref="JxlDecoderSetDecompressBoxes"/>
-        /// is set to JXL_TRUE, these boxes will be transparently decompressed by the
-        /// decoder.
-        /// - "jxli": frame index box, can list the keyframes in case of a JPEG XL
-        /// animation allowing the decoder to jump to individual frames more
-        /// efficiently.
-        /// - "jbrd": JPEG reconstruction box, contains the information required to
-        /// byte-for-byte losslessly recontruct a JPEG-1 image. The JPEG DCT
-        /// coefficients (pixel content) themselves as well as the ICC profile are
-        /// encoded in the JXL codestream (jxlc or jxlp) itself. EXIF, XMP and JUMBF
-        /// metadata is encoded in the corresponding boxes. The jbrd box itself
-        /// contains information such as the remaining app markers of the JPEG-1 file
-        /// and everything else required to fit the information together into the
-        /// exact original JPEG file.
-        /// <br/><br/>
-        /// Other application-specific boxes can exist. Their typename should not begin
-        /// with "jxl" or "JXL" or conflict with other existing typenames.
-        /// <br/><br/>
-        /// The signature, jxl* and jbrd boxes are processed by the decoder and would
-        /// typically be ignored by applications. The typical way to use this function is
-        /// to check if an encountered box contains metadata that the application is
-        /// interested in (e.g. EXIF or XMP metadata), in order to conditionally set a
-        /// box buffer.
-        /// </summary>
-        /// <param name="dec"> decoder object</param>
-        /// <param name="type"> buffer to copy the type into</param>
-        /// <param name="decompressed"> which box type to get: JXL_FALSE to get the raw box type,
-        /// which can be "brob", JXL_TRUE, get the underlying box type.</param>
-        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if
-        /// not, for example the JXL file does not use the container format.</returns>
-        [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal static extern JxlDecoderStatus JxlDecoderGetBoxType(JxlDecoder* dec,
-                                                         byte *type,
-                                                         JXL_BOOL decompressed);
+        ///// <summary>
+        ///// Outputs the type of the current box, after a <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event occured,
+        ///// as 4 characters without null termination character. In case of a compressed
+        ///// "brob" box, this will return "brob" if the decompressed argument is
+        ///// JXL_FALSE, or the underlying box type if the decompressed argument is
+        ///// JXL_TRUE.
+        ///// <br/><br/>
+        ///// The following box types are currently described in ISO/IEC 18181-2:
+        ///// - "Exif": a box with EXIF metadata.  Starts with a 4-byte tiff header offset
+        ///// (big-endian uint32) that indicates the start of the actual EXIF data
+        ///// (which starts with a tiff header). Usually the offset will be zero and the
+        ///// EXIF data starts immediately after the offset field. The Exif orientation
+        ///// should be ignored by applications; the JPEG XL codestream orientation
+        ///// takes precedence and libjxl will by default apply the correct orientation
+        ///// automatically (see <see cref="JxlDecoderSetKeepOrientation"/>).
+        ///// - "xml ": a box with XML data, in particular XMP metadata.
+        ///// - "jumb": a JUMBF superbox (JPEG Universal Metadata Box Format, ISO/IEC
+        ///// 19566-5).
+        ///// - "JXL ": mandatory signature box, must come first, 12 bytes long including
+        ///// the box header
+        ///// - "ftyp": a second mandatory signature box, must come second, 20 bytes long
+        ///// including the box header
+        ///// - "jxll": a JXL level box. This indicates if the codestream is level 5 or
+        ///// level 10 compatible. If not present, it is level 5. Level 10 allows more
+        ///// features such as very high image resolution and bit-depths above 16 bits
+        ///// per channel. Added automatically by the encoder when
+        ///// JxlEncoderSetCodestreamLevel is used
+        ///// - "jxlc": a box with the image codestream, in case the codestream is not
+        ///// split across multiple boxes. The codestream contains the JPEG XL image
+        ///// itself, including the basic info such as image dimensions, ICC color
+        ///// profile, and all the pixel data of all the image frames.
+        ///// - "jxlp": a codestream box in case it is split across multiple boxes.
+        ///// The contents are the same as in case of a jxlc box, when concatenated.
+        ///// - "brob": a Brotli-compressed box, which otherwise represents an existing
+        ///// type of box such as Exif or "xml ". When <see cref="JxlDecoderSetDecompressBoxes"/>
+        ///// is set to JXL_TRUE, these boxes will be transparently decompressed by the
+        ///// decoder.
+        ///// - "jxli": frame index box, can list the keyframes in case of a JPEG XL
+        ///// animation allowing the decoder to jump to individual frames more
+        ///// efficiently.
+        ///// - "jbrd": JPEG reconstruction box, contains the information required to
+        ///// byte-for-byte losslessly recontruct a JPEG-1 image. The JPEG DCT
+        ///// coefficients (pixel content) themselves as well as the ICC profile are
+        ///// encoded in the JXL codestream (jxlc or jxlp) itself. EXIF, XMP and JUMBF
+        ///// metadata is encoded in the corresponding boxes. The jbrd box itself
+        ///// contains information such as the remaining app markers of the JPEG-1 file
+        ///// and everything else required to fit the information together into the
+        ///// exact original JPEG file.
+        ///// <br/><br/>
+        ///// Other application-specific boxes can exist. Their typename should not begin
+        ///// with "jxl" or "JXL" or conflict with other existing typenames.
+        ///// <br/><br/>
+        ///// The signature, jxl* and jbrd boxes are processed by the decoder and would
+        ///// typically be ignored by applications. The typical way to use this function is
+        ///// to check if an encountered box contains metadata that the application is
+        ///// interested in (e.g. EXIF or XMP metadata), in order to conditionally set a
+        ///// box buffer.
+        ///// </summary>
+        ///// <param name="dec"> decoder object</param>
+        ///// <param name="type"> buffer to copy the type into</param>
+        ///// <param name="decompressed"> which box type to get: JXL_FALSE to get the raw box type,
+        ///// which can be "brob", JXL_TRUE, get the underlying box type.</param>
+        ///// <returns> <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if
+        ///// not, for example the JXL file does not use the container format.</returns>
+        //[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //internal static extern JxlDecoderStatus JxlDecoderGetBoxType(JxlDecoder* dec,
+        //                                                 byte *type,
+        //                                                 JXL_BOOL decompressed);
 
-        /// <summary>
-        /// Returns the size of a box as it appears in the container file, after the <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event. For a non-compressed box, this is the size of the
-        /// contents, excluding the 4 bytes indicating the box type. For a compressed
-        /// "brob" box, this is the size of the compressed box contents plus the
-        /// additional 4 byte indicating the underlying box type, but excluding the 4
-        /// bytes indicating "brob". This function gives the size of the data that will
-        /// be written in the output buffer when getting boxes in the default raw
-        /// compressed mode. When <see cref="JxlDecoderSetDecompressBoxes"/> is enabled, the
-        /// return value of function does not change, and the decompressed size is not
-        /// known before it has already been decompressed and output.
-        /// </summary>
-        /// <param name="dec"> decoder object</param>
-        /// <param name="size"> raw size of the box in bytes</param>
-        /// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if no box size is available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
-        /// otherwise.</returns>
-        [DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal static extern JxlDecoderStatus JxlDecoderGetBoxSizeRaw([In] JxlDecoder* dec,
-                                                            out uint64_t size);
+        ///// <summary>
+        ///// Returns the size of a box as it appears in the container file, after the <see cref="JxlDecoderStatus.JXL_DEC_BOX"/> event. For a non-compressed box, this is the size of the
+        ///// contents, excluding the 4 bytes indicating the box type. For a compressed
+        ///// "brob" box, this is the size of the compressed box contents plus the
+        ///// additional 4 byte indicating the underlying box type, but excluding the 4
+        ///// bytes indicating "brob". This function gives the size of the data that will
+        ///// be written in the output buffer when getting boxes in the default raw
+        ///// compressed mode. When <see cref="JxlDecoderSetDecompressBoxes"/> is enabled, the
+        ///// return value of function does not change, and the decompressed size is not
+        ///// known before it has already been decompressed and output.
+        ///// </summary>
+        ///// <param name="dec"> decoder object</param>
+        ///// <param name="size"> raw size of the box in bytes</param>
+        ///// <returns> <see cref="JxlDecoderStatus.JXL_DEC_ERROR"/> if no box size is available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS"/>
+        ///// otherwise.</returns>
+        //[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //internal static extern JxlDecoderStatus JxlDecoderGetBoxSizeRaw([In] JxlDecoder* dec,
+        //                                                    out uint64_t size);
 
         /// <summary>
         /// Configures at which progressive steps in frame decoding these <see cref="JxlDecoderStatus.JXL_DEC_FRAME_PROGRESSION"/> event occurs. The default value for the level

@@ -44,9 +44,9 @@ namespace JxlSharp
 			byte* pJpegOutput;
 			GCHandle jpegOutputGcHandle;
 
-			byte[] boxBuffer;
-			byte* pBoxBuffer;
-			GCHandle boxBufferGcHandle;
+			//byte[] boxBuffer;
+			//byte* pBoxBuffer;
+			//GCHandle boxBufferGcHandle;
 
 			public JxlDecoderWrapper()
 			{
@@ -67,7 +67,7 @@ namespace JxlSharp
 				{
 					ReleaseInput();
 					ReleaseJPEGBuffer();
-					ReleaseBoxBuffer();
+					//ReleaseBoxBuffer();
 					JxlDecoderDestroy(dec);
 					dec = null;
 					GC.SuppressFinalize(this);
@@ -94,7 +94,7 @@ namespace JxlSharp
 				CheckIfDisposed();
 				ReleaseInput();
 				ReleaseJPEGBuffer();
-				ReleaseBoxBuffer();
+				//ReleaseBoxBuffer();
 				JxlDecoderReset(dec);
 				JxlDecoderSetParallelRunner(dec, JxlThreadParallelRunner, parallelRunner);
 			}
@@ -944,157 +944,157 @@ namespace JxlSharp
 				int result = (int)JxlDecoderReleaseJPEGBuffer(dec);
 				return result;
 			}
-			/// <summary>
-			/// Sets output buffer for box output codestream.
-			/// <br/><br/>
-			/// The data is owned by the caller and may be used by the decoder until
-			/// JxlDecoderReleaseBoxBuffer is called or the decoder is destroyed or reset so
-			/// must be kept alive until then.
-			/// <br/><br/>
-			/// If for the current box a box buffer was set before and released with
-			/// JxlDecoderReleaseBoxBuffer, bytes that the decoder has already output should
-			/// not be included, only the remaining bytes output must be set.
-			/// <br/><br/>
-			/// The JxlDecoderReleaseBoxBuffer must be used at the next JXL_DEC_BOX event
-			/// or final JXL_DEC_SUCCESS event to compute the size of the output box bytes.
-			/// </summary>
-			/// <param name="data"> pointer to next bytes to write to</param>
-			/// <param name="size"> amount of bytes available starting from data</param>
-			/// <returns> JXL_DEC_ERROR if output buffer was already set and
-			/// JxlDecoderReleaseBoxBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
-			public JxlDecoderStatus SetBoxBuffer(uint8_t* data, int size)
-			{
-				CheckIfDisposed();
-				return JxlDecoderSetBoxBuffer(dec, data, (size_t)size);
-			}
-			/// <summary>
-			/// Sets output buffer for box output codestream.
-			/// <br/><br/>
-			/// The data is owned by the caller and may be used by the decoder until
-			/// JxlDecoderReleaseBoxBuffer is called or the decoder is destroyed or reset so
-			/// must be kept alive until then.
-			/// <br/><br/>
-			/// If for the current box a box buffer was set before and released with
-			/// JxlDecoderReleaseBoxBuffer, bytes that the decoder has already output should
-			/// not be included, only the remaining bytes output must be set.
-			/// <br/><br/>
-			/// The JxlDecoderReleaseBoxBuffer must be used at the next JXL_DEC_BOX event
-			/// or final JXL_DEC_SUCCESS event to compute the size of the output box bytes.
-			/// </summary>
-			/// <param name="data"> pointer to next bytes to write to</param>
-			/// <returns> JXL_DEC_ERROR if output buffer was already set and
-			/// JxlDecoderReleaseBoxBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
-			public JxlDecoderStatus SetBoxBuffer(byte[] data)
-			{
-				CheckIfDisposed();
-				ReleaseBoxBuffer();
-				this.boxBuffer = data;
-				this.boxBufferGcHandle = GCHandle.Alloc(this.boxBuffer, GCHandleType.Pinned);
-				this.pBoxBuffer = (byte*)this.boxBufferGcHandle.AddrOfPinnedObject();
-				return JxlDecoderSetBoxBuffer(dec, pBoxBuffer, (size_t)this.boxBuffer.Length);
-			}
-			/// <summary>
-			/// Releases buffer which was provided with JxlDecoderSetBoxBuffer.
-			/// <br/><br/>
-			/// Calling JxlDecoderReleaseBoxBuffer is required whenever
-			/// a buffer is already set and a new buffer needs to be added with
-			/// JxlDecoderSetBoxBuffer, but is not required before JxlDecoderDestroy or
-			/// JxlDecoderReset.
-			/// <br/><br/>
-			/// Calling JxlDecoderReleaseBoxBuffer when no buffer is set is
-			/// not an error and returns 0.
-			/// </summary>
-			/// <returns> the amount of bytes the decoder has not yet written to of the data
-			/// set by JxlDecoderSetBoxBuffer, or 0 if no buffer is set or
-			/// JxlDecoderReleaseBoxBuffer was already called.</returns>
-			public int ReleaseBoxBuffer()
-			{
-				CheckIfDisposed();
-				if (this.pBoxBuffer == null)
-				{
-					return 0;
-				}
-				if (this.boxBuffer != null)
-				{
-					this.boxBuffer = null;
-				}
-				this.pBoxBuffer = null;
-				if (this.boxBufferGcHandle.IsAllocated)
-				{
-					this.boxBufferGcHandle.Free();
-				}
-				int result = (int)JxlDecoderReleaseBoxBuffer(dec);
-				return result;
-			}
-			/// <summary>
-			/// Configures whether to get boxes in raw mode or in decompressed mode. In raw
-			/// mode, boxes are output as their bytes appear in the container file, which may
-			/// be decompressed, or compressed if their type is "brob". In decompressed mode,
-			/// "brob" boxes are decompressed with Brotli before outputting them. The size of
-			/// the decompressed stream is not known before the decompression has already
-			/// finished.
-			/// <br/><br/>
-			/// The default mode is raw. This setting can only be changed before decoding, or
-			/// directly after a JXL_DEC_BOX event, and is remembered until the decoder is
-			/// reset or destroyed.
-			/// <br/><br/>
-			/// Enabling decompressed mode requires Brotli support from the library.
-			/// </summary>
-			/// <param name="decompress"> JXL_TRUE to transparently decompress, JXL_FALSE to get
-			/// boxes in raw mode.</param>
-			/// <returns> JXL_DEC_ERROR if decompressed mode is set and Brotli is not
-			/// available, JXL_DEC_SUCCESS otherwise.</returns>
-			public JxlDecoderStatus SetDecompressBoxes(bool decompress)
-			{
-				CheckIfDisposed();
-				return JxlDecoderSetDecompressBoxes(dec, (JXL_BOOL)Convert.ToInt32(decompress));
-			}
-			/// <summary>
-			/// Outputs the type of the current box, after a JXL_DEC_BOX event occured, as 4
-			/// characters without null termination character. In case of a compressed "brob"
-			/// box, this will return "brob" if the decompressed argument is JXL_FALSE, or
-			/// the underlying box type if the decompressed argument is JXL_TRUE.
-			/// </summary>
-			/// <param name="boxType"> buffer to copy the type into</param>
-			/// <param name="decompressed"> which box type to get: JXL_TRUE to get the raw box type,
-			/// which can be "brob", JXL_FALSE, get the underlying box type.</param>
-			/// <returns> JXL_DEC_SUCCESS if the value is available, JXL_DEC_ERROR if not, for
-			/// example the JXL file does not use the container format.</returns>
-			public JxlDecoderStatus GetBoxType(out string boxType, bool decompressed)
-			{
-				CheckIfDisposed();
-				byte[] buffer = new byte[4];
-				fixed (byte* pBuffer = buffer)
-				{
-					var status = JxlDecoderGetBoxType(dec, pBuffer, (JXL_BOOL)Convert.ToInt32(decompressed));
-					int len = 0;
-					for (len = 0; len < buffer.Length; len++)
-					{
-						if (buffer[len] == 0) break;
-					}
-					boxType = Encoding.UTF8.GetString(buffer, 0, len);
-					return status;
-				}
-			}
-			/// <summary>
-			/// Returns the size of a box as it appears in the container file, after the
-			/// JXL_DEC_BOX event. For a non-compressed box, this is the size of the
-			/// contents, excluding the 4 bytes indicating the box type. For a compressed
-			/// "brob" box, this is the size of the compressed box contents plus the
-			/// additional 4 byte indicating the underlying box type, but excluding the 4
-			/// bytes indicating "brob". This function gives the size of the data that will
-			/// be written in the output buffer when getting boxes in the default raw
-			/// compressed mode. When JxlDecoderSetDecompressBoxes is enabled, the return
-			/// value of function does not change, and the decompressed size is not known
-			/// before it has already been decompressed and output.
-			/// </summary>
-			/// <param name="size"> raw size of the box in bytes</param>
-			/// <returns> JXL_DEC_ERROR if no box size is available, JXL_DEC_SUCCESS otherwise.</returns>
-			public JxlDecoderStatus GetBoxSizeRaw(out uint64_t size)
-			{
-				CheckIfDisposed();
-				return JxlDecoderGetBoxSizeRaw(dec, out size);
-			}
+			///// <summary>
+			///// Sets output buffer for box output codestream.
+			///// <br/><br/>
+			///// The data is owned by the caller and may be used by the decoder until
+			///// JxlDecoderReleaseBoxBuffer is called or the decoder is destroyed or reset so
+			///// must be kept alive until then.
+			///// <br/><br/>
+			///// If for the current box a box buffer was set before and released with
+			///// JxlDecoderReleaseBoxBuffer, bytes that the decoder has already output should
+			///// not be included, only the remaining bytes output must be set.
+			///// <br/><br/>
+			///// The JxlDecoderReleaseBoxBuffer must be used at the next JXL_DEC_BOX event
+			///// or final JXL_DEC_SUCCESS event to compute the size of the output box bytes.
+			///// </summary>
+			///// <param name="data"> pointer to next bytes to write to</param>
+			///// <param name="size"> amount of bytes available starting from data</param>
+			///// <returns> JXL_DEC_ERROR if output buffer was already set and
+			///// JxlDecoderReleaseBoxBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
+			//public JxlDecoderStatus SetBoxBuffer(uint8_t* data, int size)
+			//{
+			//	CheckIfDisposed();
+			//	return JxlDecoderSetBoxBuffer(dec, data, (size_t)size);
+			//}
+			///// <summary>
+			///// Sets output buffer for box output codestream.
+			///// <br/><br/>
+			///// The data is owned by the caller and may be used by the decoder until
+			///// JxlDecoderReleaseBoxBuffer is called or the decoder is destroyed or reset so
+			///// must be kept alive until then.
+			///// <br/><br/>
+			///// If for the current box a box buffer was set before and released with
+			///// JxlDecoderReleaseBoxBuffer, bytes that the decoder has already output should
+			///// not be included, only the remaining bytes output must be set.
+			///// <br/><br/>
+			///// The JxlDecoderReleaseBoxBuffer must be used at the next JXL_DEC_BOX event
+			///// or final JXL_DEC_SUCCESS event to compute the size of the output box bytes.
+			///// </summary>
+			///// <param name="data"> pointer to next bytes to write to</param>
+			///// <returns> JXL_DEC_ERROR if output buffer was already set and
+			///// JxlDecoderReleaseBoxBuffer was not called on it, JXL_DEC_SUCCESS otherwise</returns>
+			//public JxlDecoderStatus SetBoxBuffer(byte[] data)
+			//{
+			//	CheckIfDisposed();
+			//	ReleaseBoxBuffer();
+			//	this.boxBuffer = data;
+			//	this.boxBufferGcHandle = GCHandle.Alloc(this.boxBuffer, GCHandleType.Pinned);
+			//	this.pBoxBuffer = (byte*)this.boxBufferGcHandle.AddrOfPinnedObject();
+			//	return JxlDecoderSetBoxBuffer(dec, pBoxBuffer, (size_t)this.boxBuffer.Length);
+			//}
+			///// <summary>
+			///// Releases buffer which was provided with JxlDecoderSetBoxBuffer.
+			///// <br/><br/>
+			///// Calling JxlDecoderReleaseBoxBuffer is required whenever
+			///// a buffer is already set and a new buffer needs to be added with
+			///// JxlDecoderSetBoxBuffer, but is not required before JxlDecoderDestroy or
+			///// JxlDecoderReset.
+			///// <br/><br/>
+			///// Calling JxlDecoderReleaseBoxBuffer when no buffer is set is
+			///// not an error and returns 0.
+			///// </summary>
+			///// <returns> the amount of bytes the decoder has not yet written to of the data
+			///// set by JxlDecoderSetBoxBuffer, or 0 if no buffer is set or
+			///// JxlDecoderReleaseBoxBuffer was already called.</returns>
+			//public int ReleaseBoxBuffer()
+			//{
+			//	CheckIfDisposed();
+			//	if (this.pBoxBuffer == null)
+			//	{
+			//		return 0;
+			//	}
+			//	if (this.boxBuffer != null)
+			//	{
+			//		this.boxBuffer = null;
+			//	}
+			//	this.pBoxBuffer = null;
+			//	if (this.boxBufferGcHandle.IsAllocated)
+			//	{
+			//		this.boxBufferGcHandle.Free();
+			//	}
+			//	int result = (int)JxlDecoderReleaseBoxBuffer(dec);
+			//	return result;
+			//}
+			///// <summary>
+			///// Configures whether to get boxes in raw mode or in decompressed mode. In raw
+			///// mode, boxes are output as their bytes appear in the container file, which may
+			///// be decompressed, or compressed if their type is "brob". In decompressed mode,
+			///// "brob" boxes are decompressed with Brotli before outputting them. The size of
+			///// the decompressed stream is not known before the decompression has already
+			///// finished.
+			///// <br/><br/>
+			///// The default mode is raw. This setting can only be changed before decoding, or
+			///// directly after a JXL_DEC_BOX event, and is remembered until the decoder is
+			///// reset or destroyed.
+			///// <br/><br/>
+			///// Enabling decompressed mode requires Brotli support from the library.
+			///// </summary>
+			///// <param name="decompress"> JXL_TRUE to transparently decompress, JXL_FALSE to get
+			///// boxes in raw mode.</param>
+			///// <returns> JXL_DEC_ERROR if decompressed mode is set and Brotli is not
+			///// available, JXL_DEC_SUCCESS otherwise.</returns>
+			//public JxlDecoderStatus SetDecompressBoxes(bool decompress)
+			//{
+			//	CheckIfDisposed();
+			//	return JxlDecoderSetDecompressBoxes(dec, (JXL_BOOL)Convert.ToInt32(decompress));
+			//}
+			///// <summary>
+			///// Outputs the type of the current box, after a JXL_DEC_BOX event occured, as 4
+			///// characters without null termination character. In case of a compressed "brob"
+			///// box, this will return "brob" if the decompressed argument is JXL_FALSE, or
+			///// the underlying box type if the decompressed argument is JXL_TRUE.
+			///// </summary>
+			///// <param name="boxType"> buffer to copy the type into</param>
+			///// <param name="decompressed"> which box type to get: JXL_TRUE to get the raw box type,
+			///// which can be "brob", JXL_FALSE, get the underlying box type.</param>
+			///// <returns> JXL_DEC_SUCCESS if the value is available, JXL_DEC_ERROR if not, for
+			///// example the JXL file does not use the container format.</returns>
+			//public JxlDecoderStatus GetBoxType(out string boxType, bool decompressed)
+			//{
+			//	CheckIfDisposed();
+			//	byte[] buffer = new byte[4];
+			//	fixed (byte* pBuffer = buffer)
+			//	{
+			//		var status = JxlDecoderGetBoxType(dec, pBuffer, (JXL_BOOL)Convert.ToInt32(decompressed));
+			//		int len = 0;
+			//		for (len = 0; len < buffer.Length; len++)
+			//		{
+			//			if (buffer[len] == 0) break;
+			//		}
+			//		boxType = Encoding.UTF8.GetString(buffer, 0, len);
+			//		return status;
+			//	}
+			//}
+			///// <summary>
+			///// Returns the size of a box as it appears in the container file, after the
+			///// JXL_DEC_BOX event. For a non-compressed box, this is the size of the
+			///// contents, excluding the 4 bytes indicating the box type. For a compressed
+			///// "brob" box, this is the size of the compressed box contents plus the
+			///// additional 4 byte indicating the underlying box type, but excluding the 4
+			///// bytes indicating "brob". This function gives the size of the data that will
+			///// be written in the output buffer when getting boxes in the default raw
+			///// compressed mode. When JxlDecoderSetDecompressBoxes is enabled, the return
+			///// value of function does not change, and the decompressed size is not known
+			///// before it has already been decompressed and output.
+			///// </summary>
+			///// <param name="size"> raw size of the box in bytes</param>
+			///// <returns> JXL_DEC_ERROR if no box size is available, JXL_DEC_SUCCESS otherwise.</returns>
+			//public JxlDecoderStatus GetBoxSizeRaw(out uint64_t size)
+			//{
+			//	CheckIfDisposed();
+			//	return JxlDecoderGetBoxSizeRaw(dec, out size);
+			//}
 			/// <summary>
 			/// Outputs progressive step towards the decoded image so far when only partial
 			/// input was received. If the flush was successful, the buffer set with
