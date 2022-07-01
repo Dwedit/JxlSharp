@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace JxlSharp
 {
 	/// <summary>
-	/// Class to encode JPEG-XL images.  Use CreateFrameSettings to the rest of the encoding functions.
+	/// Class to encode JPEG-XL images
 	/// </summary>
 	/// <example>
 	/// Usage example:

@@ -658,12 +658,11 @@ namespace JxlSharp
 				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
 				status = encoder.SetBasicInfo(basicInfo);
 				status = encoder.SetColorEncoding(colorEncoding);
-				var frameSettings = encoder.FrameSettings;
 				foreach (var pair in settings)
 				{
 					encoder.FrameSettings.SetOption(pair.Key, pair.Value);
 				}
-				status = frameSettings.AddImageFrame(pixelFormat, bitmapCopy);
+				status = encoder.AddImageFrame(encoder.FrameSettings, pixelFormat, bitmapCopy);
 				encoder.CloseFrames();
 				encoder.CloseInput();
 				status = encoder.ProcessOutput();
