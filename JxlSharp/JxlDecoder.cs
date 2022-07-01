@@ -463,7 +463,7 @@ namespace JxlSharp
 		/// image, <see cref="GetColorAsEncodedProfile" /> should be used first.
 		/// </summary>
 		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.TargetData" />, may be nullptr otherwise.</param>
+		/// <see cref="JxlColorProfileTarget.Data" />, may be nullptr otherwise.</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="colorEncoding"> struct to copy the information into, or NULL to only
@@ -505,7 +505,7 @@ namespace JxlSharp
 		/// depending of what is encoded in the codestream.
 		/// </summary>
 		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.TargetData" />, may be NULL otherwise.</param>
+		/// <see cref="JxlColorProfileTarget.Data" />, may be NULL otherwise.</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="size"> variable to output the size into, or NULL to only check the
@@ -543,7 +543,7 @@ namespace JxlSharp
 		/// at least as many bytes as given by <see cref="GetICCProfileSize" />.
 		/// </summary>
 		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.TargetData" />, may be NULL otherwise.</param>
+		/// <see cref="JxlColorProfileTarget.Data" />, may be NULL otherwise.</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="iccProfile"> buffer to copy the ICC profile into</param>
@@ -573,11 +573,11 @@ namespace JxlSharp
 		}
 
 		/// <summary>
-		/// Sets the color profile to use for <see cref="JxlColorProfileTarget.TargetData" /> for the
+		/// Sets the color profile to use for <see cref="JxlColorProfileTarget.Data" /> for the
 		/// special case when the decoder has a choice. This only has effect for a JXL
 		/// image where uses_original_profile is false. If uses_original_profile is true,
 		/// this setting is ignored and the decoder uses a profile related to the image.
-		/// No matter what, the <see cref="JxlColorProfileTarget.TargetData" /> must still be queried
+		/// No matter what, the <see cref="JxlColorProfileTarget.Data" /> must still be queried
 		/// to know the actual data format of the decoded pixels after decoding.
 		/// <br /><br />
 		/// The JXL decoder has no color management system built in, but can convert XYB
@@ -587,10 +587,10 @@ namespace JxlSharp
 		/// <br /><br />
 		/// Can only be set after the <see cref="JxlDecoderStatus.ColorEncoding" /> event occurred and
 		/// before any other event occurred, and can affect the result of 
-		/// <see cref="JxlColorProfileTarget.TargetData" /> (but not of 
+		/// <see cref="JxlColorProfileTarget.Data" /> (but not of 
 		/// <see cref="JxlColorProfileTarget.Original" />), so should be used after getting 
 		/// <see cref="JxlColorProfileTarget.Original" /> but before getting 
-		/// <see cref="JxlColorProfileTarget.TargetData" />. The color_encoding must be grayscale if
+		/// <see cref="JxlColorProfileTarget.Data" />. The color_encoding must be grayscale if
 		/// num_color_channels from the basic info is 1, RGB if num_color_channels from
 		/// the basic info is 3.
 		/// <br /><br />

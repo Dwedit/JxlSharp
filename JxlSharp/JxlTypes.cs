@@ -75,7 +75,9 @@ namespace JxlSharp
     }
 
     /// <summary>
-    /// The header of one displayed frame or non-coalesced layer. 
+    /// The codestream animation header, optionally present in the beginning of
+    /// the codestream, and if it is it applies to all animation frames, unlike
+    /// JxlFrameHeader which applies to an individual frame.
     /// </summary>
     public struct JxlAnimationHeader
     {
@@ -138,9 +140,10 @@ namespace JxlSharp
         Error = 1,
 
         /// <summary>
-        /// The decoder needs more input bytes to continue. Before the next <see cref="JxlDecoder.ProcessInput"/> call, 
-        /// more input data must be set, by calling <see cref="JxlDecoder.ReleaseInput"/> (if input was set previously) 
-        /// and then calling <see cref="JxlDecoder.SetInput"/>. <see cref="JxlDecoder.ReleaseInput"/> returns how many bytes
+        /// The decoder needs more input bytes to continue. Before the next
+        /// <see cref="JxlDecoder.ProcessInput"/> call, more input data must be set, by calling 
+        /// <see cref="JxlDecoder.ReleaseInput"/> (if input was set previously) and then calling
+        /// <see cref="JxlDecoder.SetInput"/>. <see cref="JxlDecoder.ReleaseInput"/> returns how many bytes
         /// are not yet processed, before a next call to <see cref="JxlDecoder.ProcessInput"/>
         /// all unprocessed bytes must be provided again (the address need not match,
         /// but the contents must), and more bytes must be concatenated after the
@@ -276,54 +279,54 @@ namespace JxlSharp
         /// </summary>
         JpegReconstruction = 0x2000,
 
-		/// <summary>
-		/// Informative event by <see cref="JxlDecoder.ProcessInput"/>
-		/// "JxlDecoderProcessInput": The header of a box of the container format
-		/// (BMFF) is decoded. The following API functions related to boxes can be used
-		/// after this event:
-		/// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
-		/// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
-		/// data.
-		/// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
-		/// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
-		/// the container file, not decompressed.
-		/// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
-		/// data decompressed, or possibly compressed.
-		/// <br/><br/>
-		/// Boxes can be compressed. This is so when their box type is
-		/// "brob". In that case, they have an underlying decompressed box
-		/// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
-		/// configuring which data to get. Decompressing requires
-		/// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
-		/// type, which can be "brob", or the decompressed box type. If a box
-		/// is not compressed (its compressed type is not "brob"), then
-		/// the output decompressed box type and data is independent of what
-		/// setting is configured.
-		/// <br/><br/>
-		/// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
-		/// next box to be obtained, or can be left unset to skip outputting this box.
-		/// The output buffer contains the full box data when the next <see cref="Box"/>
-		/// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
-		/// boxes, including non-metadata boxes such as the signature box or codestream
-		/// boxes. To check whether the box is a metadata type for respectively EXIF,
-		/// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
-		/// "xml " and "jumb" respectively.
-		/// </summary>
-		Box = 0x4000,
+        /// <summary>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+        /// "JxlDecoderProcessInput": The header of a box of the container format
+        /// (BMFF) is decoded. The following API functions related to boxes can be used
+        /// after this event:
+        /// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
+        /// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
+        /// data.
+        /// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
+        /// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
+        /// the container file, not decompressed.
+        /// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
+        /// data decompressed, or possibly compressed.
+        /// <br/><br/>
+        /// Boxes can be compressed. This is so when their box type is
+        /// "brob". In that case, they have an underlying decompressed box
+        /// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
+        /// configuring which data to get. Decompressing requires
+        /// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
+        /// type, which can be "brob", or the decompressed box type. If a box
+        /// is not compressed (its compressed type is not "brob"), then
+        /// the output decompressed box type and data is independent of what
+        /// setting is configured.
+        /// <br/><br/>
+        /// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
+        /// next box to be obtained, or can be left unset to skip outputting this box.
+        /// The output buffer contains the full box data when the next <see cref="Box"/>
+        /// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
+        /// boxes, including non-metadata boxes such as the signature box or codestream
+        /// boxes. To check whether the box is a metadata type for respectively EXIF,
+        /// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
+        /// "xml " and "jumb" respectively.
+        /// </summary>
+        Box = 0x4000,
 
-		/// <summary>
-		/// Informative event by <see cref="JxlDecoder.ProcessInput"/>
-		/// "JxlDecoderProcessInput": a progressive step in decoding the frame is
-		/// reached. When calling <see cref="JxlDecoder.FlushImage"/> at this point, the flushed
-		/// image will correspond exactly to this point in decoding, and not yet
-		/// contain partial results (such as partially more fine detail) of a next
-		/// step. By default, this event will trigger maximum once per frame, when a
-		/// 8x8th resolution (DC) image is ready (the image data is still returned at
-		/// full resolution, giving upscaled DC). Use <see cref="JxlDecoder.SetProgressiveDetail"/> to configure more fine-grainedness. The
-		/// event is not guaranteed to trigger, not all images have progressive steps
-		/// or DC encoded.
-		/// </summary>
-		FrameProgression = 0x8000,
+        /// <summary>
+        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+        /// "JxlDecoderProcessInput": a progressive step in decoding the frame is
+        /// reached. When calling <see cref="JxlDecoder.FlushImage"/> at this point, the flushed
+        /// image will correspond exactly to this point in decoding, and not yet
+        /// contain partial results (such as partially more fine detail) of a next
+        /// step. By default, this event will trigger maximum once per frame, when a
+        /// 8x8th resolution (DC) image is ready (the image data is still returned at
+        /// full resolution, giving upscaled DC). Use <see cref="JxlDecoder.SetProgressiveDetail"/> to configure more fine-grainedness. The
+        /// event is not guaranteed to trigger, not all images have progressive steps
+        /// or DC encoded.
+        /// </summary>
+        FrameProgression = 0x8000,
     }
 
     /// <summary>
@@ -617,7 +620,7 @@ namespace JxlSharp
         /// it to to the original color profile. The decoder also does not convert to
         /// the target display color profile. To convert the pixel data produced by
         /// the decoder to the original color profile, one of the JxlDecoderGetColor*
-        /// functions needs to be called with <see cref="JXL_COLOR_PROFILE_TARGET_DATA"/> to get
+        /// functions needs to be called with <see cref="JxlColorProfileTarget.Data"/> to get
         /// the color profile of the decoder output, and then an external CMS can be
         /// used for conversion.
         /// Note that for lossy compression, this should be set to false for most use
@@ -1574,7 +1577,7 @@ namespace JxlSharp
         /// <summary>
         /// Get the color profile of the pixel data the decoder outputs. 
         /// </summary>
-        TargetData = 1,
+        Data = 1,
     }
 
     /// <summary>
@@ -1671,8 +1674,8 @@ namespace JxlSharp
         /// (slowest to decode, best quality/density), and maximum is 4 (fastest to
         /// decode, at the cost of some quality/density). Default is 0.
         /// </summary>
-        [Description("Sets the decoding speed tier for the provided options. Minimum is 0 "+
-        "(slowest to decode, best quality/density), and maximum is 4 (fastest to "+
+        [Description("Sets the decoding speed tier for the provided options. Minimum is 0 " +
+        "(slowest to decode, best quality/density), and maximum is 4 (fastest to " +
         "decode, at the cost of some quality/density). Default is 0.")]
         DecodingSpeed = 1,
         /// <summary>
@@ -1683,9 +1686,9 @@ namespace JxlSharp
         /// downsampling, 8 for 8x8 downsampling.
         /// </summary>
         [Description("Sets resampling option. If enabled, the image is downsampled before " +
-        "compression, and upsampled to original size in the decoder. Integer option, "+
-        "use -1 for the default behavior (resampling only applied for low quality), "+
-        "1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for 4x4 "+
+        "compression, and upsampled to original size in the decoder. Integer option, " +
+        "use -1 for the default behavior (resampling only applied for low quality), " +
+        "1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for 4x4 " +
         "downsampling, 8 for 8x8 downsampling. ")]
 
         Resampling = 2,
@@ -1696,8 +1699,8 @@ namespace JxlSharp
         /// 4x4 downsampling, 8 for 8x8 downsampling.
         /// </summary>
         [Description("Similar to RESAMPLING, but for extra channels. " +
-        "Integer option, use -1 for the default behavior (depends on encoder "+
-        "implementation), 1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for "+
+        "Integer option, use -1 for the default behavior (depends on encoder " +
+        "implementation), 1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for " +
         "4x4 downsampling, 8 for 8x8 downsampling. ")]
         ExtraChannelResampling = 3,
         /// <summary>
@@ -1711,11 +1714,11 @@ namespace JxlSharp
         /// Use 0 to disable, 1 to enable. Default value is 0.
         /// </summary>
         [Description("Indicates the frame added with JxlEncoderAddImageFrame is already " +
-        "downsampled by the downsampling factor set with  "+
-        "Resampling. The input frame must then be given in the "+
-        "downsampled resolution, not the full image resolution. The downsampled "+
-        "resolution is given by ceil(xsize / resampling), ceil(ysize / resampling) "+
-        "with xsize and ysize the dimensions given in the basic info, and resampling "+
+        "downsampled by the downsampling factor set with  " +
+        "Resampling. The input frame must then be given in the " +
+        "downsampled resolution, not the full image resolution. The downsampled " +
+        "resolution is given by ceil(xsize / resampling), ceil(ysize / resampling) " +
+        "with xsize and ysize the dimensions given in the basic info, and resampling " +
         "the factor set with Resampling" +
         "Use 0 to disable, 1 to enable. Default value is 0. ")]
         AlreadyDownsampled = 4,
@@ -1726,8 +1729,8 @@ namespace JxlSharp
         /// value is 0.
         /// </summary>
         [Description("Adds noise to the image emulating photographic film noise, the higher the " +
-        "given number, the grainier the image will be. As an example, a value of 100 "+
-        "gives low noise whereas a value of 3200 gives a lot of noise. The default "+
+        "given number, the grainier the image will be. As an example, a value of 100 " +
+        "gives low noise whereas a value of 3200 gives a lot of noise. The default " +
         "value is 0. ")]
         PhotonNoise = 5,
         /// <summary>
@@ -1736,7 +1739,7 @@ namespace JxlSharp
         /// default (encoder chooses), 0 to disable, 1 to enable.
         /// </summary>
         [Description("Enables adaptive noise generation. This setting is not recommended for " +
-        "use, please use PHOTON_NOISE instead. Use -1 for the "+
+        "use, please use PHOTON_NOISE instead. Use -1 for the " +
         "default (encoder chooses), 0 to disable, 1 to enable. ")]
         Noise = 6,
         /// <summary>
@@ -1773,7 +1776,7 @@ namespace JxlSharp
         /// enforce modular mode (e.g. for lossless images).
         /// </summary>
         [Description("Enables modular encoding. Use -1 for default (encoder " +
-        "chooses), 0 to enforce VarDCT mode (e.g. for photographic images), 1 to "+
+        "chooses), 0 to enforce VarDCT mode (e.g. for photographic images), 1 to " +
         "enforce modular mode (e.g. for lossless images). ")]
         Modular = 11,
         /// <summary>
@@ -1789,7 +1792,7 @@ namespace JxlSharp
         /// default, 0 for scanline order, 1 for center-first order.
         /// </summary>
         [Description("Determines the order in which 256x256 regions are stored in the codestream " +
-        "for progressive rendering. Use -1 for the encoder "+
+        "for progressive rendering. Use -1 for the encoder " +
         "default, 0 for scanline order, 1 for center-first order. ")]
         GroupOrder = 13,
         /// <summary>
@@ -1798,7 +1801,7 @@ namespace JxlSharp
         /// specifically set it.
         /// </summary>
         [Description("Determines the horizontal position of center for the center-first group " +
-        "order. Use -1 to automatically use the middle of the image, 0..xsize to "+
+        "order. Use -1 to automatically use the middle of the image, 0..xsize to " +
         "specifically set it. ")]
         GroupOrderCenterX = 14,
         /// <summary>
@@ -1821,7 +1824,7 @@ namespace JxlSharp
         /// disable, 1 to enable.
         /// </summary>
         [Description("Set the progressive mode for the AC coefficients of VarDCT, using spectral " +
-        "progression from the DCT coefficients. Use -1 for the encoder default, 0 to "+
+        "progression from the DCT coefficients. Use -1 for the encoder default, 0 to " +
         "disable, 1 to enable. ")]
         ProgressiveAC = 17,
         /// <summary>
@@ -1830,7 +1833,7 @@ namespace JxlSharp
         /// 0 to disable, 1 to enable.
         /// </summary>
         [Description("Set the progressive mode for the AC coefficients of VarDCT, using " +
-        "quantization of the least significant bits. Use -1 for the encoder default, "+
+        "quantization of the least significant bits. Use -1 for the encoder default, " +
         "0 to disable, 1 to enable. ")]
         QProgressiveAC = 18,
         /// <summary>
@@ -1839,7 +1842,7 @@ namespace JxlSharp
         /// resolution pass, 2 to have a 512x512 and 64x64 lower resolution pass.
         /// </summary>
         [Description("Set the progressive mode using lower-resolution DC images for VarDCT. Use " +
-        "-1 for the encoder default, 0 to disable, 1 to have an extra 64x64 lower "+
+        "-1 for the encoder default, 0 to disable, 1 to have an extra 64x64 lower " +
         "resolution pass, 2 to have a 512x512 and 64x64 lower resolution pass. ")]
         ProgressiveDC = 19,
         /// <summary>
@@ -1848,7 +1851,7 @@ namespace JxlSharp
         /// encoder default. Used for modular encoding.
         /// </summary>
         [Description("Use Global channel palette if the amount of colors is smaller than this " +
-        "percentage of range. Use 0-100 to set an explicit percentage, -1 to use the "+
+        "percentage of range. Use 0-100 to set an explicit percentage, -1 to use the " +
         "encoder default. Used for modular encoding. ")]
         ChannelColorsGlobalPercent = 20,
         /// <summary>
@@ -1857,7 +1860,7 @@ namespace JxlSharp
         /// to use the encoder default. Used for modular encoding.
         /// </summary>
         [Description("Use Local (per-group) channel palette if the amount of colors is smaller " +
-        "than this percentage of range. Use 0-100 to set an explicit percentage, -1 "+
+        "than this percentage of range. Use 0-100 to set an explicit percentage, -1 " +
         "to use the encoder default. Used for modular encoding. ")]
         ChannelColorsGroupPercent = 21,
         /// <summary>
@@ -1881,8 +1884,8 @@ namespace JxlSharp
         /// encoded data losslessly represents YCbCr values.
         /// </summary>
         [Description("Color transform for internal encoding: -1 = default, 0=XYB, 1=none (RGB), " +
-        "2=YCbCr. The XYB setting performs the forward XYB transform. None and "+
-        "YCbCr both perform no transform, but YCbCr is used to indicate that the "+
+        "2=YCbCr. The XYB setting performs the forward XYB transform. None and " +
+        "YCbCr both perform no transform, but YCbCr is used to indicate that the " +
         "encoded data losslessly represents YCbCr values. ")]
         ColorTransform = 24,
         /// <summary>
@@ -1894,10 +1897,10 @@ namespace JxlSharp
         /// depending on the speed and distance setting.
         /// </summary>
         [Description("Reversible color transform for modular encoding: -1=default, 0-41=RCT " +
-        "index, e.g. index 0 = none, index 6 = YCoCg. "+
-        "If this option is set to a non-default value, the RCT will be globally "+
-        "applied to the whole frame. "+
-        "The default behavior is to try several RCTs locally per modular group, "+
+        "index, e.g. index 0 = none, index 6 = YCoCg. " +
+        "If this option is set to a non-default value, the RCT will be globally " +
+        "applied to the whole frame. " +
+        "The default behavior is to try several RCTs locally per modular group, " +
         "depending on the speed and distance setting. ")]
         ModularColorSpace = 25,
         /// <summary>
@@ -1912,8 +1915,8 @@ namespace JxlSharp
         /// 5 and 6, 15=mix everything.
         /// </summary>
         [Description("Predictor for modular encoding. -1 = default, 0=zero, 1=left, 2=top, " +
-        "3=avg0, 4=select, 5=gradient, 6=weighted, 7=topright, 8=topleft, "+
-        "9=leftleft, 10=avg1, 11=avg2, 12=avg3, 13=toptop predictive average 14=mix "+
+        "3=avg0, 4=select, 5=gradient, 6=weighted, 7=topright, 8=topleft, " +
+        "9=leftleft, 10=avg1, 11=avg2, 12=avg3, 13=toptop predictive average 14=mix " +
         "5 and 6, 15=mix everything. ")]
         ModularPredictor = 27,
         /// <summary>
@@ -1922,7 +1925,7 @@ namespace JxlSharp
         /// 100 are also permitted. Higher values use more encoder memory.
         /// </summary>
         [Description("Fraction of pixels used to learn MA trees as a percentage. -1 = default, " +
-        "0 = no MA and fast decode, 50 = default value, 100 = all, values above "+
+        "0 = no MA and fast decode, 50 = default value, 100 = all, values above " +
         "100 are also permitted. Higher values use more encoder memory. ")]
         ModularMaTreeLearningPercent = 28,
         /// <summary>
@@ -1933,9 +1936,9 @@ namespace JxlSharp
         /// encoding and slower decoding.
         /// </summary>
         [Description("Number of extra (previous-channel) MA tree properties to use. -1 = " +
-        "default, 0-11 = valid values. Recommended values are in the range 0 to 3, "+
-        "or 0 to amount of channels minus 1 (including all extra channels, and "+
-        "excluding color channels when using VarDCT mode). Higher value gives slower "+
+        "default, 0-11 = valid values. Recommended values are in the range 0 to 3, " +
+        "or 0 to amount of channels minus 1 (including all extra channels, and " +
+        "excluding color channels when using VarDCT mode). Higher value gives slower " +
         "encoding and slower decoding. ")]
         ModularNbPrevChannels = 29,
         /// <summary>
@@ -1956,12 +1959,12 @@ namespace JxlSharp
         /// attempted to be indexed, JXL_ENC_ERROR will occur.
         /// </summary>
         [Description("Prepare the frame for indexing in the frame index box." +
-        " 0 = ignore this frame (same as not setting a value),"+
-        " 1 = index this frame within the Frame Index Box."+
-        " If any frames are indexed, the first frame needs to"+
-        " be indexed, too. If the first frame is not indexed, and"+
-        " a later frame is attempted to be indexed, JXL_ENC_ERROR will occur."+
-        " If non-keyframes, i.e., frames with cropping, blending or patches are"+
+        " 0 = ignore this frame (same as not setting a value)," +
+        " 1 = index this frame within the Frame Index Box." +
+        " If any frames are indexed, the first frame needs to" +
+        " be indexed, too. If the first frame is not indexed, and" +
+        " a later frame is attempted to be indexed, JXL_ENC_ERROR will occur." +
+        " If non-keyframes, i.e., frames with cropping, blending or patches are" +
         " attempted to be indexed, JXL_ENC_ERROR will occur.")]
         FrameIndexBox = 31,
         /// <summary>
@@ -1971,8 +1974,8 @@ namespace JxlSharp
         /// recompression, and 4 for brob boxes.
         /// </summary>
         [Description("Sets brotli encode effort for use in JPEG recompression and compressed" +
-        " metadata boxes (brob). Can be -1 (default) or 0 (fastest) to 11 (slowest)."+
-        " Default is based on the general encode effort in case of JPEG"+
+        " metadata boxes (brob). Can be -1 (default) or 0 (fastest) to 11 (slowest)." +
+        " Default is based on the general encode effort in case of JPEG" +
         " recompression, and 4 for brob boxes.")]
         BrotliEffort = 32,
     }
