@@ -622,6 +622,8 @@ namespace JxlSharp
 		/// <see cref="JxlEncoder.CloseFrames" /> must be called before the next
 		/// <see cref="JxlEncoder.ProcessOutput" /> call.
 		/// </summary>
+		/// <param name="frameSettings"> set of options and metadata for this frame. Also
+		/// includes reference to the encoder object.</param>
 		/// <param name="pixelFormat"> format for pixels. Object owned by the caller and its
 		/// contents are copied internally.</param>
 		/// <param name="buffer"> buffer type to input the pixel data from. Owned by the caller
@@ -686,6 +688,9 @@ namespace JxlSharp
 			}
 		}
 
+		/// <summary>
+		/// The parent JxlEncoder object, or null if the parent has been garbage collected
+		/// </summary>
 		public JxlEncoder Parent
 		{
 			get
@@ -709,6 +714,10 @@ namespace JxlSharp
 
 		//}
 
+		/// <summary>
+		/// Creates a new FrameSettings object copying the settings from this object
+		/// </summary>
+		/// <returns></returns>
 		public JxlEncoderFrameSettings Clone()
 		{
 			var parent = this.Parent;
