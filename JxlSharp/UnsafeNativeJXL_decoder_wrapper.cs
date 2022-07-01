@@ -160,9 +160,6 @@ namespace JxlSharp
 			/// <br /><br />
 			/// Requires that the decoder can produce JxlBasicInfo.
 			/// </summary>
-			/// <param name="dec">
-			///     <see cref="T:JxlSharp.UnsafeNativeJxl.JxlDecoder" /> to query when creating the recommended pixel
-			/// format.</param>
 			/// <param name="format"> JxlPixelFormat to populate with the recommended settings for
 			/// the data loaded into this decoder.</param>
 			/// <returns>
@@ -273,10 +270,10 @@ namespace JxlSharp
 			/// <param name="render_spotcolors"> JXL_TRUE to enable (default), JXL_FALSE to disable.</param>
 			/// <returns>
 			///     <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-			public JxlDecoderStatus SetRenderSpotcolors(int render_spotcolors)
+			public JxlDecoderStatus SetRenderSpotcolors(bool render_spotcolors)
 			{
 				CheckIfDisposed();
-				return JxlDecoderSetRenderSpotcolors(dec, render_spotcolors);
+				return JxlDecoderSetRenderSpotcolors(dec, Convert.ToInt32(render_spotcolors));
 			}
 
 			/// <summary>
@@ -292,10 +289,10 @@ namespace JxlSharp
 			/// disable it.</param>
 			/// <returns>
 			///     <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-			public JxlDecoderStatus SetCoalescing(int coalescing)
+			public JxlDecoderStatus SetCoalescing(bool coalescing)
 			{
 				CheckIfDisposed();
-				return JxlDecoderSetCoalescing(dec, coalescing);
+				return JxlDecoderSetCoalescing(dec, Convert.ToInt32(coalescing));
 			}
 
 			/// <summary>
@@ -955,10 +952,13 @@ namespace JxlSharp
 			/// may be NULL.</param>
 			/// <returns> JXL_DEC_SUCCESS on success, JXL_DEC_ERROR on error, such as
 			/// JxlDecoderSetImageOutBuffer already set.</returns>
-			public JxlDecoderStatus SetImageOutCallback([In] JxlPixelFormat* format, JxlImageOutCallback callback, void* opaque)
+			public JxlDecoderStatus SetImageOutCallback([In] ref JxlPixelFormat format, JxlImageOutCallback callback, void* opaque)
 			{
 				CheckIfDisposed();
-				return JxlDecoderSetImageOutCallback(dec, format, callback, opaque);
+				fixed (JxlPixelFormat *pFormat = &format)
+				{
+					return JxlDecoderSetImageOutCallback(dec, pFormat, callback, opaque);
+				}
 			}
 			/// <summary>
 			/// Returns the minimum size in bytes of an extra channel pixel buffer for the
@@ -974,13 +974,17 @@ namespace JxlSharp
 			/// <returns>
 			///     <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 			/// information not available yet or invalid index.</returns>
-			public JxlDecoderStatus GetExtraChannelBufferSize([In] JxlPixelFormat* format, out int size, int index)
+			public JxlDecoderStatus GetExtraChannelBufferSize([In] ref JxlPixelFormat format, out int size, int index)
 			{
 				CheckIfDisposed();
 				size_t _size;
-				var result = JxlDecoderExtraChannelBufferSize(dec, format, &_size, (uint32_t)index);
+				JxlDecoderStatus status;
+				fixed (JxlPixelFormat* pFormat = &format)
+				{
+					status = JxlDecoderExtraChannelBufferSize(dec, pFormat, &_size, (uint32_t)index);
+				}
 				size = (int)_size;
-				return result;
+				return status;
 			}
 			/// <summary>
 			/// Sets the buffer to write an extra channel to. This can be set when
@@ -1010,10 +1014,13 @@ namespace JxlSharp
 			/// <returns>
 			///     <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="F:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 			/// size too small or invalid index.</returns>
-			public JxlDecoderStatus SetExtraChannelBuffer([In] JxlPixelFormat* format, void* buffer, int size, uint32_t index)
+			public JxlDecoderStatus SetExtraChannelBuffer([In] ref JxlPixelFormat format, void* buffer, int size, uint32_t index)
 			{
 				CheckIfDisposed();
-				return JxlDecoderSetExtraChannelBuffer(dec, format, buffer, (size_t)size, index);
+				fixed (JxlPixelFormat* pFormat = &format)
+				{
+					return JxlDecoderSetExtraChannelBuffer(dec, pFormat, buffer, (size_t)size, index);
+				}
 			}
 			/// <summary>
 			/// Sets output buffer for reconstructed JPEG codestream.

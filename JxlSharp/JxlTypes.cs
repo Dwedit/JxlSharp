@@ -182,12 +182,12 @@ namespace JxlSharp
         /// </summary>
         JpegNeedMoreOutput = 6,
 
-        ///// <summary>
-        ///// The box contents output buffer is too small. <see cref="JxlDecoder.SetBoxBuffer"/>
-        ///// must be called again to make room for remaining bytes. This event may occur
-        ///// multiple times after <see cref="Box"/>.
-        ///// </summary>
-        //BoxNeedMoreOutput = 7,
+        /// <summary>
+        /// The box contents output buffer is too small. <see cref="JxlDecoder.SetBoxBuffer"/>
+        /// must be called again to make room for remaining bytes. This event may occur
+        /// multiple times after <see cref="Box"/>.
+        /// </summary>
+        BoxNeedMoreOutput = 7,
 
         /// <summary>
         /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
@@ -267,7 +267,7 @@ namespace JxlSharp
 
         /// <summary>
         /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
-        /// "JxlDecoderProcessInput": JPEG reconstruction data decoded. <see cref="JxlDecoder.SetJPEGBuffer"/> may be used to set a JPEG reconstruction buffer
+        /// "JxlDecoderProcessInput": JPEG reconstruction data decoded. <see cref="JxlDecoder.SetJPEGBuffer(byte[])"/> may be used to set a JPEG reconstruction buffer
         /// after getting the JPEG reconstruction data. If a JPEG reconstruction buffer
         /// is set a byte stream identical to the JPEG codestream used to encode the
         /// image will be written to the JPEG reconstruction buffer instead of pixels
@@ -276,54 +276,54 @@ namespace JxlSharp
         /// </summary>
         JpegReconstruction = 0x2000,
 
-        ///// <summary>
-        ///// Informative event by <see cref="JxlDecoder.ProcessInput"/>
-        ///// "JxlDecoderProcessInput": The header of a box of the container format
-        ///// (BMFF) is decoded. The following API functions related to boxes can be used
-        ///// after this event:
-        ///// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
-        ///// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
-        ///// data.
-        ///// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
-        ///// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
-        ///// the container file, not decompressed.
-        ///// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
-        ///// data decompressed, or possibly compressed.
-        ///// <br/><br/>
-        ///// Boxes can be compressed. This is so when their box type is
-        ///// "brob". In that case, they have an underlying decompressed box
-        ///// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
-        ///// configuring which data to get. Decompressing requires
-        ///// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
-        ///// type, which can be "brob", or the decompressed box type. If a box
-        ///// is not compressed (its compressed type is not "brob"), then
-        ///// the output decompressed box type and data is independent of what
-        ///// setting is configured.
-        ///// <br/><br/>
-        ///// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
-        ///// next box to be obtained, or can be left unset to skip outputting this box.
-        ///// The output buffer contains the full box data when the next <see cref="Box"/>
-        ///// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
-        ///// boxes, including non-metadata boxes such as the signature box or codestream
-        ///// boxes. To check whether the box is a metadata type for respectively EXIF,
-        ///// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
-        ///// "xml " and "jumb" respectively.
-        ///// </summary>
-        //Box = 0x4000,
+		/// <summary>
+		/// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+		/// "JxlDecoderProcessInput": The header of a box of the container format
+		/// (BMFF) is decoded. The following API functions related to boxes can be used
+		/// after this event:
+		/// - <see cref="JxlDecoder.SetBoxBuffer"/> and <see cref="JxlDecoder.ReleaseBoxBuffer"/>
+		/// "JxlDecoderReleaseBoxBuffer": set and release a buffer to get the box
+		/// data.
+		/// - <see cref="JxlDecoder.GetBoxType"/> get the 4-character box typename.
+		/// - <see cref="JxlDecoder.GetBoxSizeRaw"/> get the size of the box as it appears in
+		/// the container file, not decompressed.
+		/// - <see cref="JxlDecoder.SetDecompressBoxes"/> to configure whether to get the box
+		/// data decompressed, or possibly compressed.
+		/// <br/><br/>
+		/// Boxes can be compressed. This is so when their box type is
+		/// "brob". In that case, they have an underlying decompressed box
+		/// type and decompressed data. <see cref="JxlDecoder.SetDecompressBoxes"/> allows
+		/// configuring which data to get. Decompressing requires
+		/// Brotli. <see cref="JxlDecoder.GetBoxType"/> has a flag to get the compressed box
+		/// type, which can be "brob", or the decompressed box type. If a box
+		/// is not compressed (its compressed type is not "brob"), then
+		/// the output decompressed box type and data is independent of what
+		/// setting is configured.
+		/// <br/><br/>
+		/// The buffer set with <see cref="JxlDecoder.SetBoxBuffer"/> must be set again for each
+		/// next box to be obtained, or can be left unset to skip outputting this box.
+		/// The output buffer contains the full box data when the next <see cref="Box"/>
+		/// event or <see cref="Success"/> occurs. <see cref="Box"/> occurs for all
+		/// boxes, including non-metadata boxes such as the signature box or codestream
+		/// boxes. To check whether the box is a metadata type for respectively EXIF,
+		/// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
+		/// "xml " and "jumb" respectively.
+		/// </summary>
+		Box = 0x4000,
 
-        /// <summary>
-        /// Informative event by <see cref="JxlDecoder.ProcessInput"/>
-        /// "JxlDecoderProcessInput": a progressive step in decoding the frame is
-        /// reached. When calling <see cref="JxlDecoder.FlushImage"/> at this point, the flushed
-        /// image will correspond exactly to this point in decoding, and not yet
-        /// contain partial results (such as partially more fine detail) of a next
-        /// step. By default, this event will trigger maximum once per frame, when a
-        /// 8x8th resolution (DC) image is ready (the image data is still returned at
-        /// full resolution, giving upscaled DC). Use <see cref="JxlDecoder.SetProgressiveDetail"/> to configure more fine-grainedness. The
-        /// event is not guaranteed to trigger, not all images have progressive steps
-        /// or DC encoded.
-        /// </summary>
-        FrameProgression = 0x8000,
+		/// <summary>
+		/// Informative event by <see cref="JxlDecoder.ProcessInput"/>
+		/// "JxlDecoderProcessInput": a progressive step in decoding the frame is
+		/// reached. When calling <see cref="JxlDecoder.FlushImage"/> at this point, the flushed
+		/// image will correspond exactly to this point in decoding, and not yet
+		/// contain partial results (such as partially more fine detail) of a next
+		/// step. By default, this event will trigger maximum once per frame, when a
+		/// 8x8th resolution (DC) image is ready (the image data is still returned at
+		/// full resolution, giving upscaled DC). Use <see cref="JxlDecoder.SetProgressiveDetail"/> to configure more fine-grainedness. The
+		/// event is not guaranteed to trigger, not all images have progressive steps
+		/// or DC encoded.
+		/// </summary>
+		FrameProgression = 0x8000,
     }
 
     /// <summary>
@@ -1332,7 +1332,7 @@ namespace JxlSharp
         {
             UnsafeNativeJxl.JxlBlendInfo blendInfo;
             UnsafeNativeJxl.InitBlendInfo(out blendInfo);
-            UnsafeNativeJxl.CopyFields.WriteToPublic(ref blendInfo, ref _defaultValues);
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref blendInfo, out _defaultValues);
         }
 
         /// <summary>
@@ -1997,5 +1997,46 @@ namespace JxlSharp
             var descriptionAttribute = (DescriptionAttribute)attributes[0];
             return descriptionAttribute.Description;
         }
+    }
+
+    /// <summary>
+    /// Types of progressive detail.
+    /// Setting a progressive detail with value N implies all progressive details
+    /// with smaller or equal value. Currently only the following level of
+    /// progressive detail is implemented:
+    /// <br /> - kDC (which implies kFrames)
+    /// <br /> - kLastPasses (which implies kDC and kFrames)
+    /// <br /> - kPasses (which implies kLastPasses, kDC and kFrames)
+    /// </summary>
+    public enum JxlProgressiveDetail
+    {
+        /// <summary>
+        /// after completed kRegularFrames
+        /// </summary>
+        Frames,
+        /// <summary>
+        /// after completed DC (1:8)
+        /// </summary>
+        DC,
+        /// <summary>
+        /// after completed AC passes that are the last pass for their resolution target.
+        /// </summary>
+        LastPasses,
+        /// <summary>
+        /// after completed AC passes that are not the last pass for their resolution target.
+        /// </summary>
+        Passes,
+        /// <summary>
+        /// during DC frame when lower resolution are completed (1:32, 1:16)
+        /// </summary>
+        DCProgressive,
+        /// <summary>
+        /// after completed DC groups
+        /// </summary>
+        DCGroups,
+        /// <summary>
+        /// after completed groups
+        /// </summary>
+        Groups
     }
 }

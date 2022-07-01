@@ -12,7 +12,7 @@ namespace JxlSharp
 	{
         internal static class CopyFields
         {
-            internal static void ReadFromPublic(ref UnsafeNativeJxl.JxlColorEncoding obj, JxlSharp.JxlColorEncoding colorEncoding)
+            internal static void ReadFromPublic(out UnsafeNativeJxl.JxlColorEncoding obj, JxlSharp.JxlColorEncoding colorEncoding)
             {
                 obj.color_space = (UnsafeNativeJxl.JxlColorSpace)colorEncoding.ColorSpace;
                 obj.white_point = (UnsafeNativeJxl.JxlWhitePoint)colorEncoding.WhitePoint;
@@ -108,7 +108,7 @@ namespace JxlSharp
                 basicInfo.IntrinsicHeight = (int)obj.intrinsic_ysize;
             }
 
-            internal static void ReadFromPublic(ref UnsafeNativeJxl.JxlPixelFormat obj, JxlSharp.JxlPixelFormat format)
+            internal static void ReadFromPublic(out UnsafeNativeJxl.JxlPixelFormat obj, JxlSharp.JxlPixelFormat format)
             {
                 obj.num_channels = (uint)format.NumChannels;
                 obj.data_type = (JxlDataType)format.DataType;
@@ -124,7 +124,7 @@ namespace JxlSharp
                 format.NumChannels = (int)obj.num_channels;
             }
 
-            internal static void ReadFromPublic(ref UnsafeNativeJxl.JxlExtraChannelInfo obj, JxlSharp.JxlExtraChannelInfo info)
+            internal static void ReadFromPublic(out UnsafeNativeJxl.JxlExtraChannelInfo obj, JxlSharp.JxlExtraChannelInfo info)
             {
                 obj.alpha_premultiplied = Convert.ToInt32(info.AlphaPremultiplied);
                 obj.bits_per_sample = (uint)info.BitsPerSample;
@@ -166,11 +166,11 @@ namespace JxlSharp
                 header.LayerInfo.SaveAsReference = (int)obj.layer_info.save_as_reference;
             }
 
-            internal static void ReadFromPublic(ref UnsafeNativeJxl.JxlFrameHeader obj, JxlSharp.JxlFrameHeader header)
+            internal static void ReadFromPublic(out UnsafeNativeJxl.JxlFrameHeader obj, JxlSharp.JxlFrameHeader header)
             {
                 obj.duration = header.Duration;
                 obj.timecode = header.Timecode;
-                //obj.name_length = (uint)header.NameLength;
+                obj.name_length = (uint)header.Name.Length;
                 obj.is_last = Convert.ToInt32(header.IsLast);
                 obj.layer_info.have_crop = Convert.ToInt32(header.LayerInfo.HaveCrop);
                 obj.layer_info.crop_x0 = header.LayerInfo.CropX0;
@@ -184,7 +184,7 @@ namespace JxlSharp
                 obj.layer_info.save_as_reference = (uint)header.LayerInfo.SaveAsReference;
             }
 
-            internal static void ReadFromPublic(ref JxlBlendInfo obj, ref JxlSharp.JxlBlendInfo blendInfo)
+            internal static void ReadFromPublic(out JxlBlendInfo obj, ref JxlSharp.JxlBlendInfo blendInfo)
             {
                 obj.blendmode = (UnsafeNativeJxl.JxlBlendMode)blendInfo.BlendMode;
                 obj.source = (uint)blendInfo.Source;
@@ -192,7 +192,7 @@ namespace JxlSharp
                 obj.clamp = Convert.ToInt32(blendInfo.Clamp);
             }
 
-            internal static void WriteToPublic(ref JxlBlendInfo obj, ref JxlSharp.JxlBlendInfo blendInfo)
+            internal static void WriteToPublic(ref JxlBlendInfo obj, out JxlSharp.JxlBlendInfo blendInfo)
             {
                 blendInfo.BlendMode = (JxlSharp.JxlBlendMode)obj.blendmode;
                 blendInfo.Source = (int)obj.source;
