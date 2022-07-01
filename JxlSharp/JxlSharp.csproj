@@ -49,16 +49,15 @@
   <ItemGroup>
     <Compile Include="JXL.cs" />
     <Compile Include="JxlDecoder.cs" />
+    <Compile Include="JxlEncoder.cs" />
     <Compile Include="JxlTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnsafeNativeJXL_codestream_header.cs" />
-    <Compile Include="UnsafeNativeJXL_color_encoding.cs" />
-    <Compile Include="UnsafeNativeJXL_decode.cs" />
+    <Compile Include="UnsafeNativeJxl.cs" />
+    <Compile Include="UnsafeNativeJxl_additional_functions.cs" />
+    <Compile Include="UnsafeNativeJxl_constructor.cs" />
+    <Compile Include="UnsafeNativeJxl_copyfields.cs" />
     <Compile Include="UnsafeNativeJXL_decoder_wrapper.cs" />
-    <Compile Include="UnsafeNativeJXL_encode.cs" />
-    <Compile Include="UnsafeNativeJXL_thread_parallel_runner.cs" />
-    <Compile Include="UnsafeNativeJXL_types.cs" />
-    <Compile Include="UnsafeNativeJXL.cs" />
+    <Compile Include="UnsafeNativeJXL_encoder_wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

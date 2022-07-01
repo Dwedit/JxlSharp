@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 
@@ -132,7 +133,7 @@ namespace JxlSharp
 
         /// <summary>
         /// An error occurred, for example invalid input file or out of memory.
-        /// TODO(lode): add function to get error information from decoder.
+        /// <br/> TODO(lode): add function to get error information from decoder.
         /// </summary>
         Error = 1,
 
@@ -330,20 +331,40 @@ namespace JxlSharp
     /// for pixels. This is not necessarily the same as the data type encoded in the
     /// codestream. The channels are interleaved per pixel. The pixels are
     /// organized row by row, left to right, top to bottom.
+    /// <br/><br/>
+    /// Set the Align property to the stride of the Bitmap.
+    /// <br/><br/>
     /// TODO(lode): implement padding / alignment (row stride)
-    /// TODO(lode): support different channel orders if needed (RGB, BGR, ...)
+    /// <br/>TODO(lode): support different channel orders if needed (RGB, BGR, ...)
     /// </summary>
     public class JxlPixelFormat
     {
-        internal UnsafeNativeJXL.JxlPixelFormat pixelFormat;
+        /// <summary>
+        /// Create a JxlPixelFormat given a <see cref="System.Drawing.Imaging.PixelFormat"/>
+        /// </summary>
+        /// <param name="pixelFormat"></param>
+        public JxlPixelFormat(System.Drawing.Imaging.PixelFormat pixelFormat)
+        {
+            this.NumChannels = JXL.GetBytesPerPixel(pixelFormat);
+            this.DataType = JxlDataType.UInt8;
+        }
+        /// <summary>
+        /// Create a default pixel format for 24-bit RGB
+        /// </summary>
+        public JxlPixelFormat()
+        {
+            this.NumChannels = 3;
+            this.DataType = JxlDataType.UInt8;
+        }
+        internal UnsafeNativeJxl.JxlPixelFormat pixelFormat;
 
         /// <summary>
         /// Amount of channels available in a pixel buffer.
-        /// 1: single-channel data, e.g. grayscale or a single extra channel
-        /// 2: single-channel + alpha
-        /// 3: trichromatic, e.g. RGB
-        /// 4: trichromatic + alpha
-        /// TODO(lode): this needs finetuning. It is not yet defined how the user
+        /// <br/> 1: single-channel data, e.g. grayscale or a single extra channel
+        /// <br/> 2: single-channel + alpha
+        /// <br/> 3: trichromatic, e.g. RGB
+        /// <br/> 4: trichromatic + alpha
+        /// <br/> TODO(lode): this needs finetuning. It is not yet defined how the user
         /// chooses output color space. CMYK+alpha needs 5 channels.
         /// </summary>
         public int NumChannels
@@ -369,7 +390,7 @@ namespace JxlSharp
             }
             set
             {
-                pixelFormat.data_type = (UnsafeNativeJXL.JxlDataType)value;
+                pixelFormat.data_type = (UnsafeNativeJxl.JxlDataType)value;
             }
         }
 
@@ -386,13 +407,15 @@ namespace JxlSharp
             }
             set
             {
-                pixelFormat.endianness = (UnsafeNativeJXL.JxlEndianness)value;
+                pixelFormat.endianness = (UnsafeNativeJxl.JxlEndianness)value;
             }
         }
 
         /// <summary>
         /// Align scanlines to a multiple of align bytes, or 0 to require no
         /// alignment at all (which has the same effect as value 1)
+        /// <br/><br/>
+        /// You can set this value to the Stride of the bitmap.
         /// </summary>
         public int Align
         {
@@ -414,7 +437,20 @@ namespace JxlSharp
     /// </summary>
     public class JxlBasicInfo
     {
-        internal UnsafeNativeJXL.JxlBasicInfo basicInfo;
+        /// <summary>
+        /// Create a default BasicInfo initialized to the defaults for encoding images
+        /// </summary>
+        public JxlBasicInfo()
+        {
+            UnsafeNativeJxl.InitBasicInfo(out basicInfo);
+        }
+
+        internal JxlBasicInfo(ref UnsafeNativeJxl.JxlBasicInfo basicInfo)
+        {
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref basicInfo, this);
+        }
+
+        internal UnsafeNativeJxl.JxlBasicInfo basicInfo;
 
         /// <summary>
         /// Whether the codestream is embedded in the container format. If true,
@@ -644,7 +680,7 @@ namespace JxlSharp
             }
             set
             {
-                basicInfo.orientation = (UnsafeNativeJXL.JxlOrientation)value;
+                basicInfo.orientation = (UnsafeNativeJxl.JxlOrientation)value;
             }
         }
 
@@ -1004,7 +1040,38 @@ namespace JxlSharp
     /// </summary>
     public class JxlColorEncoding
     {
-        internal UnsafeNativeJXL.JxlColorEncoding colorEncoding;
+        /// <summary>
+        /// Sets this Color Encoding to SRGB
+        /// </summary>
+        /// <param name="isGray">If true, makes it grayscale</param>
+        public void SetToSRGB(bool isGray)
+        {
+            UnsafeNativeJxl.JxlColorEncodingSetToSRGB(out this.colorEncoding, isGray);
+        }
+        /// <summary>
+        /// Sets this Color Encoding to SRGB
+        /// </summary>
+        public void SetToSRGB()
+        {
+            UnsafeNativeJxl.JxlColorEncodingSetToSRGB(out this.colorEncoding, false);
+        }
+        /// <summary>
+        /// Sets this Color Encoding to Linear RGB
+        /// </summary>
+        /// <param name="isGray">If true, makes it grayscale</param>
+        public void SetToLinearSRGB(bool isGray)
+        {
+            UnsafeNativeJxl.JxlColorEncodingSetToLinearSRGB(out this.colorEncoding, isGray);
+        }
+        /// <summary>
+        /// Sets this Color Encoding to Linear RGB
+        /// </summary>
+        public void SetToLinearSRGB()
+        {
+            UnsafeNativeJxl.JxlColorEncodingSetToLinearSRGB(out this.colorEncoding, false);
+        }
+
+        internal UnsafeNativeJxl.JxlColorEncoding colorEncoding;
 
         /// <summary>
         /// Color space of the image data.
@@ -1017,7 +1084,7 @@ namespace JxlSharp
             }
             set
             {
-                colorEncoding.color_space = (UnsafeNativeJXL.JxlColorSpace)value;
+                colorEncoding.color_space = (UnsafeNativeJxl.JxlColorSpace)value;
             }
         }
 
@@ -1033,7 +1100,7 @@ namespace JxlSharp
             }
             set
             {
-                colorEncoding.white_point = (UnsafeNativeJXL.JxlWhitePoint)value;
+                colorEncoding.white_point = (UnsafeNativeJxl.JxlWhitePoint)value;
             }
         }
         /// <summary>
@@ -1045,15 +1112,15 @@ namespace JxlSharp
             {
                 unsafe
                 {
-                    return new XYValue(colorEncoding.white_point_xy[0], colorEncoding.white_point_xy[1]);
+                    return new XYValue(colorEncoding.white_point_xy.x, colorEncoding.white_point_xy.y);
                 }
             }
             set
             {
                 unsafe
                 {
-                    colorEncoding.white_point_xy[0] = value.X;
-                    colorEncoding.white_point_xy[1] = value.Y;
+                    colorEncoding.white_point_xy.x = value.X;
+                    colorEncoding.white_point_xy.y = value.Y;
                 }
             }
         }
@@ -1072,7 +1139,7 @@ namespace JxlSharp
             }
             set
             {
-                colorEncoding.primaries = (UnsafeNativeJXL.JxlPrimaries)value;
+                colorEncoding.primaries = (UnsafeNativeJxl.JxlPrimaries)value;
             }
         }
 
@@ -1085,15 +1152,15 @@ namespace JxlSharp
             {
                 unsafe
                 {
-                    return new XYValue(colorEncoding.primaries_red_xy[0], colorEncoding.primaries_red_xy[1]);
+                    return new XYValue(colorEncoding.primaries_red_xy.x, colorEncoding.primaries_red_xy.y);
                 }
             }
             set
             {
                 unsafe
                 {
-                    colorEncoding.primaries_red_xy[0] = value.X;
-                    colorEncoding.primaries_red_xy[1] = value.Y;
+                    colorEncoding.primaries_red_xy.x = value.X;
+                    colorEncoding.primaries_red_xy.y = value.Y;
                 }
             }
         }
@@ -1107,15 +1174,15 @@ namespace JxlSharp
             {
                 unsafe
                 {
-                    return new XYValue(colorEncoding.primaries_green_xy[0], colorEncoding.primaries_green_xy[1]);
+                    return new XYValue(colorEncoding.primaries_green_xy.x, colorEncoding.primaries_green_xy.y);
                 }
             }
             set
             {
                 unsafe
                 {
-                    colorEncoding.primaries_green_xy[0] = value.X;
-                    colorEncoding.primaries_green_xy[1] = value.Y;
+                    colorEncoding.primaries_green_xy.x = value.X;
+                    colorEncoding.primaries_green_xy.y = value.Y;
                 }
             }
         }
@@ -1129,15 +1196,15 @@ namespace JxlSharp
             {
                 unsafe
                 {
-                    return new XYValue(colorEncoding.primaries_blue_xy[0], colorEncoding.primaries_blue_xy[1]);
+                    return new XYValue(colorEncoding.primaries_blue_xy.x, colorEncoding.primaries_blue_xy.y);
                 }
             }
             set
             {
                 unsafe
                 {
-                    colorEncoding.primaries_blue_xy[0] = value.X;
-                    colorEncoding.primaries_blue_xy[1] = value.Y;
+                    colorEncoding.primaries_blue_xy.x = value.X;
+                    colorEncoding.primaries_blue_xy.y = value.Y;
                 }
             }
         }
@@ -1153,7 +1220,7 @@ namespace JxlSharp
             }
             set
             {
-                colorEncoding.transfer_function = (UnsafeNativeJXL.JxlTransferFunction)value;
+                colorEncoding.transfer_function = (UnsafeNativeJxl.JxlTransferFunction)value;
             }
         }
 
@@ -1183,7 +1250,7 @@ namespace JxlSharp
             }
             set
             {
-                colorEncoding.rendering_intent = (UnsafeNativeJXL.JxlRenderingIntent)value;
+                colorEncoding.rendering_intent = (UnsafeNativeJxl.JxlRenderingIntent)value;
             }
         }
     }
@@ -1260,6 +1327,38 @@ namespace JxlSharp
     /// </summary>
     public struct JxlBlendInfo
     {
+        static JxlBlendInfo _defaultValues;
+        static JxlBlendInfo()
+        {
+            UnsafeNativeJxl.JxlBlendInfo blendInfo;
+            UnsafeNativeJxl.InitBlendInfo(out blendInfo);
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref blendInfo, ref _defaultValues);
+        }
+
+        /// <summary>
+        /// Initializes the object to the default values
+        /// </summary>
+        public void Initialize()
+        {
+            this.BlendMode = _defaultValues.BlendMode;
+            this.Source = _defaultValues.Source;
+            this.Alpha = _defaultValues.Alpha;
+            this.Clamp = _defaultValues.Clamp;
+        }
+
+        /// <summary>
+        /// Creates a JxlBlendInfo object using the default values
+        /// </summary>
+        /// <param name="unused">Not used</param>
+        public JxlBlendInfo(bool unused)
+        {
+            this.BlendMode = _defaultValues.BlendMode;
+            this.Source = _defaultValues.Source;
+            this.Alpha = _defaultValues.Alpha;
+            this.Clamp = _defaultValues.Clamp;
+        }
+
+
         /// <summary>
         /// Blend mode.
         /// </summary>
@@ -1284,6 +1383,25 @@ namespace JxlSharp
     /// </summary>
     public class JxlFrameHeader
     {
+        private static UnsafeNativeJxl.JxlFrameHeader _defaultFrameHeader;
+        static JxlFrameHeader()
+        {
+            UnsafeNativeJxl.InitFrameHeader(out _defaultFrameHeader);
+        }
+
+        /// <summary>
+        /// Creates a new JxlFrameHeader
+        /// </summary>
+        public JxlFrameHeader()
+        {
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref _defaultFrameHeader, this);
+        }
+
+        internal JxlFrameHeader(ref UnsafeNativeJxl.JxlFrameHeader header2)
+        {
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref header2, this);
+        }
+
         /// <summary>
         /// How long to wait after rendering in ticks. The duration in seconds of a
         /// tick is given by tps_numerator and tps_denominator in JxlAnimationHeader.
@@ -1345,10 +1463,49 @@ namespace JxlSharp
     }
 
     /// <summary>
+    /// Floating point RGBA color (Linear)
+    /// </summary>
+    public struct RGBAFloat
+    {
+        /// <summary>
+        /// Red component
+        /// </summary>
+        public float R;
+        /// <summary>
+        /// Green component
+        /// </summary>
+        public float G;
+        /// <summary>
+        /// Blue component
+        /// </summary>
+        public float B;
+        /// <summary>
+        /// Alpha component
+        /// </summary>
+        public float A;
+    }
+
+    /// <summary>
     /// Information for a single extra channel.
     /// </summary>
     public class JxlExtraChannelInfo
     {
+        /// <summary>
+        /// Creates a new JxlExtraChannelInfo object given a type
+        /// </summary>
+        /// <param name="type">The type of extra channel to create</param>
+        public JxlExtraChannelInfo(JxlExtraChannelType type)
+        {
+            UnsafeNativeJxl.JxlExtraChannelInfo extraChannelInfo;
+            UnsafeNativeJxl.InitExtraChannelInfo((UnsafeNativeJxl.JxlExtraChannelType)type, out extraChannelInfo);
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref extraChannelInfo, this);
+        }
+
+        internal JxlExtraChannelInfo(ref UnsafeNativeJxl.JxlExtraChannelInfo extraChannelInfo)
+        {
+            UnsafeNativeJxl.CopyFields.WriteToPublic(ref extraChannelInfo, this);
+        }
+
         /// <summary>
         /// Given type of an extra channel.
         /// </summary>
@@ -1367,7 +1524,7 @@ namespace JxlSharp
 
         /// <summary>
         /// The exponent the channel is downsampled by on each axis.
-        /// TODO(lode): expand this comment to match the JPEG XL specification,
+        /// <br/> TODO(lode): expand this comment to match the JPEG XL specification,
         /// specify how to upscale, how to round the size computation, and to which
         /// extra channels this field applies.
         /// </summary>
@@ -1390,13 +1547,15 @@ namespace JxlSharp
         /// type is JXL_CHANNEL_SPOT_COLOR.
         /// Array size is 4.
         /// </summary>
-        public float[] SpotColor = new float[4];
+        public RGBAFloat SpotColor;
 
         /// <summary>
         /// Only applicable if type is JXL_CHANNEL_CFA.
-        /// TODO(lode): add comment about the meaning of this field.
+        /// <br/> TODO(lode): add comment about the meaning of this field.
         /// </summary>
         public int CfaChannel;
+
+
     }
 
     /// <summary>
@@ -1416,5 +1575,427 @@ namespace JxlSharp
         /// Get the color profile of the pixel data the decoder outputs. 
         /// </summary>
         TargetData = 1,
+    }
+
+    /// <summary>
+    /// Error conditions:
+    /// API usage errors have the 0x80 bit set to 1
+    /// Other errors have the 0x80 bit set to 0
+    /// </summary>
+    public enum JxlEncoderError
+    {
+        /// <summary>
+        /// No error
+        /// </summary>
+        Ok = 0,
+        /// <summary>
+        /// Generic encoder error due to unspecified cause
+        /// </summary>
+        GenericError = 1,
+        /// <summary>
+        /// Out of memory
+        /// <br/> TODO(jon): actually catch this and return this error
+        /// </summary>
+        OutOfMemory = 2,
+        /// <summary>
+        /// JPEG bitstream reconstruction data could not be
+        /// represented (e.g. too much tail data)
+        /// </summary>
+        JpegBitstreamReconstructionData = 3,
+        /// <summary>
+        /// Input is invalid (e.g. corrupt JPEG file or ICC profile)
+        /// </summary>
+        BadInput = 4,
+        /// <summary>
+        /// The encoder doesn't (yet) support this. Either no version of libjxl
+        /// supports this, and the API is used incorrectly, or the libjxl version
+        /// should have been checked before trying to do this.
+        /// </summary>
+        NotSupported = 128,
+        /// <summary>
+        /// The encoder API is used in an incorrect way.
+        /// In this case, a debug build of libjxl should output a specific error
+        /// message. (if not, please open an issue about it)
+        /// </summary>
+        ApiUsageError = 129
+    }
+
+    /// <summary>
+    /// Return value for multiple encoder functions.
+    /// </summary>
+    public enum JxlEncoderStatus
+    {
+        /// <summary>
+        /// Function call finished successfully, or encoding is finished and there is
+        /// nothing more to be done.
+        /// </summary>
+        Success,
+        /// <summary>
+        /// An error occurred, for example out of memory.
+        /// </summary>
+        Error,
+        /// <summary>
+        /// The encoder needs more output buffer to continue encoding.
+        /// </summary>
+        NeedMoreOutput,
+        /// <summary>
+        /// DEPRECATED: the encoder does not return this status and there is no need
+        /// to handle or expect it.
+        /// Instead, JXL_ENC_ERROR is returned with error condition
+        /// JXL_ENC_ERR_NOT_SUPPORTED.
+        /// </summary>
+        NotSupported
+    }
+
+    /// <summary>
+    /// Id of encoder options for a frame. This includes options such as setting
+    /// encoding effort/speed or overriding the use of certain coding tools, for this
+    /// frame. This does not include non-frame related encoder options such as for
+    /// boxes.
+    /// </summary>
+    public enum JxlEncoderFrameSettingId
+    {
+        /// <summary>
+        /// Sets encoder effort/speed level without affecting decoding speed. Valid
+        /// values are, from faster to slower speed: 1:lightning 2:thunder 3:falcon
+        /// 4:cheetah 5:hare 6:wombat 7:squirrel 8:kitten 9:tortoise.
+        /// Default: squirrel (7).
+        /// </summary>
+        [Description("Sets encoder effort/speed level without affecting decoding speed. Valid " +
+        "values are, from faster to slower speed: 1:lightning 2:thunder 3:falcon " +
+        "4:cheetah 5:hare 6:wombat 7:squirrel 8:kitten 9:tortoise. " +
+        "Default: squirrel (7).")]
+        Effort = 0,
+        /// <summary>
+        /// Sets the decoding speed tier for the provided options. Minimum is 0
+        /// (slowest to decode, best quality/density), and maximum is 4 (fastest to
+        /// decode, at the cost of some quality/density). Default is 0.
+        /// </summary>
+        [Description("Sets the decoding speed tier for the provided options. Minimum is 0 "+
+        "(slowest to decode, best quality/density), and maximum is 4 (fastest to "+
+        "decode, at the cost of some quality/density). Default is 0.")]
+        DecodingSpeed = 1,
+        /// <summary>
+        /// Sets resampling option. If enabled, the image is downsampled before
+        /// compression, and upsampled to original size in the decoder. Integer option,
+        /// use -1 for the default behavior (resampling only applied for low quality),
+        /// 1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for 4x4
+        /// downsampling, 8 for 8x8 downsampling.
+        /// </summary>
+        [Description("Sets resampling option. If enabled, the image is downsampled before " +
+        "compression, and upsampled to original size in the decoder. Integer option, "+
+        "use -1 for the default behavior (resampling only applied for low quality), "+
+        "1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for 4x4 "+
+        "downsampling, 8 for 8x8 downsampling. ")]
+
+        Resampling = 2,
+        /// <summary>
+        /// Similar to RESAMPLING, but for extra channels.
+        /// Integer option, use -1 for the default behavior (depends on encoder
+        /// implementation), 1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for
+        /// 4x4 downsampling, 8 for 8x8 downsampling.
+        /// </summary>
+        [Description("Similar to RESAMPLING, but for extra channels. " +
+        "Integer option, use -1 for the default behavior (depends on encoder "+
+        "implementation), 1 for no downsampling (1x1), 2 for 2x2 downsampling, 4 for "+
+        "4x4 downsampling, 8 for 8x8 downsampling. ")]
+        ExtraChannelResampling = 3,
+        /// <summary>
+        /// Indicates the frame added with <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddImageFrame(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlPixelFormat*,System.Void*,System.UIntPtr)" /> is already
+        /// downsampled by the downsampling factor set with 
+        /// <see cref="F:JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettingId.RESAMPLING" />. The input frame must then be given in the
+        /// downsampled resolution, not the full image resolution. The downsampled
+        /// resolution is given by ceil(xsize / resampling), ceil(ysize / resampling)
+        /// with xsize and ysize the dimensions given in the basic info, and resampling
+        /// the factor set with <see cref="F:JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettingId.RESAMPLING" />.
+        /// Use 0 to disable, 1 to enable. Default value is 0.
+        /// </summary>
+        [Description("Indicates the frame added with JxlEncoderAddImageFrame is already " +
+        "downsampled by the downsampling factor set with  "+
+        "Resampling. The input frame must then be given in the "+
+        "downsampled resolution, not the full image resolution. The downsampled "+
+        "resolution is given by ceil(xsize / resampling), ceil(ysize / resampling) "+
+        "with xsize and ysize the dimensions given in the basic info, and resampling "+
+        "the factor set with Resampling" +
+        "Use 0 to disable, 1 to enable. Default value is 0. ")]
+        AlreadyDownsampled = 4,
+        /// <summary>
+        /// Adds noise to the image emulating photographic film noise, the higher the
+        /// given number, the grainier the image will be. As an example, a value of 100
+        /// gives low noise whereas a value of 3200 gives a lot of noise. The default
+        /// value is 0.
+        /// </summary>
+        [Description("Adds noise to the image emulating photographic film noise, the higher the " +
+        "given number, the grainier the image will be. As an example, a value of 100 "+
+        "gives low noise whereas a value of 3200 gives a lot of noise. The default "+
+        "value is 0. ")]
+        PhotonNoise = 5,
+        /// <summary>
+        /// Enables adaptive noise generation. This setting is not recommended for
+        /// use, please use PHOTON_NOISE instead. Use -1 for the
+        /// default (encoder chooses), 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Enables adaptive noise generation. This setting is not recommended for " +
+        "use, please use PHOTON_NOISE instead. Use -1 for the "+
+        "default (encoder chooses), 0 to disable, 1 to enable. ")]
+        Noise = 6,
+        /// <summary>
+        /// Enables or disables dots generation. Use -1 for the default (encoder
+        /// chooses), 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Enables or disables dots generation. Use -1 for the default (encoder " +
+        "chooses), 0 to disable, 1 to enable. ")]
+        Dots = 7,
+        /// <summary>
+        /// Enables or disables patches generation. Use -1 for the default (encoder
+        /// chooses), 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Enables or disables patches generation. Use -1 for the default (encoder " +
+        "chooses), 0 to disable, 1 to enable. ")]
+        Patches = 8,
+        /// <summary>
+        /// Edge preserving filter level, -1 to 3. Use -1 for the default (encoder
+        /// chooses), 0 to 3 to set a strength.
+        /// </summary>
+        [Description("Edge preserving filter level, -1 to 3. Use -1 for the default (encoder " +
+        "chooses), 0 to 3 to set a strength. ")]
+        EPF = 9,
+        /// <summary>
+        /// Enables or disables the gaborish filter. Use -1 for the default (encoder
+        /// chooses), 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Enables or disables the gaborish filter. Use -1 for the default (encoder " +
+        "chooses), 0 to disable, 1 to enable. ")]
+        Gaborish = 10,
+        /// <summary>
+        /// Enables modular encoding. Use -1 for default (encoder
+        /// chooses), 0 to enforce VarDCT mode (e.g. for photographic images), 1 to
+        /// enforce modular mode (e.g. for lossless images).
+        /// </summary>
+        [Description("Enables modular encoding. Use -1 for default (encoder " +
+        "chooses), 0 to enforce VarDCT mode (e.g. for photographic images), 1 to "+
+        "enforce modular mode (e.g. for lossless images). ")]
+        Modular = 11,
+        /// <summary>
+        /// Enables or disables preserving color of invisible pixels. Use -1 for the
+        /// default (1 if lossless, 0 if lossy), 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Enables or disables preserving color of invisible pixels. Use -1 for the " +
+        "default (1 if lossless, 0 if lossy), 0 to disable, 1 to enable. ")]
+        KeepInvisible = 12,
+        /// <summary>
+        /// Determines the order in which 256x256 regions are stored in the codestream
+        /// for progressive rendering. Use -1 for the encoder
+        /// default, 0 for scanline order, 1 for center-first order.
+        /// </summary>
+        [Description("Determines the order in which 256x256 regions are stored in the codestream " +
+        "for progressive rendering. Use -1 for the encoder "+
+        "default, 0 for scanline order, 1 for center-first order. ")]
+        GroupOrder = 13,
+        /// <summary>
+        /// Determines the horizontal position of center for the center-first group
+        /// order. Use -1 to automatically use the middle of the image, 0..xsize to
+        /// specifically set it.
+        /// </summary>
+        [Description("Determines the horizontal position of center for the center-first group " +
+        "order. Use -1 to automatically use the middle of the image, 0..xsize to "+
+        "specifically set it. ")]
+        GroupOrderCenterX = 14,
+        /// <summary>
+        /// Determines the center for the center-first group order. Use -1 to
+        /// automatically use the middle of the image, 0..ysize to specifically set it.
+        /// </summary>
+        [Description("Determines the center for the center-first group order. Use -1 to " +
+        "automatically use the middle of the image, 0..ysize to specifically set it. ")]
+        GroupOrderCenterY = 15,
+        /// <summary>
+        /// Enables or disables progressive encoding for modular mode. Use -1 for the
+        /// encoder default, 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Enables or disables progressive encoding for modular mode. Use -1 for the " +
+        "encoder default, 0 to disable, 1 to enable. ")]
+        Responsive = 16,
+        /// <summary>
+        /// Set the progressive mode for the AC coefficients of VarDCT, using spectral
+        /// progression from the DCT coefficients. Use -1 for the encoder default, 0 to
+        /// disable, 1 to enable.
+        /// </summary>
+        [Description("Set the progressive mode for the AC coefficients of VarDCT, using spectral " +
+        "progression from the DCT coefficients. Use -1 for the encoder default, 0 to "+
+        "disable, 1 to enable. ")]
+        ProgressiveAC = 17,
+        /// <summary>
+        /// Set the progressive mode for the AC coefficients of VarDCT, using
+        /// quantization of the least significant bits. Use -1 for the encoder default,
+        /// 0 to disable, 1 to enable.
+        /// </summary>
+        [Description("Set the progressive mode for the AC coefficients of VarDCT, using " +
+        "quantization of the least significant bits. Use -1 for the encoder default, "+
+        "0 to disable, 1 to enable. ")]
+        QProgressiveAC = 18,
+        /// <summary>
+        /// Set the progressive mode using lower-resolution DC images for VarDCT. Use
+        /// -1 for the encoder default, 0 to disable, 1 to have an extra 64x64 lower
+        /// resolution pass, 2 to have a 512x512 and 64x64 lower resolution pass.
+        /// </summary>
+        [Description("Set the progressive mode using lower-resolution DC images for VarDCT. Use " +
+        "-1 for the encoder default, 0 to disable, 1 to have an extra 64x64 lower "+
+        "resolution pass, 2 to have a 512x512 and 64x64 lower resolution pass. ")]
+        ProgressiveDC = 19,
+        /// <summary>
+        /// Use Global channel palette if the amount of colors is smaller than this
+        /// percentage of range. Use 0-100 to set an explicit percentage, -1 to use the
+        /// encoder default. Used for modular encoding.
+        /// </summary>
+        [Description("Use Global channel palette if the amount of colors is smaller than this " +
+        "percentage of range. Use 0-100 to set an explicit percentage, -1 to use the "+
+        "encoder default. Used for modular encoding. ")]
+        ChannelColorsGlobalPercent = 20,
+        /// <summary>
+        /// Use Local (per-group) channel palette if the amount of colors is smaller
+        /// than this percentage of range. Use 0-100 to set an explicit percentage, -1
+        /// to use the encoder default. Used for modular encoding.
+        /// </summary>
+        [Description("Use Local (per-group) channel palette if the amount of colors is smaller " +
+        "than this percentage of range. Use 0-100 to set an explicit percentage, -1 "+
+        "to use the encoder default. Used for modular encoding. ")]
+        ChannelColorsGroupPercent = 21,
+        /// <summary>
+        /// Use color palette if amount of colors is smaller than or equal to this
+        /// amount, or -1 to use the encoder default. Used for modular encoding.
+        /// </summary>
+        [Description("Use color palette if amount of colors is smaller than or equal to this " +
+        "amount, or -1 to use the encoder default. Used for modular encoding. ")]
+        PaletteColors = 22,
+        /// <summary>
+        /// Enables or disables delta palette. Use -1 for the default (encoder
+        /// chooses), 0 to disable, 1 to enable. Used in modular mode.
+        /// </summary>
+        [Description("Enables or disables delta palette. Use -1 for the default (encoder " +
+        "chooses), 0 to disable, 1 to enable. Used in modular mode. ")]
+        LossyPalette = 23,
+        /// <summary>
+        /// Color transform for internal encoding: -1 = default, 0=XYB, 1=none (RGB),
+        /// 2=YCbCr. The XYB setting performs the forward XYB transform. None and
+        /// YCbCr both perform no transform, but YCbCr is used to indicate that the
+        /// encoded data losslessly represents YCbCr values.
+        /// </summary>
+        [Description("Color transform for internal encoding: -1 = default, 0=XYB, 1=none (RGB), " +
+        "2=YCbCr. The XYB setting performs the forward XYB transform. None and "+
+        "YCbCr both perform no transform, but YCbCr is used to indicate that the "+
+        "encoded data losslessly represents YCbCr values. ")]
+        ColorTransform = 24,
+        /// <summary>
+        /// Reversible color transform for modular encoding: -1=default, 0-41=RCT
+        /// index, e.g. index 0 = none, index 6 = YCoCg.
+        /// If this option is set to a non-default value, the RCT will be globally
+        /// applied to the whole frame.
+        /// The default behavior is to try several RCTs locally per modular group,
+        /// depending on the speed and distance setting.
+        /// </summary>
+        [Description("Reversible color transform for modular encoding: -1=default, 0-41=RCT " +
+        "index, e.g. index 0 = none, index 6 = YCoCg. "+
+        "If this option is set to a non-default value, the RCT will be globally "+
+        "applied to the whole frame. "+
+        "The default behavior is to try several RCTs locally per modular group, "+
+        "depending on the speed and distance setting. ")]
+        ModularColorSpace = 25,
+        /// <summary>
+        /// Group size for modular encoding: -1=default, 0=128, 1=256, 2=512, 3=1024.
+        /// </summary>
+        [Description("Group size for modular encoding: -1=default, 0=128, 1=256, 2=512, 3=1024. ")]
+        ModularGroupSize = 26,
+        /// <summary>
+        /// Predictor for modular encoding. -1 = default, 0=zero, 1=left, 2=top,
+        /// 3=avg0, 4=select, 5=gradient, 6=weighted, 7=topright, 8=topleft,
+        /// 9=leftleft, 10=avg1, 11=avg2, 12=avg3, 13=toptop predictive average 14=mix
+        /// 5 and 6, 15=mix everything.
+        /// </summary>
+        [Description("Predictor for modular encoding. -1 = default, 0=zero, 1=left, 2=top, " +
+        "3=avg0, 4=select, 5=gradient, 6=weighted, 7=topright, 8=topleft, "+
+        "9=leftleft, 10=avg1, 11=avg2, 12=avg3, 13=toptop predictive average 14=mix "+
+        "5 and 6, 15=mix everything. ")]
+        ModularPredictor = 27,
+        /// <summary>
+        /// Fraction of pixels used to learn MA trees as a percentage. -1 = default,
+        /// 0 = no MA and fast decode, 50 = default value, 100 = all, values above
+        /// 100 are also permitted. Higher values use more encoder memory.
+        /// </summary>
+        [Description("Fraction of pixels used to learn MA trees as a percentage. -1 = default, " +
+        "0 = no MA and fast decode, 50 = default value, 100 = all, values above "+
+        "100 are also permitted. Higher values use more encoder memory. ")]
+        ModularMaTreeLearningPercent = 28,
+        /// <summary>
+        /// Number of extra (previous-channel) MA tree properties to use. -1 =
+        /// default, 0-11 = valid values. Recommended values are in the range 0 to 3,
+        /// or 0 to amount of channels minus 1 (including all extra channels, and
+        /// excluding color channels when using VarDCT mode). Higher value gives slower
+        /// encoding and slower decoding.
+        /// </summary>
+        [Description("Number of extra (previous-channel) MA tree properties to use. -1 = " +
+        "default, 0-11 = valid values. Recommended values are in the range 0 to 3, "+
+        "or 0 to amount of channels minus 1 (including all extra channels, and "+
+        "excluding color channels when using VarDCT mode). Higher value gives slower "+
+        "encoding and slower decoding. ")]
+        ModularNbPrevChannels = 29,
+        /// <summary>
+        /// Enable or disable CFL (chroma-from-luma) for lossless JPEG recompression.
+        /// -1 = default, 0 = disable CFL, 1 = enable CFL.
+        /// </summary>
+        [Description("Enable or disable CFL (chroma-from-luma) for lossless JPEG recompression." +
+        " -1 = default, 0 = disable CFL, 1 = enable CFL.")]
+        JpegReconChromaFromLuma = 30,
+        /// <summary>
+        /// Prepare the frame for indexing in the frame index box.
+        /// 0 = ignore this frame (same as not setting a value),
+        /// 1 = index this frame within the Frame Index Box.
+        /// If any frames are indexed, the first frame needs to
+        /// be indexed, too. If the first frame is not indexed, and
+        /// a later frame is attempted to be indexed, JXL_ENC_ERROR will occur.
+        /// If non-keyframes, i.e., frames with cropping, blending or patches are
+        /// attempted to be indexed, JXL_ENC_ERROR will occur.
+        /// </summary>
+        [Description("Prepare the frame for indexing in the frame index box." +
+        " 0 = ignore this frame (same as not setting a value),"+
+        " 1 = index this frame within the Frame Index Box."+
+        " If any frames are indexed, the first frame needs to"+
+        " be indexed, too. If the first frame is not indexed, and"+
+        " a later frame is attempted to be indexed, JXL_ENC_ERROR will occur."+
+        " If non-keyframes, i.e., frames with cropping, blending or patches are"+
+        " attempted to be indexed, JXL_ENC_ERROR will occur.")]
+        FrameIndexBox = 31,
+        /// <summary>
+        /// Sets brotli encode effort for use in JPEG recompression and compressed
+        /// metadata boxes (brob). Can be -1 (default) or 0 (fastest) to 11 (slowest).
+        /// Default is based on the general encode effort in case of JPEG
+        /// recompression, and 4 for brob boxes.
+        /// </summary>
+        [Description("Sets brotli encode effort for use in JPEG recompression and compressed" +
+        " metadata boxes (brob). Can be -1 (default) or 0 (fastest) to 11 (slowest)."+
+        " Default is based on the general encode effort in case of JPEG"+
+        " recompression, and 4 for brob boxes.")]
+        BrotliEffort = 32,
+    }
+
+    /// <summary>
+    /// Extension method for getting the description of the enum value
+    /// </summary>
+    public static class JxlEncoderFrameSettingIdExtensions
+    {
+        /// <summary>
+        /// Returns the description of the enum value
+        /// </summary>
+        /// <param name="settingId">The setting to return the description of</param>
+        /// <returns>The description if one exists, otherwise ""</returns>
+        public static string GetDescription(this JxlEncoderFrameSettingId settingId)
+        {
+            var members = typeof(JxlEncoderFrameSettingId).GetMember(settingId.ToString());
+            if (members == null || members.Length == 0) return "";
+            var member = members[0];
+            var attributes = member.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            if (attributes == null || attributes.Length == 0) return "";
+            var descriptionAttribute = (DescriptionAttribute)attributes[0];
+            return descriptionAttribute.Description;
+        }
     }
 }

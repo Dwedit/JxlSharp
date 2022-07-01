@@ -17,7 +17,7 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="pixelFormat">The GDI+ pixel format</param>
 		/// <returns>The number of bytes per pixel for that pixel format</returns>
-		private static int GetBytesPerPixel(PixelFormat pixelFormat)
+		internal static int GetBytesPerPixel(PixelFormat pixelFormat)
 		{
 			switch (pixelFormat)
 			{
@@ -244,7 +244,7 @@ namespace JxlSharp
 		}
 
 		/// <summary>
-		/// Loads a JXL file into a locked image buffer  (SRGB or grayscale only, Image dimensions must match the file)
+		/// Loads a JXL file into a locked image buffer  (SRGB or grayscale only, Image dimensions and alpha channel must match the file)
 		/// </summary>
 		/// <param name="data">The byte data for the JXL file</param>
 		/// <param name="width">Width of the buffer (must match the file)</param>
@@ -322,21 +322,6 @@ namespace JxlSharp
 					}
 				}
 			}
-
-
-
-			//pixelFormat.Align = bitmapData.Stride;
-			//var status = jxlDecoder.SetImageOutBuffer(pixelFormat, bitmapData.Scan0, bitmapData.Stride * bitmapData.Height);
-			//if (status != JxlDecoderStatus.Success)
-			//{
-			//	throw new Exception();
-			//}
-			//status = jxlDecoder.ProcessInput();
-			//if (status > JxlDecoderStatus.Success && status < JxlDecoderStatus.BasicInfo)
-			//{
-			//	throw new Exception();
-			//}
-
 		}
 
 		/// <summary>
@@ -344,7 +329,7 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="basicInfo">A JxlBasicInfo object describing the image</param>
 		/// <returns>Either PixelFormat.Format32bppArgb, PixelFormat.Format24bppRgb, or PixelFormat.Format8bppIndexed</returns>
-		public static PixelFormat GetPixelFormat(JxlBasicInfo basicInfo)
+		public static PixelFormat SuggestPixelFormat(JxlBasicInfo basicInfo)
 		{
 			bool isColor = basicInfo.NumColorChannels > 1;
 			bool hasAlpha = basicInfo.AlphaBits > 0;
@@ -375,7 +360,7 @@ namespace JxlSharp
 		}
 		private static Bitmap CreateBlankBitmap(JxlBasicInfo basicInfo)
 		{
-			PixelFormat bitmapPixelFormat = GetPixelFormat(basicInfo);
+			PixelFormat bitmapPixelFormat = SuggestPixelFormat(basicInfo);
 			Bitmap bitmap = new Bitmap(basicInfo.Width, basicInfo.Height, bitmapPixelFormat);
 			return bitmap;
 		}
@@ -402,119 +387,6 @@ namespace JxlSharp
 				return null;
 			}
 			return bitmap;
-
-
-			
-			
-			
-			//Bitmap bitmap = null;
-			//JxlBasicInfo basicInfo = null;
-			//using (var jxlDecoder = new JxlDecoder())
-			//{
-			//	jxlDecoder.SetInput(data);
-			//	jxlDecoder.SubscribeEvents(JxlDecoderStatus.BasicInfo | JxlDecoderStatus.Frame | JxlDecoderStatus.FullImage);
-			//	while (true)
-			//	{
-			//		var status = jxlDecoder.ProcessInput();
-			//		if (status == JxlDecoderStatus.BasicInfo)
-			//		{
-			//			status = jxlDecoder.GetBasicInfo(out basicInfo);
-			//		}
-			//		else if (status == JxlDecoderStatus.Frame)
-			//		{
-			//			PixelFormat bitmapPixelFormat = PixelFormat.Format32bppArgb;
-			//			JxlPixelFormat pixelFormat = new JxlPixelFormat();
-			//			pixelFormat.DataType = JxlDataType.UInt8;
-			//			pixelFormat.Endianness = JxlEndianness.NativeEndian;
-			//			bool isColor = basicInfo.NumColorChannels > 1;
-			//			bool hasAlpha = basicInfo.AlphaBits > 0;
-			//			if (isColor)
-			//			{
-			//				if (hasAlpha)
-			//				{
-			//					bitmapPixelFormat = PixelFormat.Format32bppArgb;
-			//					pixelFormat.NumChannels = 4;
-			//				}
-			//				else
-			//				{
-			//					bitmapPixelFormat = PixelFormat.Format24bppRgb;
-			//					pixelFormat.NumChannels = 3;
-			//				}
-			//			}
-			//			else
-			//			{
-			//				if (hasAlpha)
-			//				{
-			//					bitmapPixelFormat = PixelFormat.Format32bppArgb;
-			//					pixelFormat.NumChannels = 4;
-			//				}
-			//				else
-			//				{
-			//					bitmapPixelFormat = PixelFormat.Format8bppIndexed;
-			//					pixelFormat.NumChannels = 1;
-			//				}
-			//			}
-
-			//			bitmap = new Bitmap(basicInfo.Width, basicInfo.Height, bitmapPixelFormat);
-			//			var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, bitmap.PixelFormat);
-			//			if (bitmapData.Stride < 0)
-			//			{
-			//				throw new NotSupportedException("Stride can not be negative");
-			//			}
-			//			try
-			//			{
-			//				pixelFormat.Align = bitmapData.Stride;
-			//				status = jxlDecoder.SetImageOutBuffer(pixelFormat, bitmapData.Scan0, bitmapData.Stride * bitmapData.Height);
-			//				if (status != JxlDecoderStatus.Success)
-			//				{
-			//					throw new Exception();
-			//				}
-			//				status = jxlDecoder.ProcessInput();
-			//				if (status > JxlDecoderStatus.Success && status < JxlDecoderStatus.BasicInfo)
-			//				{
-			//					throw new Exception();
-			//				}
-			//			}
-			//			finally
-			//			{
-			//				if (bitmap != null)
-			//				{
-			//					bitmap.UnlockBits(bitmapData);
-			//				}
-			//			}
-			//		}
-			//		else if (status == JxlDecoderStatus.FullImage)
-			//		{
-			//			0.GetHashCode();
-			//		}
-			//		else if (status == JxlDecoderStatus.Success)
-			//		{
-			//			if (bitmap != null)
-			//			{
-			//				if (bitmap.PixelFormat == PixelFormat.Format8bppIndexed)
-			//				{
-			//					SetGrayscalePalette(bitmap);
-			//				}
-			//				else
-			//				{
-			//					BgrSwap(bitmap);
-			//				}
-			//			}
-			//			return bitmap;
-			//			//break;
-			//		}
-			//		else if (status > JxlDecoderStatus.Success && status < JxlDecoderStatus.BasicInfo)
-			//		{
-			//			if (bitmap != null)
-			//			{
-			//				bitmap.Dispose();
-			//				bitmap = null;
-			//			}
-			//			return null;
-			//			//break;
-			//		}
-			//	}
-			//}
 		}
 
 		/// <summary>
@@ -522,7 +394,7 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="jxlBytes">File bytes for the JXL file</param>
 		/// <returns>The resulting JPEG bytes on success, otherwise returns null</returns>
-		public static byte[] TranscodeToJpeg(byte[] jxlBytes)
+		public static byte[] TranscodeJxlToJpeg(byte[] jxlBytes)
 		{
 			byte[] buffer = new byte[0];
 			int outputPosition = 0;
@@ -592,6 +464,218 @@ namespace JxlSharp
 						return null;
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Transcodes a JPEG file to a JXL file
+		/// </summary>
+		/// <param name="jpegBytes">File bytes for the JPEG file</param>
+		/// <returns>The resulting JXL bytes on success, otherwise returns null</returns>
+		public static byte[] TranscodeJpegToJxl(byte[] jpegBytes)
+		{
+			MemoryStream ms = new MemoryStream();
+			JxlEncoderStatus status;
+			using (var encoder = new JxlEncoder(ms))
+			{
+				status = encoder.StoreJPEGMetadata(true);
+				var frameSettings = encoder.CreateFrameSettings();
+				status = frameSettings.AddJPEGFrame(jpegBytes);
+				encoder.CloseFrames();
+				encoder.CloseInput();
+				status = encoder.ProcessOutput();
+				if (status == JxlEncoderStatus.Success)
+				{
+					return ms.ToArray();
+				}
+				return null;
+			}
+		}
+
+		private static void CreateBasicInfo(Bitmap bitmap, out JxlBasicInfo basicInfo, out JxlPixelFormat pixelFormat, out JxlColorEncoding colorEncoding)
+		{
+			basicInfo = new JxlBasicInfo();
+			pixelFormat = new JxlPixelFormat();
+			pixelFormat.DataType = JxlDataType.UInt8;
+			pixelFormat.Endianness = JxlEndianness.NativeEndian;
+			if (bitmap.PixelFormat == PixelFormat.Format32bppArgb || bitmap.PixelFormat == PixelFormat.Format32bppPArgb)
+			{
+				basicInfo.AlphaBits = 8;
+				basicInfo.NumColorChannels = 3;
+				basicInfo.NumExtraChannels = 1;
+				if (bitmap.PixelFormat == PixelFormat.Format32bppPArgb)
+				{
+					basicInfo.AlphaPremultiplied = true;
+				}
+				pixelFormat.NumChannels = 4;
+			}
+			else if (bitmap.PixelFormat == PixelFormat.Format8bppIndexed)
+			{
+				basicInfo.NumColorChannels = 1;
+				pixelFormat.NumChannels = 1;
+			}
+			else
+			{
+				basicInfo.NumColorChannels = 3;
+				pixelFormat.NumChannels = 3;
+			}
+			basicInfo.BitsPerSample = 8;
+			basicInfo.IntrinsicWidth = bitmap.Width;
+			basicInfo.IntrinsicHeight = bitmap.Height;
+			basicInfo.Width = bitmap.Width;
+			basicInfo.Height = bitmap.Height;
+			colorEncoding = new JxlColorEncoding();
+			bool isGray = basicInfo.NumColorChannels == 1;
+			colorEncoding.SetToSRGB(isGray);
+
+		}
+
+		/// <summary>
+		/// Returns an RGB/RGBA byte array with Blue and Red swapped
+		/// </summary>
+		/// <param name="bitmap">The bitmap to return a copy of</param>
+		/// <param name="hasAlpha">True to include an alpha channel</param>
+		/// <returns>The image converted to an array (with blue and red swapped)</returns>
+		private static byte[] CopyBitmapAndBgrSwap(Bitmap bitmap, bool hasAlpha)
+		{
+			if (hasAlpha)
+			{
+				byte[] newBytes = new byte[bitmap.Width * bitmap.Height * 4];
+				BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+				try
+				{
+					unsafe
+					{
+						fixed (byte* pBytes = newBytes)
+						{
+							for (int y = 0; y < bitmap.Height; y++)
+							{
+								byte* src = (byte*)bitmapData.Scan0 + bitmapData.Stride * y;
+								byte* dest = pBytes + bitmap.Width * 4 * y;
+								for (int x = 0; x < bitmap.Width; x++)
+								{
+									dest[0] = src[2];
+									dest[1] = src[1];
+									dest[2] = src[0];
+									dest[3] = src[3];
+									dest += 4;
+									src += 4;
+								}
+							}
+						}
+					}
+				}
+				finally
+				{
+					bitmap.UnlockBits(bitmapData);
+				}
+				return newBytes;
+			}
+			else
+			{
+				byte[] newBytes = new byte[bitmap.Width * bitmap.Height * 3];
+				BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+				try
+				{
+					unsafe
+					{
+						fixed (byte* pBytes = newBytes)
+						{
+							for (int y = 0; y < bitmap.Height; y++)
+							{
+								byte* src = (byte*)bitmapData.Scan0 + bitmapData.Stride * y;
+								byte* dest = pBytes + bitmap.Width * 3 * y;
+								for (int x = 0; x < bitmap.Width; x++)
+								{
+									dest[0] = src[2];
+									dest[1] = src[1];
+									dest[2] = src[0];
+									dest += 3;
+									src += 3;
+								}
+							}
+						}
+					}
+				}
+				finally
+				{
+					bitmap.UnlockBits(bitmapData);
+				}
+				return newBytes;
+			}
+		}
+
+
+		/// <summary>
+		/// Encodes a JXL file losslessly
+		/// </summary>
+		/// <param name="bitmap">The bitmap to save</param>
+		/// <returns>The JXL file bytes</returns>
+		public static byte[] EncodeJxlLossless(Bitmap bitmap)
+		{
+			JxlEncoderStatus status;
+			MemoryStream ms = new MemoryStream();
+			using (var encoder = new JxlEncoder(ms))
+			{
+				JxlBasicInfo basicInfo;
+				JxlPixelFormat pixelFormat;
+				JxlColorEncoding colorEncoding;
+				CreateBasicInfo(bitmap, out basicInfo, out pixelFormat, out colorEncoding);
+				bool hasAlpha = basicInfo.AlphaBits > 0;
+				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
+				status = encoder.SetBasicInfo(basicInfo);
+				status = encoder.SetColorEncoding(colorEncoding);
+				var frameSettings = encoder.CreateFrameSettings();
+				status = frameSettings.SetFrameLossless(true);
+				status = frameSettings.AddImageFrame(pixelFormat, bitmapCopy);
+				encoder.CloseFrames();
+				encoder.CloseInput();
+				status = encoder.ProcessOutput();
+				byte[] bytes;
+				if (status == JxlEncoderStatus.Success)
+				{
+					bytes = ms.ToArray();
+				}
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Encodes a JXL file using the settings provided
+		/// </summary>
+		/// <param name="bitmap">The bitmap to save</param>
+		/// <param name="settings">The settings to save the image with</param>
+		/// <returns>The JXL file, or null on failure</returns>
+		public static byte[] EncodeJxl(Bitmap bitmap, IEnumerable<KeyValuePair<JxlEncoderFrameSettingId, int>> settings)
+		{
+			JxlEncoderStatus status;
+			MemoryStream ms = new MemoryStream();
+			using (var encoder = new JxlEncoder(ms))
+			{
+				JxlBasicInfo basicInfo;
+				JxlPixelFormat pixelFormat;
+				JxlColorEncoding colorEncoding;
+				CreateBasicInfo(bitmap, out basicInfo, out pixelFormat, out colorEncoding);
+				bool hasAlpha = basicInfo.AlphaBits > 0;
+				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
+				status = encoder.SetBasicInfo(basicInfo);
+				status = encoder.SetColorEncoding(colorEncoding);
+				var frameSettings = encoder.CreateFrameSettings();
+				foreach (var pair in settings)
+				{
+					frameSettings.FrameSettingsSetOption(pair.Key, pair.Value);
+				}
+				status = frameSettings.AddImageFrame(pixelFormat, bitmapCopy);
+				encoder.CloseFrames();
+				encoder.CloseInput();
+				status = encoder.ProcessOutput();
+
+				byte[] bytes = null;
+				if (status == JxlEncoderStatus.Success)
+				{
+					bytes = ms.ToArray();
+				}
+				return bytes;
 			}
 		}
 	}
