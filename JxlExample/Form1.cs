@@ -15,6 +15,7 @@ namespace JxlExample
 	public partial class Form1 : Form
 	{
 		string loadedFileName = "";
+		Dictionary<JxlEncoderFrameSettingId, int> jxlSettings = new Dictionary<JxlEncoderFrameSettingId, int>();
 
 		public Form1()
 		{
@@ -163,21 +164,28 @@ namespace JxlExample
 			{
 				Bitmap bitmap = (Bitmap)this.pictureBox1.Image;
 				string ext = Path.GetExtension(fileName).ToLowerInvariant();
-				if (ext == ".jxl")
-				{
-					MessageBox.Show("Writing JXL files is not yet implemented.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-					//byte[] jxlData = JXL.SaveImage(bitmap);
-					//if (jxlData != null)
-					//{
-					//	File.WriteAllBytes(fileName, jxlData);
-					//}
-				}
 				string sourceExt = Path.GetExtension(loadedFileName);
+				if (ext == ".jxl" && sourceExt == ".jpg")
+				{
+					byte[] jpegBytes = File.ReadAllBytes(loadedFileName);
+					byte[] jxlBytes = JXL.TranscodeJpegToJxl(jpegBytes);
+					if (jxlBytes != null)
+					{
+						File.WriteAllBytes(fileName, jxlBytes);
+						this.loadedFileName = fileName;
+						MessageBox.Show("JXL file saved using JPEG reconstruction data.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						return;
+					}
+					else
+					{
+						MessageBox.Show("Failed to save JXL file.", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
+					}
+				}
 				if (sourceExt == ".jxl" && ext == ".jpg")
 				{
 					byte[] jxlBytes = File.ReadAllBytes(loadedFileName);
-					byte[] jpegBytes = JXL.TranscodeToJpeg(jxlBytes);
+					byte[] jpegBytes = JXL.TranscodeJxlToJpeg(jxlBytes);
 					if (jpegBytes != null)
 					{
 						File.WriteAllBytes(fileName, jpegBytes);
@@ -190,7 +198,33 @@ namespace JxlExample
 						MessageBox.Show("This JXL file does not contain JPEG reconstruction data.", "Note", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
 				}
+				if (ext == ".jxl")
+				{
+					using (var encoderOptionsForm = new EncoderOptionsForm(this.jxlSettings))
+					{
+						var dialogResult =  encoderOptionsForm.ShowDialog();
+						if (dialogResult == DialogResult.Cancel)
+						{
+							return;
+						}
+					}
+					byte[] jxlData = JXL.EncodeJxl(bitmap, this.jxlSettings);
+					if (jxlData != null)
+					{
+						File.WriteAllBytes(fileName, jxlData);
+						this.loadedFileName = fileName;
+						MessageBox.Show("JXL file was saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						return;
+					}
+					else
+					{
+						MessageBox.Show("Failed to save JXL file.", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						return;
+					}
+				}
 				bitmap.Save(fileName);
+				this.loadedFileName = fileName;
+				MessageBox.Show("Image was saved.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 

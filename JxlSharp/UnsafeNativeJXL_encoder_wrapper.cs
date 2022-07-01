@@ -209,9 +209,9 @@ namespace JxlSharp
 			/// requires more JxlEncoderProcessOutput calls to continue.
 			/// <br /><br />
 			/// This encodes the frames and/or boxes added so far. If the last frame or last
-			/// box has been added, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" />, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" />
-			/// and/or <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must be called before the next
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" /> call, or the codestream won't be encoded
+			/// box has been added, <see cref="JxlEncoderCloseInput(JxlEncoder*)" />, <see cref="JxlEncoderCloseFrames(JxlEncoder*)" />
+			/// and/or <see cref="JxlEncoderCloseBoxes(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call, or the codestream won't be encoded
 			/// correctly.
 			/// </summary>
 			/// <param name="next_out"> pointer to next bytes to write to.</param>
@@ -238,9 +238,9 @@ namespace JxlSharp
 			/// requires more JxlEncoderProcessOutput calls to continue.
 			/// <br /><br />
 			/// This encodes the frames and/or boxes added so far. If the last frame or last
-			/// box has been added, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" />, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" />
-			/// and/or <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must be called before the next
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" /> call, or the codestream won't be encoded
+			/// box has been added, <see cref="JxlEncoderCloseInput(JxlEncoder*)" />, <see cref="JxlEncoderCloseFrames(JxlEncoder*)" />
+			/// and/or <see cref="JxlEncoderCloseBoxes(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call, or the codestream won't be encoded
 			/// correctly.
 			/// </summary>
 			/// <returns> JXL_ENC_SUCCESS when encoding finished and all events handled.</returns>
@@ -276,7 +276,7 @@ namespace JxlSharp
 
 			/// <summary>
 			/// Adds a metadata box to the file format. JxlEncoderProcessOutput must be used
-			/// to effectively write the box to the output. <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderUseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must
+			/// to effectively write the box to the output. <see cref="JxlEncoderUseBoxes(JxlEncoder*)" /> must
 			/// be enabled before using this function.
 			/// <br /><br />
 			/// Boxes allow inserting application-specific data and metadata (Exif, XML/XMP,
@@ -335,7 +335,6 @@ namespace JxlSharp
 			/// <param name="contents"> the full contents of the box, for example EXIF
 			/// data. ISO BMFF box header must not be included, only the contents. Owned by
 			/// the caller and its contents are copied internally.</param>
-			/// <param name="size"> size of the box contents.</param>
 			/// <param name="compressBox"> Whether to compress this box as a "brob" box. Requires
 			/// Brotli support.</param>
 			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error, such as when
@@ -370,8 +369,8 @@ namespace JxlSharp
 
 			/// <summary>
 			/// Indicates the intention to add metadata boxes. This allows 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddBox(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte*,System.Byte*,System.UIntPtr,System.Int32)" /> to be used. When using this function, then it is required
-			/// to use <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> at the end.
+			/// <see cref="JxlEncoderAddBox(JxlEncoder*,byte*,byte*,UIntPtr,System.Int32)" /> to be used. When using this function, then it is required
+			/// to use <see cref="JxlEncoderCloseBoxes(JxlEncoder*)" /> at the end.
 			/// <br /><br />
 			/// By default the encoder assumes no metadata boxes will be added.
 			/// <br /><br />
@@ -384,17 +383,17 @@ namespace JxlSharp
 			}
 
 			/// <summary>
-			/// Declares that no further boxes will be added with <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddBox(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte*,System.Byte*,System.UIntPtr,System.Int32)" />.
+			/// Declares that no further boxes will be added with <see cref="JxlEncoderAddBox(JxlEncoder*,byte*,byte*,UIntPtr,System.Int32)" />.
 			/// This function must be called after the last box is added so the encoder knows
 			/// the stream will be finished. It is not necessary to use this function if
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderUseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> is not used. Further frames may still be added.
+			/// <see cref="JxlEncoderUseBoxes(JxlEncoder*)" /> is not used. Further frames may still be added.
 			/// <br /><br />
 			/// Must be called between JxlEncoderAddBox of the last box
-			/// and the next call to JxlEncoderProcessOutput, or <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" />
+			/// and the next call to JxlEncoderProcessOutput, or <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" />
 			/// won't output the last box correctly.
 			/// <br /><br />
 			/// NOTE: if you don't need to close frames and boxes at separate times, you can
-			/// use <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> instead to close both at once.
+			/// use <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> instead to close both at once.
 			/// </summary>
 			public void CloseBoxes()
 			{
@@ -403,14 +402,14 @@ namespace JxlSharp
 			}
 
 			/// <summary>
-			/// Declares that no frames will be added and <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddImageFrame(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlPixelFormat*,System.Void*,System.UIntPtr)" /> and
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddJPEGFrame(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,System.Byte*,System.UIntPtr)" /> won't be called anymore. Further metadata boxes
-			/// may still be added. This function or <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must be called
+			/// Declares that no frames will be added and <see cref="JxlEncoderAddImageFrame(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr)" /> and
+			/// <see cref="JxlEncoderAddJPEGFrame(JxlEncoderFrameSettings*,byte*,UIntPtr)" /> won't be called anymore. Further metadata boxes
+			/// may still be added. This function or <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> must be called
 			/// after adding the last frame and the next call to
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" />, or the frame won't be properly marked as last.
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" />, or the frame won't be properly marked as last.
 			/// <br /><br />
 			/// NOTE: if you don't need to close frames and boxes at separate times, you can
-			/// use <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> instead to close both at once.
+			/// use <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> instead to close both at once.
 			/// </summary>
 			public void CloseFrames()
 			{
@@ -421,13 +420,13 @@ namespace JxlSharp
 			/// <summary>
 			/// Closes any input to the encoder, equivalent to calling JxlEncoderCloseFrames
 			/// as well as calling JxlEncoderCloseBoxes if needed. No further input of any
-			/// kind may be given to the encoder, but further <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" />
+			/// kind may be given to the encoder, but further <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" />
 			/// calls should be done to create the final output.
 			/// <br /><br />
-			/// The requirements of both <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> and 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> apply to this function. Either this function or the
+			/// The requirements of both <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> and 
+			/// <see cref="JxlEncoderCloseBoxes(JxlEncoder*)" /> apply to this function. Either this function or the
 			/// other two must be called after the final frame and/or box, and the next
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" /> call, or the codestream won't be encoded
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call, or the codestream won't be encoded
 			/// correctly.
 			/// </summary>
 			public void CloseInput()
@@ -439,7 +438,7 @@ namespace JxlSharp
 			/// <summary>
 			/// Sets the original color encoding of the image encoded by this encoder. This
 			/// is an alternative to JxlEncoderSetICCProfile and only one of these two must
-			/// be used. This one sets the color encoding as a <see cref="T:JxlSharp.UnsafeNativeJxl.JxlColorEncoding" />, while
+			/// be used. This one sets the color encoding as a <see cref="JxlColorEncoding" />, while
 			/// the other sets it as ICC binary data.
 			/// Must be called after JxlEncoderSetBasicInfo.
 			/// </summary>
@@ -460,7 +459,7 @@ namespace JxlSharp
 			/// Sets the original color encoding of the image encoded by this encoder as an
 			/// ICC color profile. This is an alternative to JxlEncoderSetColorEncoding and
 			/// only one of these two must be used. This one sets the color encoding as ICC
-			/// binary data, while the other defines it as a <see cref="T:JxlSharp.UnsafeNativeJxl.JxlColorEncoding" />.
+			/// binary data, while the other defines it as a <see cref="JxlColorEncoding" />.
 			/// Must be called after JxlEncoderSetBasicInfo.
 			/// </summary>
 			/// <param name="icc_profile"> bytes of the original ICC profile</param>
@@ -479,8 +478,8 @@ namespace JxlSharp
 			/// Sets the global metadata of the image encoded by this encoder.
 			/// <br /><br />
 			/// If the JxlBasicInfo contains information of extra channels beyond an alpha
-			/// channel, then <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetExtraChannelInfo(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.UIntPtr,JxlSharp.UnsafeNativeJxl.JxlExtraChannelInfo*)" /> must be called between
-			/// JxlEncoderSetBasicInfo and <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddImageFrame(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlPixelFormat*,System.Void*,System.UIntPtr)" />. In order to indicate
+			/// channel, then <see cref="JxlEncoderSetExtraChannelInfo(JxlEncoder*,UIntPtr,JxlExtraChannelInfo*)" /> must be called between
+			/// JxlEncoderSetBasicInfo and <see cref="JxlEncoderAddImageFrame(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr)" />. In order to indicate
 			/// extra channels, the value of `info.num_extra_channels` should be set to the
 			/// number of extra channels, also counting the alpha channel if present.
 			/// </summary>
@@ -537,8 +536,8 @@ namespace JxlSharp
 			/// Forces the encoder to use the box-based container format (BMFF) even
 			/// when not necessary.
 			/// <br /><br />
-			/// When using <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderUseBoxes(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" />, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderStoreJPEGMetadata(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Int32)" /> or 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetCodestreamLevel(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Int32)" /> with level 10, the encoder will automatically
+			/// When using <see cref="JxlEncoderUseBoxes(JxlEncoder*)" />, <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> or 
+			/// <see cref="JxlEncoderSetCodestreamLevel(JxlEncoder*,System.Int32)" /> with level 10, the encoder will automatically
 			/// also use the container format, it is not necessary to use
 			/// JxlEncoderUseContainer for those use cases.
 			/// <br /><br />
@@ -595,9 +594,9 @@ namespace JxlSharp
 			/// <br /><br />
 			/// The default value is -1. This means the encoder will automatically choose
 			/// between level 5 and level 10 based on what information is inside the 
-			/// <see cref="T:JxlSharp.UnsafeNativeJxl.JxlBasicInfo" /> structure. Do note that some level 10 features, particularly
+			/// <see cref="JxlBasicInfo" /> structure. Do note that some level 10 features, particularly
 			/// those used by animated JPEG XL codestreams, might require level 10, even
-			/// though the <see cref="T:JxlSharp.UnsafeNativeJxl.JxlBasicInfo" /> only suggests level 5. In this case, the level
+			/// though the <see cref="JxlBasicInfo" /> only suggests level 5. In this case, the level
 			/// must be explicitly set to 10, otherwise the encoder will return an error.
 			/// The encoder will restrict public encoding choices to those compatible with
 			/// the level setting.
@@ -641,7 +640,7 @@ namespace JxlSharp
 			/// Create a new set of encoder options <br/>
 			/// The returned object is tied to the encoder and it will be
 			/// deallocated by the encoder when JxlEncoderDestroy() is called. For functions
-			/// taking both a <see cref="T:JxlSharp.UnsafeNativeJxl.JxlEncoder" /> and a <see cref="T:JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings" />, only
+			/// taking both a <see cref="JxlEncoder" /> and a <see cref="JxlEncoderFrameSettings" />, only
 			/// JxlEncoderFrameSettings created with this function for the same encoder
 			/// instance can be used.
 			/// </summary>
@@ -657,7 +656,7 @@ namespace JxlSharp
 			/// <br /><br />
 			/// The returned pointer is an opaque struct tied to the encoder and it will be
 			/// deallocated by the encoder when JxlEncoderDestroy() is called. For functions
-			/// taking both a <see cref="T:JxlSharp.UnsafeNativeJxl.JxlEncoder" /> and a <see cref="T:JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings" />, only
+			/// taking both a <see cref="JxlEncoder" /> and a <see cref="JxlEncoderFrameSettings" />, only
 			/// JxlEncoderFrameSettings created with this function for the same encoder
 			/// instance can be used.
 			/// </summary>
@@ -753,19 +752,19 @@ namespace JxlSharp
 			/// to true in the basic info, then this function should be used to set the
 			/// time duration of this individual frame. By default individual frames have a
 			/// time duration of 0, making them form a composite still. See 
-			/// <see cref="T:JxlSharp.UnsafeNativeJxl.JxlFrameHeader" /> for more information.
+			/// <see cref="JxlFrameHeader" /> for more information.
 			/// <br /><br />
 			/// This information is stored in the JxlEncoderFrameSettings and so is used for
 			/// any frame encoded with these JxlEncoderFrameSettings. It is ok to change
-			/// between <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddImageFrame(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlPixelFormat*,System.Void*,System.UIntPtr)" /> calls, each added image frame will have
+			/// between <see cref="JxlEncoderAddImageFrame(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr)" /> calls, each added image frame will have
 			/// the frame header that was set in the options at the time of calling
 			/// JxlEncoderAddImageFrame.
 			/// <br /><br />
 			/// The is_last and name_length fields of the JxlFrameHeader are ignored, use
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> to indicate last frame, and 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameName(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,System.Byte*)" /> to indicate the name and its length instead.
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> to indicate last frame, and 
+			/// <see cref="JxlEncoderSetFrameName(JxlEncoderFrameSettings*,byte*)" /> to indicate the name and its length instead.
 			/// Calling this function will clear any name that was previously set with 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameName(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,System.Byte*)" />.
+			/// <see cref="JxlEncoderSetFrameName(JxlEncoderFrameSettings*,byte*)" />.
 			/// </summary>
 			/// <param name="frame_header"> frame header data to set. Object owned by the caller and
 			/// does not need to be kept in memory, its information is copied internally.</param>
@@ -782,7 +781,7 @@ namespace JxlSharp
 			/// <summary>
 			/// Sets blend info of an extra channel. The blend info of extra channels is set
 			/// separately from that of the color channels, the color channels are set with
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameHeader(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlFrameHeader*)" />.
+			/// <see cref="JxlEncoderSetFrameHeader(JxlEncoderFrameSettings*,JxlFrameHeader*)" />.
 			/// </summary>
 			/// <param name="index"> index of the extra channel to use.</param>
 			/// <param name="blend_info"> blend info to set for the extra channel</param>
@@ -799,14 +798,14 @@ namespace JxlSharp
 			/// <summary>
 			/// Sets the name of the animation frame. This function is optional, frames are
 			/// not required to have a name. This setting is a part of the frame header, and
-			/// the same principles as for <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameHeader(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlFrameHeader*)" /> apply. The
+			/// the same principles as for <see cref="JxlEncoderSetFrameHeader(JxlEncoderFrameSettings*,JxlFrameHeader*)" /> apply. The
 			/// name_length field of JxlFrameHeader is ignored by the encoder, this function
 			/// determines the name length instead as the length in bytes of the C string.
 			/// <br /><br />
 			/// The maximum possible name length is 1071 bytes (excluding terminating null
 			/// character).
 			/// <br /><br />
-			/// Calling <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameHeader(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlFrameHeader*)" /> clears any name that was
+			/// Calling <see cref="JxlEncoderSetFrameHeader(JxlEncoderFrameSettings*,JxlFrameHeader*)" /> clears any name that was
 			/// previously set.
 			/// </summary>
 			/// <param name="frame_name"> name of the next frame to be encoded, as a UTF-8 encoded C
@@ -821,14 +820,14 @@ namespace JxlSharp
 			/// <summary>
 			/// Sets the name of the animation frame. This function is optional, frames are
 			/// not required to have a name. This setting is a part of the frame header, and
-			/// the same principles as for <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameHeader(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlFrameHeader*)" /> apply. The
+			/// the same principles as for <see cref="JxlEncoderSetFrameHeader(JxlEncoderFrameSettings*,JxlFrameHeader*)" /> apply. The
 			/// name_length field of JxlFrameHeader is ignored by the encoder, this function
 			/// determines the name length instead as the length in bytes of the C string.
 			/// <br /><br />
 			/// The maximum possible name length is 1071 bytes (excluding terminating null
 			/// character).
 			/// <br /><br />
-			/// Calling <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetFrameHeader(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlFrameHeader*)" /> clears any name that was
+			/// Calling <see cref="JxlEncoderSetFrameHeader(JxlEncoderFrameSettings*,JxlFrameHeader*)" /> clears any name that was
 			/// previously set.
 			/// </summary>
 			/// <param name="frame_name"> name of the next frame to be encoded, as a UTF-8 encoded C
@@ -857,12 +856,12 @@ namespace JxlSharp
 			/// parameters of the added JPEG frame.
 			/// <br /><br />
 			/// If the encoder is set to store JPEG reconstruction metadata using 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderStoreJPEGMetadata(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
+			/// <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
 			/// possible to losslessly reconstruct the JPEG codestream.
 			/// <br /><br />
-			/// If this is the last frame, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> or 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must be called before the next
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" /> call.
+			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
 			/// </summary>
 			/// <param name="buffer"> bytes to read JPEG from. Owned by the caller and its contents
 			/// are copied internally.</param>
@@ -886,12 +885,12 @@ namespace JxlSharp
 			/// parameters of the added JPEG frame.
 			/// <br /><br />
 			/// If the encoder is set to store JPEG reconstruction metadata using 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderStoreJPEGMetadata(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
+			/// <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
 			/// possible to losslessly reconstruct the JPEG codestream.
 			/// <br /><br />
-			/// If this is the last frame, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> or 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must be called before the next
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" /> call.
+			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
 			/// </summary>
 			/// <param name="buffer"> bytes to read JPEG from. Owned by the caller and its contents
 			/// are copied internally.</param>
@@ -934,7 +933,7 @@ namespace JxlSharp
 			/// - trichromatic + alpha
 			/// <br /><br />
 			/// Extra channels not handled here need to be set by 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetExtraChannelBuffer(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlPixelFormat*,System.Void*,System.UIntPtr,System.UInt32)" />.
+			/// <see cref="JxlEncoderSetExtraChannelBuffer(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr,System.UInt32)" />.
 			/// If the image has alpha, and alpha is not passed here, it will implicitly be
 			/// set to all-opaque (an alpha value of 1.0 everywhere).
 			/// <br /><br />
@@ -949,9 +948,9 @@ namespace JxlSharp
 			/// uses_original_profile=false case. They are however not allowed to be NaN or
 			/// +-infinity.
 			/// <br /><br />
-			/// If this is the last frame, <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseInput(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> or 
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderCloseFrames(JxlSharp.UnsafeNativeJxl.JxlEncoder*)" /> must be called before the next
-			/// <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderProcessOutput(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.Byte**,System.UIntPtr*)" /> call.
+			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
 			/// </summary>
 			/// <param name="pixel_format"> format for pixels. Object owned by the caller and its
 			/// contents are copied internally.</param>
@@ -972,13 +971,13 @@ namespace JxlSharp
 			/// <summary>
 			/// Sets the buffer to read pixels from for an extra channel at a given index.
 			/// The index must be smaller than the num_extra_channels in the associated
-			/// JxlBasicInfo. Must call <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderSetExtraChannelInfo(JxlSharp.UnsafeNativeJxl.JxlEncoder*,System.UIntPtr,JxlSharp.UnsafeNativeJxl.JxlExtraChannelInfo*)" /> before
+			/// JxlBasicInfo. Must call <see cref="JxlEncoderSetExtraChannelInfo(JxlEncoder*,UIntPtr,JxlExtraChannelInfo*)" /> before
 			/// JxlEncoderSetExtraChannelBuffer.
 			/// <br /><br />
 			/// TODO(firsching): mention what data types in pixel formats are supported.
 			/// <br /><br />
 			/// It is required to call this function for every extra channel, except for the
-			/// alpha channel if that was already set through <see cref="M:JxlSharp.UnsafeNativeJxl.JxlEncoderAddImageFrame(JxlSharp.UnsafeNativeJxl.JxlEncoderFrameSettings*,JxlSharp.UnsafeNativeJxl.JxlPixelFormat*,System.Void*,System.UIntPtr)" />.
+			/// alpha channel if that was already set through <see cref="JxlEncoderAddImageFrame(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr)" />.
 			/// </summary>
 			/// <param name="pixel_format"> format for pixels. Object owned by the caller and its
 			/// contents are copied internally. The num_channels value is ignored, since the

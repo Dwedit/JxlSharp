@@ -54,10 +54,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnsafeNativeJxl.cs" />
     <Compile Include="UnsafeNativeJxl_additional_functions.cs" />
-    <Compile Include="UnsafeNativeJxl_constructor.cs" />
+    <Compile Include="UnsafeNativeJxl_static_constructor.cs" />
     <Compile Include="UnsafeNativeJxl_copyfields.cs" />
-    <Compile Include="UnsafeNativeJXL_decoder_wrapper.cs" />
-    <Compile Include="UnsafeNativeJXL_encoder_wrapper.cs" />
+    <Compile Include="UnsafeNativeJxl_decoder_wrapper.cs" />
+    <Compile Include="UnsafeNativeJxl_encoder_wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
