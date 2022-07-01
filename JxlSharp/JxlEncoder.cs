@@ -32,10 +32,9 @@ namespace JxlSharp
 	///				colorEncoding.SetToSRGB(false);
 	///				status = encoder.SetColorEncoding(colorEncoding);
 	///				//Most actions are done with a FrameSettings object
-	///				JxlEncoderFrameSettings frameSettings = encoder.CreateFrameSettings();
-	///				//call frameSettings.FrameSettingsSetOption for encoding settings
-	///				//call frameSettings.JxlEncoderSetFrameDistance to select the lossy quality
-	///				status = frameSettings.AddImageFrame(pixelFormat, bytes);
+	///				//call encoder.FrameSettings.FrameSettingsSetOption for encoding settings
+	///				//call encoder.FrameSettings.JxlEncoderSetFrameDistance to select the lossy quality
+	///				status = encoder.AddImageFrame(encoder.FrameSettings, pixelFormat, bytes);
 	///				//must call CloseFrames and CloseInput to finalize the image, otherwise a truncated (invalid) file will be generated
 	///				encoder.CloseFrames();
 	///				encoder.CloseInput();
