@@ -1167,7 +1167,7 @@ namespace JxlSharp
 		/// interested in (e.g. EXIF or XMP metadata), in order to conditionally set a
 		/// box buffer.
 		/// </summary>
-		/// <param name="type"> buffer to copy the type into</param>
+		/// <param name="boxType"> buffer to copy the type into</param>
 		/// <param name="decompressed"> which box type to get: JXL_FALSE to get the raw box type,
 		/// which can be "brob", JXL_TRUE, get the underlying box type.</param>
 		/// <returns>
@@ -1227,11 +1227,11 @@ namespace JxlSharp
 
 		/// <summary>
 		/// Configures at which progressive steps in frame decoding these 
-		/// <see cref="JxlDecoderStatus.Frame_PROGRESSION" /> event occurs. The default value for the level
+		/// <see cref="JxlDecoderStatus.FrameProgression" /> event occurs. The default value for the level
 		/// of detail if this function is never called is `kDC`.
 		/// </summary>
 		/// <param name="detail"> at which level of detail to trigger 
-		/// <see cref="JxlDecoderStatus.Frame_PROGRESSION" /></param>
+		/// <see cref="JxlDecoderStatus.FrameProgression" /></param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.Success" /> on success, <see cref="JxlDecoderStatus.Error" /> on error, such as
 		/// an invalid value for the progressive detail.</returns>
@@ -1242,7 +1242,7 @@ namespace JxlSharp
 
 		/// <summary>
 		/// Returns the intended downsampling ratio for the progressive frame produced
-		/// by <see cref="FlushImage" /> after the latest <see cref="JxlDecoderStatus.Frame_PROGRESSION" />
+		/// by <see cref="FlushImage" /> after the latest <see cref="JxlDecoderStatus.FrameProgression" />
 		/// event.
 		/// </summary>
 		/// <returns> The intended downsampling ratio, can be 1, 2, 4 or 8.</returns>

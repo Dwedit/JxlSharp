@@ -1594,7 +1594,7 @@ namespace JxlSharp
 		internal unsafe static extern JxlSignature JxlSignatureCheck(byte* buf, UIntPtr len);
 
 		/// <summary>
-		/// Creates an instance of <see cref=JxlDecoder" /> and initializes it.
+		/// Creates an instance of <see cref="JxlDecoder" /> and initializes it.
 		/// <br /><br /><tt>memory_manager</tt> will be used for all the library dynamic allocations made
 		/// from this instance. The parameter may be NULL, in which case the default
 		/// allocator will be used. See jxl/memory_manager.h for details.
@@ -1603,13 +1603,13 @@ namespace JxlSharp
 		/// manager will be copied internally.</param>
 		/// <returns>
 		///     <tt>NULL</tt> if the instance can not be allocated or initialized</returns>
-		/// <returns> pointer to initialized <see cref=JxlDecoder" /> otherwise</returns>
+		/// <returns> pointer to initialized <see cref="JxlDecoder" /> otherwise</returns>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoder* JxlDecoderCreate(JxlMemoryManager* memory_manager);
 
 		/// <summary>
-		/// Re-initializes a <see cref=JxlDecoder" /> instance, so it can be re-used for decoding
+		/// Re-initializes a <see cref="JxlDecoder" /> instance, so it can be re-used for decoding
 		/// another image. All state and settings are reset as if the object was
 		/// newly created with <see cref="JxlDecoderCreate(JxlMemoryManager*)" />, but the memory manager is kept.
 		/// </summary>
@@ -1619,7 +1619,7 @@ namespace JxlSharp
 		internal unsafe static extern void JxlDecoderReset(JxlDecoder* dec);
 
 		/// <summary>
-		/// Deinitializes and frees <see cref=JxlDecoder" /> instance.
+		/// Deinitializes and frees <see cref="JxlDecoder" /> instance.
 		/// </summary>
 		/// <param name="dec"> instance to be cleaned up and deallocated.</param>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -1687,7 +1687,7 @@ namespace JxlSharp
 		/// Requires that the decoder can produce JxlBasicInfo.
 		/// </summary>
 		/// <param name="dec">
-		///     <see cref=JxlDecoder" /> to query when creating the recommended pixel
+		///     <see cref="JxlDecoder" /> to query when creating the recommended pixel
 		/// format.</param>
 		/// <param name="format"> JxlPixelFormat to populate with the recommended settings for
 		/// the data loaded into this decoder.</param>
@@ -1773,7 +1773,7 @@ namespace JxlSharp
 		/// re-oriented according to the image's Orientation setting.
 		/// <br /><br />
 		/// This function must be called at the beginning, before decoding is performed.
-		/// <br /><br /><see cref=JxlBasicInfo" /> for the orientation field, and <see cref=JxlOrientation" /> for the
+		/// <br /><br /><see cref="JxlBasicInfo" /> for the orientation field, and <see cref="JxlOrientation" /> for the
 		/// possible values.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
@@ -2713,7 +2713,7 @@ namespace JxlSharp
 		/// to true in the basic info, then this function should be used to set the
 		/// time duration of this individual frame. By default individual frames have a
 		/// time duration of 0, making them form a composite still. See 
-		/// <see cref=JxlFrameHeader" /> for more information.
+		/// <see cref="JxlFrameHeader" /> for more information.
 		/// <br /><br />
 		/// This information is stored in the JxlEncoderFrameSettings and so is used for
 		/// any frame encoded with these JxlEncoderFrameSettings. It is ok to change
@@ -3026,7 +3026,7 @@ namespace JxlSharp
 		/// <summary>
 		/// Sets the original color encoding of the image encoded by this encoder. This
 		/// is an alternative to JxlEncoderSetICCProfile and only one of these two must
-		/// be used. This one sets the color encoding as a <see cref=JxlColorEncoding" />, while
+		/// be used. This one sets the color encoding as a <see cref="JxlColorEncoding" />, while
 		/// the other sets it as ICC binary data.
 		/// Must be called after JxlEncoderSetBasicInfo.
 		/// </summary>
@@ -3043,7 +3043,7 @@ namespace JxlSharp
 		/// Sets the original color encoding of the image encoded by this encoder as an
 		/// ICC color profile. This is an alternative to JxlEncoderSetColorEncoding and
 		/// only one of these two must be used. This one sets the color encoding as ICC
-		/// binary data, while the other defines it as a <see cref=JxlColorEncoding" />.
+		/// binary data, while the other defines it as a <see cref="JxlColorEncoding" />.
 		/// Must be called after JxlEncoderSetBasicInfo.
 		/// </summary>
 		/// <param name="enc"> encoder object.</param>
@@ -3228,9 +3228,9 @@ namespace JxlSharp
 		/// <br /><br />
 		/// The default value is -1. This means the encoder will automatically choose
 		/// between level 5 and level 10 based on what information is inside the 
-		/// <see cref=JxlBasicInfo" /> structure. Do note that some level 10 features, particularly
+		/// <see cref="JxlBasicInfo" /> structure. Do note that some level 10 features, particularly
 		/// those used by animated JPEG XL codestreams, might require level 10, even
-		/// though the <see cref=JxlBasicInfo" /> only suggests level 5. In this case, the level
+		/// though the <see cref="JxlBasicInfo" /> only suggests level 5. In this case, the level
 		/// must be explicitly set to 10, otherwise the encoder will return an error.
 		/// The encoder will restrict internal encoding choices to those compatible with
 		/// the level setting.
@@ -3356,7 +3356,7 @@ namespace JxlSharp
 		/// <br /><br />
 		/// The returned pointer is an opaque struct tied to the encoder and it will be
 		/// deallocated by the encoder when JxlEncoderDestroy() is called. For functions
-		/// taking both a <see cref=JxlEncoder" /> and a <see cref=JxlEncoderFrameSettings" />, only
+		/// taking both a <see cref="JxlEncoder" /> and a <see cref="JxlEncoderFrameSettings" />, only
 		/// JxlEncoderFrameSettings created with this function for the same encoder
 		/// instance can be used.
 		/// </summary>

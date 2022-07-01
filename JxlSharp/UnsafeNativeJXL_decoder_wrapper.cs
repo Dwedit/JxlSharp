@@ -773,7 +773,6 @@ namespace JxlSharp
 			/// name_length + 1 bytes allocated, gotten from the associated JxlFrameHeader.
 			/// </summary>
 			/// <param name="name"> buffer to copy the name into</param>
-			/// <param name="size"> size of the name buffer in bytes, including zero termination
 			/// character, so this must be at least JxlFrameHeader.name_length + 1.</param>
 			/// <returns>
 			///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
@@ -1285,7 +1284,7 @@ namespace JxlSharp
 			/// interested in (e.g. EXIF or XMP metadata), in order to conditionally set a
 			/// box buffer.
 			/// </summary>
-			/// <param name="type"> buffer to copy the type into</param>
+			/// <param name="boxType"> buffer to copy the type into</param>
 			/// <param name="decompressed"> which box type to get: JXL_FALSE to get the raw box type,
 			/// which can be "brob", JXL_TRUE, get the underlying box type.</param>
 			/// <returns>
