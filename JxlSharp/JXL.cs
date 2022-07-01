@@ -479,8 +479,7 @@ namespace JxlSharp
 			using (var encoder = new JxlEncoder(ms))
 			{
 				status = encoder.StoreJPEGMetadata(true);
-				var frameSettings = encoder.CreateFrameSettings();
-				status = frameSettings.AddJPEGFrame(jpegBytes);
+				status = encoder.AddJPEGFrame(encoder.FrameSettings, jpegBytes);
 				encoder.CloseFrames();
 				encoder.CloseInput();
 				status = encoder.ProcessOutput();
@@ -625,9 +624,8 @@ namespace JxlSharp
 				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
 				status = encoder.SetBasicInfo(basicInfo);
 				status = encoder.SetColorEncoding(colorEncoding);
-				var frameSettings = encoder.CreateFrameSettings();
-				status = frameSettings.SetFrameLossless(true);
-				status = frameSettings.AddImageFrame(pixelFormat, bitmapCopy);
+				status = encoder.FrameSettings.SetFrameLossless(true);
+				status = encoder.AddImageFrame(encoder.FrameSettings, pixelFormat, bitmapCopy);
 				encoder.CloseFrames();
 				encoder.CloseInput();
 				status = encoder.ProcessOutput();
@@ -660,10 +658,10 @@ namespace JxlSharp
 				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
 				status = encoder.SetBasicInfo(basicInfo);
 				status = encoder.SetColorEncoding(colorEncoding);
-				var frameSettings = encoder.CreateFrameSettings();
+				var frameSettings = encoder.FrameSettings;
 				foreach (var pair in settings)
 				{
-					frameSettings.FrameSettingsSetOption(pair.Key, pair.Value);
+					encoder.FrameSettings.SetOption(pair.Key, pair.Value);
 				}
 				status = frameSettings.AddImageFrame(pixelFormat, bitmapCopy);
 				encoder.CloseFrames();

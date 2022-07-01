@@ -37,6 +37,23 @@ namespace JxlSharp
 			JxlEncoder* enc;
 			void* parallelRunner;
 
+			JxlEncoderFrameSettingsWrapper _frameSettings;
+
+			/// <summary>
+			/// Frame Settings default instance for this encoder
+			/// </summary>
+			public JxlEncoderFrameSettingsWrapper FrameSettings
+			{
+				get
+				{
+					if (_frameSettings == null)
+					{
+						_frameSettings = FrameSettingsCreate();
+					}
+					return _frameSettings;
+				}
+			}
+
 			//byte* pOutputBuffer;
 			//GCHandle outputBufferGcHandle;
 			
@@ -108,7 +125,6 @@ namespace JxlSharp
 				enc = UnsafeNativeJxl.JxlEncoderCreate(null);
 				parallelRunner = UnsafeNativeJxl.JxlThreadParallelRunnerCreate(null, (size_t)Environment.ProcessorCount);
 				UnsafeNativeJxl.JxlEncoderSetParallelRunner(enc, JxlThreadParallelRunner, parallelRunner);
-
 			}
 
 			public JxlEncoderWrapper(int initialCapacity)
@@ -678,6 +694,167 @@ namespace JxlSharp
 				CheckIfDisposed();
 				return UnsafeNativeJxl.JxlEncoderOptionsCreate(this.enc, A_1);
 			}
+
+			/// <summary>
+			/// Sets the buffer to read JPEG encoded bytes from for the next frame to encode.
+			/// <br /><br />
+			/// If JxlEncoderSetBasicInfo has not yet been called, calling
+			/// JxlEncoderAddJPEGFrame will implicitly call it with the parameters of the
+			/// added JPEG frame.
+			/// <br /><br />
+			/// If JxlEncoderSetColorEncoding or JxlEncoderSetICCProfile has not yet been
+			/// called, calling JxlEncoderAddJPEGFrame will implicitly call it with the
+			/// parameters of the added JPEG frame.
+			/// <br /><br />
+			/// If the encoder is set to store JPEG reconstruction metadata using 
+			/// <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
+			/// possible to losslessly reconstruct the JPEG codestream.
+			/// <br /><br />
+			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
+			/// </summary>
+			/// <param name="frame_settings"> set of options and metadata for this frame. Also
+			/// includes reference to the encoder object.</param>
+			/// <param name="buffer"> bytes to read JPEG from. Owned by the caller and its contents
+			/// are copied internally.</param>
+			/// <param name="size"> size of buffer in bytes.</param>
+			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
+			public JxlEncoderStatus AddJPEGFrame(JxlEncoderFrameSettingsWrapper frame_settings, byte* buffer, int size)
+			{
+				CheckIfDisposed();
+				return UnsafeNativeJxl.JxlEncoderAddJPEGFrame(frame_settings.frame_settings, buffer, (size_t)size);
+			}
+
+			/// <summary>
+			/// Sets the buffer to read JPEG encoded bytes from for the next frame to encode.
+			/// <br /><br />
+			/// If JxlEncoderSetBasicInfo has not yet been called, calling
+			/// JxlEncoderAddJPEGFrame will implicitly call it with the parameters of the
+			/// added JPEG frame.
+			/// <br /><br />
+			/// If JxlEncoderSetColorEncoding or JxlEncoderSetICCProfile has not yet been
+			/// called, calling JxlEncoderAddJPEGFrame will implicitly call it with the
+			/// parameters of the added JPEG frame.
+			/// <br /><br />
+			/// If the encoder is set to store JPEG reconstruction metadata using 
+			/// <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
+			/// possible to losslessly reconstruct the JPEG codestream.
+			/// <br /><br />
+			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
+			/// <param name="frame_settings"> set of options and metadata for this frame. Also
+			/// includes reference to the encoder object.</param>
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
+			/// </summary>
+			/// <param name="buffer"> bytes to read JPEG from. Owned by the caller and its contents
+			/// are copied internally.</param>
+			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
+			public JxlEncoderStatus AddJPEGFrame(JxlEncoderFrameSettingsWrapper frame_settings, byte[] buffer)
+			{
+				CheckIfDisposed();
+				fixed (byte* pBuffer = buffer)
+				{
+					return UnsafeNativeJxl.JxlEncoderAddJPEGFrame(frame_settings.frame_settings, pBuffer, (size_t)buffer.Length);
+				}
+			}
+
+
+			/// <summary>
+			/// Sets the buffer to read pixels from for the next image to encode. Must call
+			/// JxlEncoderSetBasicInfo before JxlEncoderAddImageFrame.
+			/// <br /><br />
+			/// Currently only some data types for pixel formats are supported:
+			/// - JXL_TYPE_UINT8, with range 0..255
+			/// - JXL_TYPE_UINT16, with range 0..65535
+			/// - JXL_TYPE_FLOAT16, with nominal range 0..1
+			/// - JXL_TYPE_FLOAT, with nominal range 0..1
+			/// <br /><br />
+			/// Note: the sample data type in pixel_format is allowed to be different from
+			/// what is described in the JxlBasicInfo. The type in pixel_format describes the
+			/// format of the uncompressed pixel buffer. The bits_per_sample and
+			/// exponent_bits_per_sample in the JxlBasicInfo describes what will actually be
+			/// encoded in the JPEG XL codestream. For example, to encode a 12-bit image, you
+			/// would set bits_per_sample to 12, and you could use e.g. JXL_TYPE_UINT16
+			/// (where the values are rescaled to 16-bit, i.e. multiplied by 65535/4095) or
+			/// JXL_TYPE_FLOAT (where the values are rescaled to 0..1, i.e. multiplied
+			/// by 1.f/4095.f). While it is allowed, it is obviously not recommended to use a
+			/// pixel_format with lower precision than what is specified in the JxlBasicInfo.
+			/// <br /><br />
+			/// We support interleaved channels as described by the JxlPixelFormat:
+			/// - single-channel data, e.g. grayscale
+			/// - single-channel + alpha
+			/// - trichromatic, e.g. RGB
+			/// - trichromatic + alpha
+			/// <br /><br />
+			/// Extra channels not handled here need to be set by 
+			/// <see cref="JxlEncoderSetExtraChannelBuffer(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr,System.UInt32)" />.
+			/// If the image has alpha, and alpha is not passed here, it will implicitly be
+			/// set to all-opaque (an alpha value of 1.0 everywhere).
+			/// <br /><br />
+			/// The pixels are assumed to be encoded in the original profile that is set with
+			/// JxlEncoderSetColorEncoding or JxlEncoderSetICCProfile. If none of these
+			/// functions were used, the pixels are assumed to be nonlinear sRGB for integer
+			/// data types (JXL_TYPE_UINT8, JXL_TYPE_UINT16), and linear sRGB for floating
+			/// point data types (JXL_TYPE_FLOAT16, JXL_TYPE_FLOAT).
+			/// <br /><br />
+			/// Sample values in floating-point pixel formats are allowed to be outside the
+			/// nominal range, e.g. to represent out-of-sRGB-gamut colors in the
+			/// uses_original_profile=false case. They are however not allowed to be NaN or
+			/// +-infinity.
+			/// <br /><br />
+			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
+			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
+			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
+			/// </summary>
+			/// <param name="frame_settings"> set of options and metadata for this frame. Also
+			/// includes reference to the encoder object.</param>
+			/// <param name="pixel_format"> format for pixels. Object owned by the caller and its
+			/// contents are copied internally.</param>
+			/// <param name="buffer"> buffer type to input the pixel data from. Owned by the caller
+			/// and its contents are copied internally.</param>
+			/// <param name="size"> size of buffer in bytes. This size should match what is implied
+			/// by the frame dimensions and the pixel format.</param>
+			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
+			public JxlEncoderStatus AddImageFrame(JxlEncoderFrameSettingsWrapper frame_settings, ref JxlPixelFormat pixel_format, void* buffer, int size)
+			{
+				CheckIfDisposed();
+				fixed (JxlPixelFormat* pPixelFormat = &pixel_format)
+				{
+					return UnsafeNativeJxl.JxlEncoderAddImageFrame(frame_settings.frame_settings, pPixelFormat, buffer, (size_t)size);
+				}
+			}
+
+			/// <summary>
+			/// Sets the buffer to read pixels from for an extra channel at a given index.
+			/// The index must be smaller than the num_extra_channels in the associated
+			/// JxlBasicInfo. Must call <see cref="JxlEncoderSetExtraChannelInfo(JxlEncoder*,UIntPtr,JxlExtraChannelInfo*)" /> before
+			/// JxlEncoderSetExtraChannelBuffer.
+			/// <br /><br />
+			/// TODO(firsching): mention what data types in pixel formats are supported.
+			/// <br /><br />
+			/// It is required to call this function for every extra channel, except for the
+			/// alpha channel if that was already set through <see cref="JxlEncoderAddImageFrame(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr)" />.
+			/// </summary>
+			/// <param name="frame_settings"> set of options and metadata for this frame. Also
+			/// includes reference to the encoder object.</param>
+			/// <param name="pixel_format"> format for pixels. Object owned by the caller and its
+			/// contents are copied internally. The num_channels value is ignored, since the
+			/// number of channels for an extra channel is always assumed to be one.</param>
+			/// <param name="buffer"> buffer type to input the pixel data from. Owned by the caller
+			/// and its contents are copied internally.</param>
+			/// <param name="size"> size of buffer in bytes. This size should match what is implied
+			/// by the frame dimensions and the pixel format.</param>
+			/// <param name="index"> index of the extra channel to use.</param>
+			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
+			public JxlEncoderStatus SetExtraChannelBuffer(JxlEncoderFrameSettingsWrapper frame_settings, ref JxlPixelFormat pixel_format, void* buffer, int size, int index)
+			{
+				CheckIfDisposed();
+				fixed (JxlPixelFormat* pPixelFormat = &pixel_format)
+				{
+					return UnsafeNativeJxl.JxlEncoderSetExtraChannelBuffer(frame_settings.frame_settings, pPixelFormat, buffer, (size_t)size, (uint)index);
+				}
+			}
 		}
 
 		/// <summary>
@@ -686,7 +863,7 @@ namespace JxlSharp
 		internal class JxlEncoderFrameSettingsWrapper
 		{
 			WeakReference<JxlEncoderWrapper> parent;
-			JxlEncoderFrameSettings* frame_settings;
+			internal JxlEncoderFrameSettings* frame_settings;
 
 			/// <summary>
 			/// Gets the parent JxlEncoderWrapper object (or null if the object has been garbage collected)
@@ -845,159 +1022,6 @@ namespace JxlSharp
 			}
 
 			/// <summary>
-			/// Sets the buffer to read JPEG encoded bytes from for the next frame to encode.
-			/// <br /><br />
-			/// If JxlEncoderSetBasicInfo has not yet been called, calling
-			/// JxlEncoderAddJPEGFrame will implicitly call it with the parameters of the
-			/// added JPEG frame.
-			/// <br /><br />
-			/// If JxlEncoderSetColorEncoding or JxlEncoderSetICCProfile has not yet been
-			/// called, calling JxlEncoderAddJPEGFrame will implicitly call it with the
-			/// parameters of the added JPEG frame.
-			/// <br /><br />
-			/// If the encoder is set to store JPEG reconstruction metadata using 
-			/// <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
-			/// possible to losslessly reconstruct the JPEG codestream.
-			/// <br /><br />
-			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
-			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
-			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
-			/// </summary>
-			/// <param name="buffer"> bytes to read JPEG from. Owned by the caller and its contents
-			/// are copied internally.</param>
-			/// <param name="size"> size of buffer in bytes.</param>
-			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-			public JxlEncoderStatus AddJPEGFrame(byte* buffer, int size)
-			{
-				CheckIfDisposed();
-				return UnsafeNativeJxl.JxlEncoderAddJPEGFrame(frame_settings, buffer, (size_t)size);
-			}
-
-			/// <summary>
-			/// Sets the buffer to read JPEG encoded bytes from for the next frame to encode.
-			/// <br /><br />
-			/// If JxlEncoderSetBasicInfo has not yet been called, calling
-			/// JxlEncoderAddJPEGFrame will implicitly call it with the parameters of the
-			/// added JPEG frame.
-			/// <br /><br />
-			/// If JxlEncoderSetColorEncoding or JxlEncoderSetICCProfile has not yet been
-			/// called, calling JxlEncoderAddJPEGFrame will implicitly call it with the
-			/// parameters of the added JPEG frame.
-			/// <br /><br />
-			/// If the encoder is set to store JPEG reconstruction metadata using 
-			/// <see cref="JxlEncoderStoreJPEGMetadata(JxlEncoder*,System.Int32)" /> and a single JPEG frame is added, it will be
-			/// possible to losslessly reconstruct the JPEG codestream.
-			/// <br /><br />
-			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
-			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
-			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
-			/// </summary>
-			/// <param name="buffer"> bytes to read JPEG from. Owned by the caller and its contents
-			/// are copied internally.</param>
-			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-			public JxlEncoderStatus AddJPEGFrame(byte[] buffer)
-			{
-				CheckIfDisposed();
-				fixed (byte* pBuffer = buffer)
-				{
-					return UnsafeNativeJxl.JxlEncoderAddJPEGFrame(frame_settings, pBuffer, (size_t)buffer.Length);
-				}
-			}
-
-
-			/// <summary>
-			/// Sets the buffer to read pixels from for the next image to encode. Must call
-			/// JxlEncoderSetBasicInfo before JxlEncoderAddImageFrame.
-			/// <br /><br />
-			/// Currently only some data types for pixel formats are supported:
-			/// - JXL_TYPE_UINT8, with range 0..255
-			/// - JXL_TYPE_UINT16, with range 0..65535
-			/// - JXL_TYPE_FLOAT16, with nominal range 0..1
-			/// - JXL_TYPE_FLOAT, with nominal range 0..1
-			/// <br /><br />
-			/// Note: the sample data type in pixel_format is allowed to be different from
-			/// what is described in the JxlBasicInfo. The type in pixel_format describes the
-			/// format of the uncompressed pixel buffer. The bits_per_sample and
-			/// exponent_bits_per_sample in the JxlBasicInfo describes what will actually be
-			/// encoded in the JPEG XL codestream. For example, to encode a 12-bit image, you
-			/// would set bits_per_sample to 12, and you could use e.g. JXL_TYPE_UINT16
-			/// (where the values are rescaled to 16-bit, i.e. multiplied by 65535/4095) or
-			/// JXL_TYPE_FLOAT (where the values are rescaled to 0..1, i.e. multiplied
-			/// by 1.f/4095.f). While it is allowed, it is obviously not recommended to use a
-			/// pixel_format with lower precision than what is specified in the JxlBasicInfo.
-			/// <br /><br />
-			/// We support interleaved channels as described by the JxlPixelFormat:
-			/// - single-channel data, e.g. grayscale
-			/// - single-channel + alpha
-			/// - trichromatic, e.g. RGB
-			/// - trichromatic + alpha
-			/// <br /><br />
-			/// Extra channels not handled here need to be set by 
-			/// <see cref="JxlEncoderSetExtraChannelBuffer(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr,System.UInt32)" />.
-			/// If the image has alpha, and alpha is not passed here, it will implicitly be
-			/// set to all-opaque (an alpha value of 1.0 everywhere).
-			/// <br /><br />
-			/// The pixels are assumed to be encoded in the original profile that is set with
-			/// JxlEncoderSetColorEncoding or JxlEncoderSetICCProfile. If none of these
-			/// functions were used, the pixels are assumed to be nonlinear sRGB for integer
-			/// data types (JXL_TYPE_UINT8, JXL_TYPE_UINT16), and linear sRGB for floating
-			/// point data types (JXL_TYPE_FLOAT16, JXL_TYPE_FLOAT).
-			/// <br /><br />
-			/// Sample values in floating-point pixel formats are allowed to be outside the
-			/// nominal range, e.g. to represent out-of-sRGB-gamut colors in the
-			/// uses_original_profile=false case. They are however not allowed to be NaN or
-			/// +-infinity.
-			/// <br /><br />
-			/// If this is the last frame, <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> or 
-			/// <see cref="JxlEncoderCloseFrames(JxlEncoder*)" /> must be called before the next
-			/// <see cref="JxlEncoderProcessOutput(JxlEncoder*,byte**,UIntPtr*)" /> call.
-			/// </summary>
-			/// <param name="pixel_format"> format for pixels. Object owned by the caller and its
-			/// contents are copied internally.</param>
-			/// <param name="buffer"> buffer type to input the pixel data from. Owned by the caller
-			/// and its contents are copied internally.</param>
-			/// <param name="size"> size of buffer in bytes. This size should match what is implied
-			/// by the frame dimensions and the pixel format.</param>
-			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-			public JxlEncoderStatus AddImageFrame(ref JxlPixelFormat pixel_format, void* buffer, int size)
-			{
-				CheckIfDisposed();
-				fixed (JxlPixelFormat* pPixelFormat = &pixel_format)
-				{
-					return UnsafeNativeJxl.JxlEncoderAddImageFrame(frame_settings, pPixelFormat, buffer, (size_t)size);
-				}
-			}
-
-			/// <summary>
-			/// Sets the buffer to read pixels from for an extra channel at a given index.
-			/// The index must be smaller than the num_extra_channels in the associated
-			/// JxlBasicInfo. Must call <see cref="JxlEncoderSetExtraChannelInfo(JxlEncoder*,UIntPtr,JxlExtraChannelInfo*)" /> before
-			/// JxlEncoderSetExtraChannelBuffer.
-			/// <br /><br />
-			/// TODO(firsching): mention what data types in pixel formats are supported.
-			/// <br /><br />
-			/// It is required to call this function for every extra channel, except for the
-			/// alpha channel if that was already set through <see cref="JxlEncoderAddImageFrame(JxlEncoderFrameSettings*,JxlPixelFormat*,void*,UIntPtr)" />.
-			/// </summary>
-			/// <param name="pixel_format"> format for pixels. Object owned by the caller and its
-			/// contents are copied internally. The num_channels value is ignored, since the
-			/// number of channels for an extra channel is always assumed to be one.</param>
-			/// <param name="buffer"> buffer type to input the pixel data from. Owned by the caller
-			/// and its contents are copied internally.</param>
-			/// <param name="size"> size of buffer in bytes. This size should match what is implied
-			/// by the frame dimensions and the pixel format.</param>
-			/// <param name="index"> index of the extra channel to use.</param>
-			/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-			public JxlEncoderStatus SetExtraChannelBuffer(ref JxlPixelFormat pixel_format, void* buffer, int size, int index)
-			{
-				CheckIfDisposed();
-				fixed (JxlPixelFormat* pPixelFormat = &pixel_format)
-				{
-					return UnsafeNativeJxl.JxlEncoderSetExtraChannelBuffer(frame_settings, pPixelFormat, buffer, (size_t)size, (uint)index);
-				}
-			}
-
-			/// <summary>
 			/// Sets a frame-specific option of integer type to the encoder options.
 			/// The JxlEncoderFrameSettingId argument determines which option is set.
 			/// </summary>
@@ -1008,7 +1032,7 @@ namespace JxlSharp
 			/// value for the given option. If an error is returned, the state of the
 			/// JxlEncoderFrameSettings object is still valid and is the same as before this
 			/// function was called.</returns>
-			public JxlEncoderStatus FrameSettingsSetOption(JxlEncoderFrameSettingId option, int value)
+			public JxlEncoderStatus SetOption(JxlEncoderFrameSettingId option, int value)
 			{
 				CheckIfDisposed();
 				return UnsafeNativeJxl.JxlEncoderFrameSettingsSetOption(frame_settings, option, value);
@@ -1053,7 +1077,7 @@ namespace JxlSharp
 			/// DEPRECATED: use JxlEncoderFrameSettingsSetOption(frame_settings,
 			/// JXL_ENC_FRAME_SETTING_EFFORT, effort) instead.</returns>
 			[Obsolete]
-			public JxlEncoderStatus JxlEncoderOptionsSetEffort(int effort)
+			public JxlEncoderStatus SetEffort(int effort)
 			{
 				CheckIfDisposed();
 				return UnsafeNativeJxl.JxlEncoderOptionsSetEffort(frame_settings, effort);
@@ -1067,7 +1091,7 @@ namespace JxlSharp
 			/// DEPRECATED: use JxlEncoderFrameSettingsSetOption(frame_settings,
 			/// JXL_ENC_FRAME_SETTING_DECODING_SPEED, tier) instead.</returns>
 			[Obsolete]
-			public JxlEncoderStatus JxlEncoderOptionsSetDecodingSpeed(int tier)
+			public JxlEncoderStatus SetDecodingSpeed(int tier)
 			{
 				CheckIfDisposed();
 				return UnsafeNativeJxl.JxlEncoderOptionsSetDecodingSpeed(frame_settings, tier);
@@ -1094,7 +1118,7 @@ namespace JxlSharp
 			/// DEPRECATED: use JxlEncoderSetFrameDistance instead.
 			/// </summary>
 			[Obsolete]
-			public JxlEncoderStatus JxlEncoderOptionsSetDistance(float distance)
+			public JxlEncoderStatus SetDistance(float distance)
 			{
 				CheckIfDisposed();
 				return UnsafeNativeJxl.JxlEncoderOptionsSetDistance(frame_settings, distance);

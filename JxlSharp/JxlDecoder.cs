@@ -176,7 +176,7 @@ namespace JxlSharp
 		/// Select for which informative events, i.e. <see cref="JxlDecoderStatus.BasicInfo" />, etc., the
 		/// decoder should return with a status. It is not required to subscribe to any
 		/// events, data can still be requested from the decoder as soon as it available.
-		/// By default, the decoder is subscribed to no events (events_wanted == 0), and
+		/// By default, the decoder is subscribed to no events (eventsWanted == 0), and
 		/// the decoder will then only return when it cannot continue because it needs
 		/// more input data or more output buffer. This function may only be be called
 		/// before using <see cref="ProcessInput" />.
@@ -195,14 +195,14 @@ namespace JxlSharp
 		/// indicating that the decoder must perform a rotation and/or
 		/// mirroring to the encoded image data.
 		/// <br />
-		/// <br /> - If skip_reorientation is JXL_FALSE (the default): the decoder
+		/// <br /> - If <paramref name="keepOrientation"/> is false (the default): the decoder
 		/// will apply the transformation from the orientation setting, hence
 		/// rendering the image according to its specified intent. When
 		/// producing a JxlBasicInfo, the decoder will always set the
-		/// orientation field to JXL_ORIENT_IDENTITY (matching the returned
+		/// orientation field to <see cref="JxlOrientation.Identity"/> (matching the returned
 		/// pixel data) and also align xsize and ysize so that they correspond
 		/// to the width and the height of the returned pixel data.
-		/// <br /> - If skip_reorientation is JXL_TRUE: the decoder will skip
+		/// <br /> - If <paramref name="keepOrientation"/> is true: the decoder will skip
 		/// applying the transformation from the orientation setting, returning
 		/// the image in the as-in-bitstream pixeldata orientation.
 		/// This may be faster to decode since the decoder doesn't have to apply the
@@ -213,7 +213,7 @@ namespace JxlSharp
 		/// re-oriented according to the image's Orientation setting.
 		/// <br /><br />
 		/// This function must be called at the beginning, before decoding is performed.
-		/// <br /><br /><see cref="T:JxlSharp.UnsafeNativeJxl.JxlBasicInfo" /> for the orientation field, and <see cref="T:JxlSharp.UnsafeNativeJxl.JxlOrientation" /> for the
+		/// <br /><br /><see cref="JxlBasicInfo" /> for the orientation field, and <see cref="JxlOrientation" /> for the
 		/// possible values.
 		/// </summary>
 		/// <param name="keepOrientation"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
