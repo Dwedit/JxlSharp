@@ -15,6 +15,7 @@ namespace JxlExample
 	public partial class Form1 : Form
 	{
 		string loadedFileName = "";
+		EncoderOptions encoderOptions = new EncoderOptions();
 		Dictionary<JxlEncoderFrameSettingId, int> jxlSettings = new Dictionary<JxlEncoderFrameSettingId, int>();
 
 		public Form1()
@@ -200,15 +201,16 @@ namespace JxlExample
 				}
 				if (ext == ".jxl")
 				{
-					using (var encoderOptionsForm = new EncoderOptionsForm(this.jxlSettings))
+					using (var encoderOptionsForm2 = new EncoderOptionsForm2(this.encoderOptions))
 					{
-						var dialogResult =  encoderOptionsForm.ShowDialog();
+						var dialogResult =  encoderOptionsForm2.ShowDialog();
 						if (dialogResult == DialogResult.Cancel)
 						{
 							return;
 						}
 					}
-					byte[] jxlData = JXL.EncodeJxl(bitmap, this.jxlSettings);
+					
+					byte[] jxlData = JXL.EncodeJxl(bitmap, encoderOptions.LossyMode, encoderOptions.Quality, encoderOptions.Settings);
 					if (jxlData != null)
 					{
 						File.WriteAllBytes(fileName, jxlData);

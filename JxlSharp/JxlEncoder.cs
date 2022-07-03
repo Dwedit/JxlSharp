@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JxlSharp
 {
@@ -678,7 +676,7 @@ namespace JxlSharp
 	public class JxlEncoderFrameSettings
 	{
 		UnsafeNativeJxl.JxlEncoderFrameSettingsWrapper frameSettings;
-		WeakReference<JxlEncoder> _parent;
+		WeakReference _parent;
 		
 		internal UnsafeNativeJxl.JxlEncoderFrameSettingsWrapper Wrapper
 		{
@@ -695,17 +693,17 @@ namespace JxlSharp
 		{
 			get
 			{
-				if (_parent.TryGetTarget(out JxlEncoder value) && value != null)
-				{
-					return value;
-				}
-				return null;
+				return (JxlEncoder)_parent.Target;
+			}
+			private set
+			{
+				_parent = new WeakReference(value);
 			}
 		}
 
 		internal JxlEncoderFrameSettings(JxlEncoder parent, UnsafeNativeJxl.JxlEncoderFrameSettingsWrapper frameSettings)
 		{
-			this._parent = new WeakReference<JxlEncoder>(parent);
+			this.Parent = parent;
 			this.frameSettings = frameSettings;
 		}
 
@@ -936,7 +934,7 @@ namespace JxlSharp
 		/// <param name="distance"> the distance value to set.</param>
 		/// <returns> <see cref="JxlEncoderStatus.Success"/> if the operation was successful, <see cref="JxlEncoderStatus.Error"/>
 		/// otherwise.</returns>
-		public JxlEncoderStatus JxlEncoderSetFrameDistance(float distance)
+		public JxlEncoderStatus SetFrameDistance(float distance)
 		{
 			return (JxlEncoderStatus)frameSettings.SetFrameDistance(distance);
 		}
@@ -952,7 +950,7 @@ namespace JxlSharp
 		/// <param name="distance"> the distance value to set.</param>
 		/// <returns> <see cref="JxlEncoderStatus.Success"/> if the operation was successful, <see cref="JxlEncoderStatus.Error"/>
 		/// otherwise.</returns>
-		public JxlEncoderStatus JxlEncoderSetFrameDistance(double distance)
+		public JxlEncoderStatus SetFrameDistance(double distance)
 		{
 			return (JxlEncoderStatus)frameSettings.SetFrameDistance((float)distance);
 		}

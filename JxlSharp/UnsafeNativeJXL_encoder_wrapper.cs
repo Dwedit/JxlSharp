@@ -862,7 +862,7 @@ namespace JxlSharp
 		/// </summary>
 		internal class JxlEncoderFrameSettingsWrapper
 		{
-			WeakReference<JxlEncoderWrapper> parent;
+			WeakReference _parent;
 			internal JxlEncoderFrameSettings* frame_settings;
 
 			/// <summary>
@@ -872,11 +872,11 @@ namespace JxlSharp
 			{
 				get
 				{
-					if (parent.TryGetTarget(out JxlEncoderWrapper value) && value != null)
-					{
-						return value;
-					}
-					return null;
+					return (JxlEncoderWrapper)_parent.Target;
+				}
+				private set
+				{
+					this._parent = new WeakReference(value);
 				}
 			}
 
@@ -887,7 +887,7 @@ namespace JxlSharp
 			/// <param name="frameSettings">The pointer to the JxlEncoderFrameSettings pointer to wrap</param>
 			internal JxlEncoderFrameSettingsWrapper(JxlEncoderWrapper parent, JxlEncoderFrameSettings* frameSettings)
 			{
-				this.parent = new WeakReference<JxlEncoderWrapper>(parent);
+				this.Parent = parent;
 				this.frame_settings = frameSettings;
 			}
 			

@@ -384,6 +384,7 @@ namespace JxlSharp
 				if (this.input == data) return JxlDecoderStatus.JXL_DEC_SUCCESS;
 
 				ReleaseInput();
+				if (data == null) return JxlDecoderStatus.JXL_DEC_SUCCESS;
 				this.input = data;
 				this.inputGcHandle = GCHandle.Alloc(this.input, GCHandleType.Pinned);
 				this.pInput = (byte*)this.inputGcHandle.AddrOfPinnedObject();
@@ -773,7 +774,6 @@ namespace JxlSharp
 			/// name_length + 1 bytes allocated, gotten from the associated JxlFrameHeader.
 			/// </summary>
 			/// <param name="name"> buffer to copy the name into</param>
-			/// character, so this must be at least JxlFrameHeader.name_length + 1.</param>
 			/// <returns>
 			///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
 			/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> in
@@ -794,7 +794,7 @@ namespace JxlSharp
 						status = JxlDecoderGetFrameName(dec, pBuffer, (size_t)bufferSize);
 						if (status == JxlDecoderStatus.JXL_DEC_SUCCESS)
 						{
-							name = Encoding.UTF8.GetString(pBuffer, bufferSize - 1);
+							name = Encoding.UTF8.GetString(buffer, 0, bufferSize - 1);
 						}
 					}
 				}
@@ -1069,11 +1069,14 @@ namespace JxlSharp
 			{
 				CheckIfDisposed();
 				ReleaseJPEGBuffer();
+				if (data == null)
+				{
+					return JxlDecoderStatus.JXL_DEC_SUCCESS;
+				}
 				if (outputPosition < 0 || outputPosition >= data.Length)
 				{
 					return JxlDecoderStatus.JXL_DEC_ERROR;
 				}
-
 				this.jpegOutput = data;
 				this.jpegOutputGcHandle = GCHandle.Alloc(this.jpegOutput, GCHandleType.Pinned);
 				this.pJpegOutput = (byte*)this.jpegOutputGcHandle.AddrOfPinnedObject();
@@ -1164,6 +1167,7 @@ namespace JxlSharp
 			{
 				CheckIfDisposed();
 				ReleaseBoxBuffer();
+				if (data == null) return JxlDecoderStatus.JXL_DEC_SUCCESS;
 				this.boxBuffer = data;
 				this.boxBufferGcHandle = GCHandle.Alloc(this.boxBuffer, GCHandleType.Pinned);
 				this.pBoxBuffer = (byte*)this.boxBufferGcHandle.AddrOfPinnedObject();

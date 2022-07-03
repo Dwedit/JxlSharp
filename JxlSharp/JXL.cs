@@ -605,46 +605,55 @@ namespace JxlSharp
 		}
 
 
-		/// <summary>
-		/// Encodes a JXL file losslessly
-		/// </summary>
-		/// <param name="bitmap">The bitmap to save</param>
-		/// <returns>The JXL file bytes</returns>
-		public static byte[] EncodeJxlLossless(Bitmap bitmap)
-		{
-			JxlEncoderStatus status;
-			MemoryStream ms = new MemoryStream();
-			using (var encoder = new JxlEncoder(ms))
-			{
-				JxlBasicInfo basicInfo;
-				JxlPixelFormat pixelFormat;
-				JxlColorEncoding colorEncoding;
-				CreateBasicInfo(bitmap, out basicInfo, out pixelFormat, out colorEncoding);
-				bool hasAlpha = basicInfo.AlphaBits > 0;
-				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
-				status = encoder.SetBasicInfo(basicInfo);
-				status = encoder.SetColorEncoding(colorEncoding);
-				status = encoder.FrameSettings.SetFrameLossless(true);
-				status = encoder.AddImageFrame(encoder.FrameSettings, pixelFormat, bitmapCopy);
-				encoder.CloseFrames();
-				encoder.CloseInput();
-				status = encoder.ProcessOutput();
-				byte[] bytes;
-				if (status == JxlEncoderStatus.Success)
-				{
-					bytes = ms.ToArray();
-				}
-				return null;
-			}
-		}
+		///// <summary>
+		///// Encodes a JXL file losslessly
+		///// </summary>
+		///// <param name="bitmap">The bitmap to save</param>
+		///// <returns>The JXL file bytes</returns>
+		//public static byte[] EncodeJxlLossless(Bitmap bitmap)
+		//{
+		//	JxlEncoderStatus status;
+		//	MemoryStream ms = new MemoryStream();
+		//	using (var encoder = new JxlEncoder(ms))
+		//	{
+		//		JxlBasicInfo basicInfo;
+		//		JxlPixelFormat pixelFormat;
+		//		JxlColorEncoding colorEncoding;
+		//		CreateBasicInfo(bitmap, out basicInfo, out pixelFormat, out colorEncoding);
+		//		bool hasAlpha = basicInfo.AlphaBits > 0;
+		//		byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
+		//		status = encoder.SetBasicInfo(basicInfo);
+		//		status = encoder.SetColorEncoding(colorEncoding);
+		//		status = encoder.FrameSettings.SetFrameLossless(true);
+		//		status = encoder.AddImageFrame(encoder.FrameSettings, pixelFormat, bitmapCopy);
+		//		encoder.CloseFrames();
+		//		encoder.CloseInput();
+		//		status = encoder.ProcessOutput();
+		//		byte[] bytes;
+		//		if (status == JxlEncoderStatus.Success)
+		//		{
+		//			bytes = ms.ToArray();
+		//		}
+		//		return null;
+		//	}
+		//}
 
 		/// <summary>
 		/// Encodes a JXL file using the settings provided
 		/// </summary>
 		/// <param name="bitmap">The bitmap to save</param>
+		/// <param name="lossyMode">Whether to save lossless, lossy, photo, or drawing</param>
+		/// <param name="frameDistance">Sets the distance level for lossy compression<br/>
+		/// target max butteraugli distance, lower = higher quality. <br/>
+		/// Range: 0 .. 15.<br/>
+		/// 0.0 = mathematically lossless (however, use lossless mode instead to use true lossless, 
+		/// as setting distance to 0 alone is not the only requirement).<br/>
+		/// 1.0 = visually lossless. <br/>
+		/// Recommended range: 0.5 .. 3.0. <br/>
+		/// Default value: 1.0.</param>
 		/// <param name="settings">The settings to save the image with</param>
 		/// <returns>The JXL file, or null on failure</returns>
-		public static byte[] EncodeJxl(Bitmap bitmap, IEnumerable<KeyValuePair<JxlEncoderFrameSettingId, int>> settings)
+		public static byte[] EncodeJxl(Bitmap bitmap, JxlLossyMode lossyMode, float frameDistance, IDictionary<JxlEncoderFrameSettingId, int> settings)
 		{
 			JxlEncoderStatus status;
 			MemoryStream ms = new MemoryStream();
@@ -660,7 +669,26 @@ namespace JxlSharp
 				status = encoder.SetColorEncoding(colorEncoding);
 				foreach (var pair in settings)
 				{
-					encoder.FrameSettings.SetOption(pair.Key, pair.Value);
+					status = encoder.FrameSettings.SetOption(pair.Key, pair.Value);
+				}
+				if (lossyMode == JxlLossyMode.Lossless)
+				{
+					status = encoder.FrameSettings.SetFrameLossless(true);
+					status = encoder.FrameSettings.SetFrameDistance(0);
+					status = encoder.FrameSettings.SetOption(JxlEncoderFrameSettingId.Modular, 1); 
+				}
+				else
+				{
+					status = encoder.FrameSettings.SetFrameDistance(frameDistance);
+					status = encoder.FrameSettings.SetFrameLossless(false);
+					if (lossyMode == JxlLossyMode.Photo)
+					{
+						status = encoder.FrameSettings.SetOption(JxlEncoderFrameSettingId.Modular, 0);
+					}
+					else if (lossyMode == JxlLossyMode.Drawing)
+					{
+						status = encoder.FrameSettings.SetOption(JxlEncoderFrameSettingId.Modular, 1);
+					}
 				}
 				status = encoder.AddImageFrame(encoder.FrameSettings, pixelFormat, bitmapCopy);
 				encoder.CloseFrames();
@@ -675,5 +703,28 @@ namespace JxlSharp
 				return bytes;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Lossless/Lossy Mode for JXL.EncodeJxl
+	/// </summary>
+	public enum JxlLossyMode
+	{
+		/// <summary>
+		/// Lossless mode
+		/// </summary>
+		Lossless = 0,
+		/// <summary>
+		/// Automatic selection
+		/// </summary>
+		Default = 1,
+		/// <summary>
+		/// VarDCT mode (like JPEG)
+		/// </summary>
+		Photo = 2,
+		/// <summary>
+		/// Modular Mode for drawn images, not for things that have previously been saved as JPEG.
+		/// </summary>
+		Drawing = 3,
 	}
 }

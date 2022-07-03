@@ -53,17 +53,32 @@ namespace JxlSharp
 	/// </example>
 	public class JxlDecoder : IDisposable
 	{
-		bool decompressBoxes;
+		/// <summary>
+		/// `lastStatus` is used to support the <see cref="GetBox"/> function, the last decoder status must be <see cref="JxlDecoderStatus.Box"/>.
+		/// After calling <see cref="ProcessInput"/>, the status returned is for the next item, and we want a future call to ProcessInput to return that status instead.
+		/// </summary>
 		JxlDecoderStatus lastStatus;
+		/// <summary>
+		/// `skipNextProcessInput` is used to support the <see cref="GetBox"/> function,
+		/// because a call to <see cref="ProcessInput"/> will return the status of the next item.
+		/// This allows a future call to <see cref="ProcessInput"/> to see the status.
+		/// </summary>
+		bool skipNextProcessInput = false;
 
+		/// <summary>
+		/// The Decoder Wrapper object, this object does all the interop stuff
+		/// </summary>
 		UnsafeNativeJxl.JxlDecoderWrapper decoderWrapper;
+
 		/// <summary>
 		/// Creates a new JxlDecoder
 		/// </summary>
 		public JxlDecoder()
 		{
 			decoderWrapper = new UnsafeNativeJxl.JxlDecoderWrapper();
-			decompressBoxes = false;
+			//decompressBoxes = false;
+			lastStatus = JxlDecoderStatus.Success;
+			skipNextProcessInput = false;
 		}
 
 		/// <summary>
@@ -82,7 +97,9 @@ namespace JxlSharp
 		public void Reset()
 		{
 			decoderWrapper.Reset();
-			decompressBoxes = false;
+			//decompressBoxes = false;
+			lastStatus = JxlDecoderStatus.Success;
+			skipNextProcessInput = false;
 		}
 		/// <summary>
 		/// Rewinds decoder to the beginning. The same input must be given again from
@@ -99,6 +116,7 @@ namespace JxlSharp
 		public void Rewind()
 		{
 			decoderWrapper.Rewind();
+			lastStatus = JxlDecoderStatus.Success;
 		}
 		/// <summary>
 		/// Makes the decoder skip the next `amount` frames. It still needs to process
@@ -306,6 +324,11 @@ namespace JxlSharp
 		/// is available and has been output in the pixel buffer.</returns>
 		public JxlDecoderStatus ProcessInput()
 		{
+			if (skipNextProcessInput)
+			{
+				skipNextProcessInput = false;
+				return lastStatus;
+			}
 			lastStatus = (JxlDecoderStatus)decoderWrapper.ProcessInput();
 			return lastStatus;
 		}
@@ -938,6 +961,36 @@ namespace JxlSharp
 		}
 
 		///// <summary>
+		///// Call this in response to <see cref="JxlDecoderStatus.Frame"/>.  Assigns the image to a buffer.
+		///// <br/><br/>
+		///// Equivalent to calling <see cref="SetImageOutBuffer"/> then <see cref="ProcessInput"/>
+		///// </summary>
+		///// <param name="format"> format of the pixels. Object owned by user and its contents
+		///// are copied internally.</param>
+		///// <param name="buffer"> buffer type to output the pixel data to</param>
+		///// <param name="size"> size of buffer in bytes</param>
+		///// <returns>
+		/////     <see cref="JxlDecoderStatus.Success" /> on success, <see cref="JxlDecoderStatus.Error" /> on error, such as
+		///// size too small.</returns>
+		//public JxlDecoderStatus GetImage(JxlPixelFormat format, IntPtr buffer, int size)
+		//{
+		//	JxlDecoderStatus status = SetImageOutBuffer(format, buffer, size);
+		//	if (status != JxlDecoderStatus.Success)
+		//	{
+		//		return status;
+		//	}
+		//	status = ProcessInput();
+		//	if (status < JxlDecoderStatus.BasicInfo)
+		//	{
+		//		return status;
+		//	}
+		//	skipNextProcessInput = true;
+		//	return JxlDecoderStatus.Success;
+		//}
+
+
+
+		///// <summary>
 		///// Warning: Pointer must remain valid between the call to SetJPEGBuffer and the call to ReleaseJPEGBuffer.
 		///// Use the Array version of this function instead for better safety.
 		///// <br/><br/>
@@ -965,7 +1018,7 @@ namespace JxlSharp
 		//		return status;
 		//	}
 		//}
-		
+
 		/// <summary>
 		/// Sets output buffer for reconstructed JPEG codestream.
 		/// <br /><br />
@@ -1008,37 +1061,38 @@ namespace JxlSharp
 			return decoderWrapper.ReleaseJPEGBuffer();
 		}
 
-		/// <summary>
-		/// Warning: Pointer must remain valid between the call to SetBoxBuffer and the call to ReleaseBoxBufffer.
-		/// Use the Array version of this function instead for better safety.
-		/// <br/><br/>
-		/// Sets output buffer for box output codestream.
-		/// <br /><br />
-		/// The data is owned by the caller and may be used by the decoder until 
-		/// <see cref="ReleaseBoxBuffer" /> is called or the decoder is destroyed or
-		/// reset so must be kept alive until then.
-		/// <br /><br />
-		/// If for the current box a box buffer was set before and released with 
-		/// <see cref="ReleaseBoxBuffer" />, bytes that the decoder has already output
-		/// should not be included, only the remaining bytes output must be set.
-		/// <br /><br />
-		/// The <see cref="ReleaseBoxBuffer" /> must be used at the next <see cref="JxlDecoderStatus.Box" />
-		/// event or final <see cref="JxlDecoderStatus.Success" /> event to compute the size of the output
-		/// box bytes.
-		/// </summary>
-		/// <param name="data"> pointer to next bytes to write to</param>
-		/// <param name="size"> amount of bytes available starting from data</param>
-		/// <returns>
-		///     <see cref="JxlDecoderStatus.Error" /> if output buffer was already set and 
-		/// <see cref="ReleaseBoxBuffer" /> was not called on it, <see cref="JxlDecoderStatus.Success" />
-		/// otherwise</returns>
-		public JxlDecoderStatus SetBoxBuffer(IntPtr data, int size)
-		{
-			unsafe
-			{
-				return (JxlDecoderStatus)decoderWrapper.SetBoxBuffer((byte*)data, size);
-			}
-		}
+		//commented out because a raw pointer version of box buffer is unnecessary
+		///// <summary>
+		///// Warning: Pointer must remain valid between the call to SetBoxBuffer and the call to ReleaseBoxBufffer.
+		///// Use the Array version of this function instead for better safety.
+		///// <br/><br/>
+		///// Sets output buffer for box output codestream.
+		///// <br /><br />
+		///// The data is owned by the caller and may be used by the decoder until 
+		///// <see cref="ReleaseBoxBuffer" /> is called or the decoder is destroyed or
+		///// reset so must be kept alive until then.
+		///// <br /><br />
+		///// If for the current box a box buffer was set before and released with 
+		///// <see cref="ReleaseBoxBuffer" />, bytes that the decoder has already output
+		///// should not be included, only the remaining bytes output must be set.
+		///// <br /><br />
+		///// The <see cref="ReleaseBoxBuffer" /> must be used at the next <see cref="JxlDecoderStatus.Box" />
+		///// event or final <see cref="JxlDecoderStatus.Success" /> event to compute the size of the output
+		///// box bytes.
+		///// </summary>
+		///// <param name="data"> pointer to next bytes to write to</param>
+		///// <param name="size"> amount of bytes available starting from data</param>
+		///// <returns>
+		/////     <see cref="JxlDecoderStatus.Error" /> if output buffer was already set and 
+		///// <see cref="ReleaseBoxBuffer" /> was not called on it, <see cref="JxlDecoderStatus.Success" />
+		///// otherwise</returns>
+		//public JxlDecoderStatus SetBoxBuffer(IntPtr data, int size)
+		//{
+		//	unsafe
+		//	{
+		//		return (JxlDecoderStatus)decoderWrapper.SetBoxBuffer((byte*)data, size);
+		//	}
+		//}
 
 		/// <summary>
 		/// Sets output buffer for box output codestream.
@@ -1105,7 +1159,7 @@ namespace JxlSharp
 		/// available, <see cref="JxlDecoderStatus.Success" /> otherwise.</returns>
 		public JxlDecoderStatus SetDecompressBoxes(bool decompress)
 		{
-			this.decompressBoxes = decompress;
+			//this.decompressBoxes = decompress;
 			return (JxlDecoderStatus)decoderWrapper.SetDecompressBoxes(decompress);
 		}
 
@@ -1199,30 +1253,54 @@ namespace JxlSharp
 			return (JxlDecoderStatus)decoderWrapper.GetBoxSizeRaw(out size);
 		}
 
-		public JxlDecoderStatus GetBox(out byte[] box, out string boxType)
+		/// <summary>
+		/// Call this after receiving a <see cref="JxlDecoderStatus.Box"/> event.  Returns the box as a byte array and the box type.
+		/// <br/><br/>This function is equivalent to calling <see cref="SetDecompressBoxes"/>, <see cref="GetBoxSizeRaw"/>, <see cref="GetBoxType"/>, 
+		/// <see cref="SetBoxBuffer"/>, <see cref="ProcessInput"/>, then finally <see cref="ReleaseBoxBuffer"/>
+		/// </summary>
+		/// <param name="box">The byte array to return</param>
+		/// <param name="boxType">The box type (ISO/IEC 18181-2)</param>
+		/// <param name="decompressBox">Whether to decompress a "brob" box</param>
+		/// <returns><see cref="JxlDecoderStatus.Success" /> on success, otherwise <see cref="JxlDecoderStatus.Error" /></returns>
+		public JxlDecoderStatus GetBox(out byte[] box, out string boxType, bool decompressBox)
 		{
-			throw new NotImplementedException();
-			//box = null;
-			//boxType = "";
-			//ulong boxSize;
-			//JxlDecoderStatus status;
-			//status = (JxlDecoderStatus)decoderWrapper.SetDecompressBoxes(this.decompressBoxes);
-			//if (status != JxlDecoderStatus.Success)
-			//{
-			//	return status;
-			//}
-			//status = (JxlDecoderStatus)decoderWrapper.GetBoxSizeRaw(out boxSize);
-			//if (status != JxlDecoderStatus.Success)
-			//{
-			//	return status;
-			//}
-			//status = (JxlDecoderStatus)decoderWrapper.GetBoxType(out boxType, this.decompressBoxes);
-			//if (status != JxlDecoderStatus.Success)
-			//{
-			//	return status;
-			//}
-			//status = (JxlDecoderStatus)decoderWrapper.SetBoxBuffer
-
+			box = null;
+			boxType = "";
+			ulong boxSize;
+			if (lastStatus != JxlDecoderStatus.Box)
+			{
+				return JxlDecoderStatus.Error;
+			}
+			JxlDecoderStatus status;
+			status = (JxlDecoderStatus)decoderWrapper.SetDecompressBoxes(decompressBox);
+			if (status != JxlDecoderStatus.Success)
+			{
+				return status;
+			}
+			status = (JxlDecoderStatus)decoderWrapper.GetBoxSizeRaw(out boxSize);
+			if (status != JxlDecoderStatus.Success)
+			{
+				return status;
+			}
+			status = (JxlDecoderStatus)decoderWrapper.GetBoxType(out boxType, decompressBox);
+			if (status != JxlDecoderStatus.Success)
+			{
+				return status;
+			}
+			box = new byte[(int)boxSize];
+			status = (JxlDecoderStatus)decoderWrapper.SetBoxBuffer(box);
+			if (status != JxlDecoderStatus.Success)
+			{
+				return status;
+			}
+			status = ProcessInput();
+			decoderWrapper.ReleaseBoxBuffer();
+			if (status < JxlDecoderStatus.BasicInfo)
+			{
+				return status;
+			}
+			skipNextProcessInput = true;
+			return JxlDecoderStatus.Success;
 		}
 
 		/// <summary>

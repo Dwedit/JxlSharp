@@ -7,7 +7,7 @@
     <ProjectGuid>{54B86C0A-FE3D-470B-9F71-CCC3DEF58CB2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>JxlSharp</RootNamespace>
-    <AssemblyName>JxlDecoder</AssemblyName>
+    <AssemblyName>JxlSharp</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -20,11 +20,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\JxlDecoder.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\JxlSharp.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -49,11 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EncoderOptionsForm.cs">
+    <Compile Include="EncoderOptionsForm2.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EncoderOptionsForm.Designer.cs">
-      <DependentUpon>EncoderOptionsForm.cs</DependentUpon>
+    <Compile Include="EncoderOptionsForm2.Designer.cs">
+      <DependentUpon>EncoderOptionsForm2.cs</DependentUpon>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -63,8 +63,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="EncoderOptionsForm.resx">
-      <DependentUpon>EncoderOptionsForm.cs</DependentUpon>
+    <EmbeddedResource Include="EncoderOptionsForm2.resx">
+      <DependentUpon>EncoderOptionsForm2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
