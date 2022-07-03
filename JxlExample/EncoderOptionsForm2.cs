@@ -47,18 +47,12 @@ namespace JxlExample
 			{
 				quality = 1;
 			}
-			int noiseLevel;
-			if (!int.TryParse(txtNoise.Text, out noiseLevel))
-			{
-				noiseLevel = 0;
-			}
 			int keepInvisible = chkPreserveColor.Checked ? 1: 0;
 
 			this.EncoderOptions.LossyMode = lossyMode;
 			this.EncoderOptions.Quality = quality;
 			this.EncoderOptions.Settings[JxlEncoderFrameSettingId.Effort] = effort;
 			this.EncoderOptions.Settings[JxlEncoderFrameSettingId.DecodingSpeed] = decodeSpeed;
-			this.EncoderOptions.Settings[JxlEncoderFrameSettingId.PhotonNoise] = noiseLevel;
 			this.EncoderOptions.Settings[JxlEncoderFrameSettingId.KeepInvisible] = keepInvisible;
 		}
 
@@ -82,16 +76,6 @@ namespace JxlExample
 			else
 			{
 				decodingSpeed = 0;
-			}
-
-			int photonNoise = 0;
-			if (this.EncoderOptions.Settings.TryGetValue(JxlEncoderFrameSettingId.PhotonNoise, out photonNoise) && photonNoise != -1)
-			{
-
-			}
-			else
-			{
-				photonNoise = 0;
 			}
 
 			int keepInvisible = 0;
@@ -144,7 +128,6 @@ namespace JxlExample
 			}
 
 			txtQuality.Text = Math.Round(quality, 4).ToString();
-			txtNoise.Text = photonNoise.ToString();
 			chkPreserveColor.Checked = keepInvisible == 1;
 		}
 	}
@@ -159,7 +142,6 @@ namespace JxlExample
 			this.LossyMode = JxlLossyMode.Default;
 			this.Settings[JxlEncoderFrameSettingId.Effort] = 7;
 			this.Settings[JxlEncoderFrameSettingId.DecodingSpeed] = 0;
-			this.Settings[JxlEncoderFrameSettingId.PhotonNoise] = 0;
 			this.Settings[JxlEncoderFrameSettingId.KeepInvisible] = 1;
 			this.Quality = 1.0f;
 		}

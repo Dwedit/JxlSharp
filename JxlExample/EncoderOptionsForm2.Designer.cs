@@ -44,12 +44,9 @@ namespace JxlExample
 			this.txtQuality = new System.Windows.Forms.TextBox();
 			this.lblQuality = new System.Windows.Forms.Label();
 			this.lblQualityHelp = new System.Windows.Forms.Label();
-			this.lblNoise = new System.Windows.Forms.Label();
-			this.txtNoise = new System.Windows.Forms.TextBox();
 			this.chkPreserveColor = new System.Windows.Forms.CheckBox();
 			this.cmdOK = new System.Windows.Forms.Button();
 			this.cmdCancel = new System.Windows.Forms.Button();
-			this.lblNoiseHelp = new System.Windows.Forms.Label();
 			this.boxCompressionMode.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -208,26 +205,10 @@ namespace JxlExample
 			this.lblQualityHelp.TabIndex = 7;
 			this.lblQualityHelp.Text = resources.GetString("lblQualityHelp.Text");
 			// 
-			// lblNoise
-			// 
-			this.lblNoise.AutoSize = true;
-			this.lblNoise.Location = new System.Drawing.Point(9, 232);
-			this.lblNoise.Name = "lblNoise";
-			this.lblNoise.Size = new System.Drawing.Size(56, 13);
-			this.lblNoise.TabIndex = 11;
-			this.lblNoise.Text = "Add &Noise";
-			// 
-			// txtNoise
-			// 
-			this.txtNoise.Location = new System.Drawing.Point(12, 248);
-			this.txtNoise.Name = "txtNoise";
-			this.txtNoise.Size = new System.Drawing.Size(100, 20);
-			this.txtNoise.TabIndex = 12;
-			// 
 			// chkPreserveColor
 			// 
 			this.chkPreserveColor.AutoSize = true;
-			this.chkPreserveColor.Location = new System.Drawing.Point(12, 278);
+			this.chkPreserveColor.Location = new System.Drawing.Point(12, 235);
 			this.chkPreserveColor.Name = "chkPreserveColor";
 			this.chkPreserveColor.Size = new System.Drawing.Size(212, 17);
 			this.chkPreserveColor.TabIndex = 13;
@@ -237,7 +218,7 @@ namespace JxlExample
 			// cmdOK
 			// 
 			this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.cmdOK.Location = new System.Drawing.Point(338, 300);
+			this.cmdOK.Location = new System.Drawing.Point(338, 257);
 			this.cmdOK.Name = "cmdOK";
 			this.cmdOK.Size = new System.Drawing.Size(75, 23);
 			this.cmdOK.TabIndex = 14;
@@ -248,21 +229,12 @@ namespace JxlExample
 			// cmdCancel
 			// 
 			this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cmdCancel.Location = new System.Drawing.Point(419, 300);
+			this.cmdCancel.Location = new System.Drawing.Point(419, 257);
 			this.cmdCancel.Name = "cmdCancel";
 			this.cmdCancel.Size = new System.Drawing.Size(75, 23);
 			this.cmdCancel.TabIndex = 15;
 			this.cmdCancel.Text = "Cancel";
 			this.cmdCancel.UseVisualStyleBackColor = true;
-			// 
-			// lblNoiseHelp
-			// 
-			this.lblNoiseHelp.AutoSize = true;
-			this.lblNoiseHelp.Location = new System.Drawing.Point(144, 238);
-			this.lblNoiseHelp.Name = "lblNoiseHelp";
-			this.lblNoiseHelp.Size = new System.Drawing.Size(252, 26);
-			this.lblNoiseHelp.TabIndex = 10;
-			this.lblNoiseHelp.Text = "Adds noise to the image.\r\n0 = no noise, 100 = some noise, 3600 = lots of noise";
 			// 
 			// EncoderOptionsForm2
 			// 
@@ -270,13 +242,10 @@ namespace JxlExample
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.cmdCancel;
-			this.ClientSize = new System.Drawing.Size(506, 335);
-			this.Controls.Add(this.lblNoiseHelp);
+			this.ClientSize = new System.Drawing.Size(506, 292);
 			this.Controls.Add(this.cmdCancel);
 			this.Controls.Add(this.cmdOK);
 			this.Controls.Add(this.chkPreserveColor);
-			this.Controls.Add(this.lblNoise);
-			this.Controls.Add(this.txtNoise);
 			this.Controls.Add(this.lblQualityHelp);
 			this.Controls.Add(this.lblQuality);
 			this.Controls.Add(this.txtQuality);
@@ -314,11 +283,8 @@ namespace JxlExample
 		private System.Windows.Forms.TextBox txtQuality;
 		private System.Windows.Forms.Label lblQuality;
 		private System.Windows.Forms.Label lblQualityHelp;
-		private System.Windows.Forms.Label lblNoise;
-		private System.Windows.Forms.TextBox txtNoise;
 		private System.Windows.Forms.CheckBox chkPreserveColor;
 		private System.Windows.Forms.Button cmdOK;
 		private System.Windows.Forms.Button cmdCancel;
-		private System.Windows.Forms.Label lblNoiseHelp;
 	}
 }
