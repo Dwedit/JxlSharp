@@ -16,7 +16,7 @@ namespace JxlExample
 	{
 		string loadedFileName = "";
 		EncoderOptions encoderOptions = new EncoderOptions();
-		Dictionary<JxlEncoderFrameSettingId, int> jxlSettings = new Dictionary<JxlEncoderFrameSettingId, int>();
+		Dictionary<JxlEncoderFrameSettingId, long> jxlSettings = new Dictionary<JxlEncoderFrameSettingId, long>();
 
 		public Form1()
 		{

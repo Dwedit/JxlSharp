@@ -653,7 +653,7 @@ namespace JxlSharp
 		/// Default value: 1.0.</param>
 		/// <param name="settings">The settings to save the image with</param>
 		/// <returns>The JXL file, or null on failure</returns>
-		public static byte[] EncodeJxl(Bitmap bitmap, JxlLossyMode lossyMode, float frameDistance, IDictionary<JxlEncoderFrameSettingId, int> settings)
+		public static byte[] EncodeJxl(Bitmap bitmap, JxlLossyMode lossyMode, float frameDistance, IDictionary<JxlEncoderFrameSettingId, long> settings)
 		{
 			JxlEncoderStatus status;
 			MemoryStream ms = new MemoryStream();

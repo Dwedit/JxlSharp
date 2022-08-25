@@ -58,7 +58,7 @@ namespace JxlExample
 
 		private void ReadOptions()
 		{
-			int effort = 7;
+			long effort = 7;
 			if (this.EncoderOptions.Settings.TryGetValue(JxlEncoderFrameSettingId.Effort, out effort) && effort != -1)
 			{
 
@@ -68,7 +68,7 @@ namespace JxlExample
 				effort = 7;
 			}
 
-			int decodingSpeed = 0;
+			long decodingSpeed = 0;
 			if (this.EncoderOptions.Settings.TryGetValue(JxlEncoderFrameSettingId.DecodingSpeed, out decodingSpeed) && decodingSpeed != -1)
 			{
 
@@ -78,7 +78,7 @@ namespace JxlExample
 				decodingSpeed = 0;
 			}
 
-			int keepInvisible = 0;
+			long keepInvisible = 0;
 			if (this.EncoderOptions.Settings.TryGetValue(JxlEncoderFrameSettingId.KeepInvisible, out keepInvisible) && keepInvisible != -1)
 			{
 
@@ -96,7 +96,7 @@ namespace JxlExample
 
 			if (effort >= 1 && effort <= 9)
 			{
-				cboEncodingSpeed.SelectedIndex = effort - 1;
+				cboEncodingSpeed.SelectedIndex = (int)(effort - 1);
 			}
 			else
 			{
@@ -104,7 +104,7 @@ namespace JxlExample
 			}
 			if (decodingSpeed >= 0 && decodingSpeed <= 4)
 			{
-				cboDecodingSpeed.SelectedIndex = decodingSpeed;
+				cboDecodingSpeed.SelectedIndex = (int)decodingSpeed;
 			}
 			optLossless.Checked = false;
 			optAuto.Checked = false;
@@ -134,7 +134,7 @@ namespace JxlExample
 
 	public class EncoderOptions
 	{
-		public Dictionary<JxlSharp.JxlEncoderFrameSettingId, int> Settings = new Dictionary<JxlSharp.JxlEncoderFrameSettingId, int>();
+		public Dictionary<JxlSharp.JxlEncoderFrameSettingId, long> Settings = new Dictionary<JxlSharp.JxlEncoderFrameSettingId, long>();
 		public JxlLossyMode LossyMode;
 		public float Quality;
 		public EncoderOptions()

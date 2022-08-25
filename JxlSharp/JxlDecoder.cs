@@ -165,6 +165,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.Success" /> if no error, <see cref="JxlDecoderStatus.NeedMoreInput" /> if the
 		/// basic info isn't yet available, and <see cref="JxlDecoderStatus.Error" /> otherwise.</returns>
+		[Obsolete]
 		public JxlDecoderStatus GetDefaultPixelFormat(out JxlPixelFormat format)
 		{
 			format = new JxlPixelFormat();
@@ -239,6 +240,25 @@ namespace JxlSharp
 		public JxlDecoderStatus SetKeepOrientation(bool keepOrientation)
 		{
 			return (JxlDecoderStatus)decoderWrapper.SetKeepOrientation(keepOrientation);
+		}
+
+		/// <summary>
+		/// Enables or disables preserving of associated alpha channels. If
+		/// unpremul_alpha is set to JXL_FALSE then for associated alpha channel, the
+		/// pixel data is returned with premultiplied colors. If it is set to JXL_TRUE,
+		/// The colors will be unpremultiplied based on the alpha channel. This function
+		/// has no effect if the image does not have an associated alpha channel.
+		/// <br /><br />
+		/// By default, this option is disabled, and the returned pixel data "as is".
+		/// <br /><br />
+		/// This function must be called at the beginning, before decoding is performed.
+		/// </summary>
+		/// <param name="unpremulAlpha"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
+		/// <returns>
+		///     <see cref="JxlDecoderStatus.Success" /> if no error, <see cref="JxlDecoderStatus.Error" /> otherwise.</returns>
+		public JxlDecoderStatus SetUnpremultiplyAlpha(bool unpremulAlpha)
+		{
+			return (JxlDecoderStatus)decoderWrapper.SetUnpremultiplyAlpha(unpremulAlpha);
 		}
 
 		/// <summary>
@@ -379,9 +399,10 @@ namespace JxlSharp
 		/// remaining in the data set by <see cref="SetInput(byte[])" />, or 0 if no input is
 		/// set or <see cref="ReleaseInput" /> was already called. For a next call
 		/// to <see cref="ProcessInput" />, the buffer must start with these
-		/// unprocessed bytes. This value doesn't provide information about how many
-		/// bytes the decoder truly processed internally or how large the original
-		/// JPEG XL codestream or file are.</returns>
+		/// unprocessed bytes. From this value it is possible to infer the position
+		/// of certain JPEG XL codestream elements (e.g. end of headers, frame
+		/// start/end). See the documentation of individual values of 
+		/// <see cref="JxlDecoderStatus" /> for more information.</returns>
 		public int ReleaseInput()
 		{
 			return decoderWrapper.ReleaseInput();
@@ -485,8 +506,7 @@ namespace JxlSharp
 		/// for a specific color space, possibly indicated in the JPEG XL
 		/// image, <see cref="GetColorAsEncodedProfile" /> should be used first.
 		/// </summary>
-		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.Data" />, may be nullptr otherwise.</param>
+		/// <param name="unusedFormat"> deprecated, can be NULL</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="colorEncoding"> struct to copy the information into, or NULL to only
@@ -496,14 +516,14 @@ namespace JxlSharp
 		/// <see cref="JxlDecoderStatus.NeedMoreInput" /> if not yet available, <see cref="JxlDecoderStatus.Error" /> in
 		/// case the encoded structured color profile does not exist in the
 		/// codestream.</returns>
-		public JxlDecoderStatus GetColorAsEncodedProfile(JxlPixelFormat format, JxlColorProfileTarget target, out JxlColorEncoding colorEncoding)
+		public JxlDecoderStatus GetColorAsEncodedProfile(JxlPixelFormat unusedFormat, JxlColorProfileTarget target, out JxlColorEncoding colorEncoding)
 		{
 			colorEncoding = new JxlColorEncoding();
 			unsafe
 			{
-				if (format != null)
+				if (unusedFormat != null)
 				{
-					fixed (UnsafeNativeJxl.JxlPixelFormat* pFormat = &format.pixelFormat)
+					fixed (UnsafeNativeJxl.JxlPixelFormat* pFormat = &unusedFormat.pixelFormat)
 					{
 						var status = (JxlDecoderStatus)decoderWrapper.GetColorAsEncodedProfile(pFormat, (UnsafeNativeJxl.JxlColorProfileTarget)target, out colorEncoding.colorEncoding);
 						return status;
@@ -527,8 +547,7 @@ namespace JxlSharp
 		/// or a close approximation generated from JPEG XL encoded structured data,
 		/// depending of what is encoded in the codestream.
 		/// </summary>
-		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.Data" />, may be NULL otherwise.</param>
+		/// <param name="unusedFormat"> deprecated, can be NULL</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="size"> variable to output the size into, or NULL to only check the
@@ -539,14 +558,14 @@ namespace JxlSharp
 		/// input data to determine whether an ICC profile is available or what its
 		/// size is, <see cref="JxlDecoderStatus.Error" /> in case the ICC profile is not available and
 		/// cannot be generated.</returns>
-		public JxlDecoderStatus GetICCProfileSize(JxlPixelFormat format, JxlColorProfileTarget target, out int size)
+		public JxlDecoderStatus GetICCProfileSize(JxlPixelFormat unusedFormat, JxlColorProfileTarget target, out int size)
 		{
 			JxlDecoderStatus status;
 			unsafe
 			{
-				if (format != null)
+				if (unusedFormat != null)
 				{
-					fixed (UnsafeNativeJxl.JxlPixelFormat* pFormat = &format.pixelFormat)
+					fixed (UnsafeNativeJxl.JxlPixelFormat* pFormat = &unusedFormat.pixelFormat)
 					{
 						status = (JxlDecoderStatus)decoderWrapper.GetICCProfileSize(pFormat, (UnsafeNativeJxl.JxlColorProfileTarget)target, out size);
 						return status;
@@ -565,8 +584,7 @@ namespace JxlSharp
 		/// <see cref="GetICCProfileSize" /> returns success. The output buffer must have
 		/// at least as many bytes as given by <see cref="GetICCProfileSize" />.
 		/// </summary>
-		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.Data" />, may be NULL otherwise.</param>
+		/// <param name="unusedFormat"> deprecated, can be NULL</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="iccProfile"> buffer to copy the ICC profile into</param>
@@ -575,13 +593,13 @@ namespace JxlSharp
 		/// available, <see cref="JxlDecoderStatus.NeedMoreInput" /> if not yet available, 
 		/// <see cref="JxlDecoderStatus.Error" /> if the profile doesn't exist or the output size is not
 		/// large enough.</returns>
-		public JxlDecoderStatus GetColorAsICCProfile(JxlPixelFormat format, JxlColorProfileTarget target, out byte[] iccProfile)
+		public JxlDecoderStatus GetColorAsICCProfile(JxlPixelFormat unusedFormat, JxlColorProfileTarget target, out byte[] iccProfile)
 		{
 			unsafe
 			{
-				if (format != null)
+				if (unusedFormat != null)
 				{
-					fixed (UnsafeNativeJxl.JxlPixelFormat* pFormat = &format.pixelFormat)
+					fixed (UnsafeNativeJxl.JxlPixelFormat* pFormat = &unusedFormat.pixelFormat)
 					{
 						var status = (JxlDecoderStatus)decoderWrapper.GetColorAsICCProfile(pFormat, (UnsafeNativeJxl.JxlColorProfileTarget)target, out iccProfile);
 						return status;

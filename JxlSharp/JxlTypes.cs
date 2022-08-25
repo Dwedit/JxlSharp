@@ -130,6 +130,16 @@ namespace JxlSharp
 		/// <summary>
 		/// Function call finished successfully, or decoding is finished and there is
 		/// nothing more to be done.
+		/// <br /><br />
+		/// Note that <see cref="JxlDecoder.ProcessInput" /> will return <see cref="JxlDecoderStatus.Success"/> if all
+		/// events that were registered with <see cref="JxlDecoder.SubscribeEvents" /> were
+		/// processed, even before the end of the JPEG XL codestream.
+		/// <br /><br />
+		/// In this case, the return value <see cref="JxlDecoder.ReleaseInput" /> will be the same
+		/// as it was at the last signaled event. E.g. if <see cref="JxlDecoderStatus.FullImage"/> was
+		/// subscribed to, then all bytes from the end of the JPEG XL codestream
+		/// (including possible boxes needed for jpeg reconstruction) will be returned
+		/// as unprocessed.
 		/// </summary>
 		Success = 0,
 
@@ -148,6 +158,11 @@ namespace JxlSharp
 		/// all unprocessed bytes must be provided again (the address need not match,
 		/// but the contents must), and more bytes must be concatenated after the
 		/// unprocessed bytes.
+		/// <br/>In most cases, <see cref="JxlDecoder.ReleaseInput" /> will return no unprocessed bytes
+		/// at this event, the only exceptions are if the previously set input ended
+		/// within (a) the raw codestream signature, (b) the signature box, (c) a box
+		/// header, or (d) the first 4 bytes of a brob, ftyp, or jxlp box. In any of
+		/// these cases the number of unprocessed bytes is less than 20.
 		/// </summary>
 		NeedMoreInput = 2,
 
@@ -157,6 +172,9 @@ namespace JxlSharp
 		/// if <see cref="PreviewImage"/> is requested and it is possible to decode a
 		/// preview image from the codestream and the preview out buffer was not yet
 		/// set. There is maximum one preview image in a codestream.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the frame header (including ToC) of the preview frame as
+		/// unprocessed.
 		/// </summary>
 		NeedPreviewOutBuffer = 3,
 
@@ -174,6 +192,8 @@ namespace JxlSharp
 		/// The decoder requests an output buffer to store the full resolution image,
 		/// which can be set with <see cref="JxlDecoder.SetImageOutBuffer"/> or with <see cref="JxlDecoder.SetImageOutCallback"/>. This event re-occurs for new frames if
 		/// there are multiple animation frames and requires setting an output again.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the frame header (including ToC) as unprocessed.
 		/// </summary>
 		NeedImageOutBuffer = 5,
 
@@ -196,6 +216,9 @@ namespace JxlSharp
 		/// Informative event by <see cref="JxlDecoder.ProcessInput"/>
 		/// "JxlDecoderProcessInput": Basic information such as image dimensions and
 		/// extra channels. This event occurs max once per image.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the basic info as unprocessed (including the last byte of basic info
+		/// if it did not end on a byte boundary).
 		/// </summary>
 		BasicInfo = 0x40,
 
@@ -214,6 +237,9 @@ namespace JxlSharp
 		/// "JxlDecoderProcessInput": Color encoding or ICC profile from the
 		/// codestream header. This event occurs max once per image and always later
 		/// than <see cref="BasicInfo"/> and earlier than any pixel data.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the image header (which is the start of the first frame) as
+		/// unprocessed.
 		/// </summary>
 		ColorEncoding = 0x100,
 
@@ -222,6 +248,8 @@ namespace JxlSharp
 		/// "JxlDecoderProcessInput": Preview image, a small frame, decoded. This
 		/// event can only happen if the image has a preview frame encoded. This event
 		/// occurs max once for the codestream and always later than <see cref="ColorEncoding"/> and before <see cref="Frame"/>.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the preview frame as unprocessed.
 		/// </summary>
 		PreviewImage = 0x200,
 
@@ -240,6 +268,8 @@ namespace JxlSharp
 		/// JPEG XL supports encoding a single frame as the composition of multiple
 		/// internal sub-frames also called frames, this event is not indicated for the
 		/// internal frames.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the frame header (including ToC) as unprocessed.
 		/// </summary>
 		Frame = 0x400,
 
@@ -265,6 +295,10 @@ namespace JxlSharp
 		/// getting the basic image information to be able to get the image pixels, if
 		/// not this return status only indicates we're past this point in the
 		/// codestream. This event occurs max once per frame and always later than <see cref="DcImage"/>.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the frame (or if <see cref="JpegReconstruction" /> is subscribed to,
+		/// from the end of the last box that is needed for jpeg reconstruction) as
+		/// unprocessed.
 		/// </summary>
 		FullImage = 0x1000,
 
@@ -276,6 +310,8 @@ namespace JxlSharp
 		/// image will be written to the JPEG reconstruction buffer instead of pixels
 		/// to the image out buffer. This event occurs max once per image and always
 		/// before <see cref="FullImage"/>.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the 'jbrd' box as unprocessed.
 		/// </summary>
 		JpegReconstruction = 0x2000,
 
@@ -311,6 +347,9 @@ namespace JxlSharp
 		/// boxes. To check whether the box is a metadata type for respectively EXIF,
 		/// XMP or JUMBF, use <see cref="JxlDecoder.GetBoxType"/> and check for types "Exif",
 		/// "xml " and "jumb" respectively.
+		/// <br /><br />
+		/// In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// start of the box header as unprocessed.
 		/// </summary>
 		Box = 0x4000,
 
@@ -325,6 +364,9 @@ namespace JxlSharp
 		/// full resolution, giving upscaled DC). Use <see cref="JxlDecoder.SetProgressiveDetail"/> to configure more fine-grainedness. The
 		/// event is not guaranteed to trigger, not all images have progressive steps
 		/// or DC encoded.
+		/// <br/>In this case, <see cref="JxlDecoder.ReleaseInput" /> will return all bytes from the
+		/// end of the section that was needed to produce this progressive event as
+		/// unprocessed.
 		/// </summary>
 		FrameProgression = 0x8000,
 	}

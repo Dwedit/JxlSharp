@@ -1027,11 +1027,22 @@ namespace JxlSharp
 		/// events that can be subscribed to, they are never returned if they
 		/// have not been registered with <see cref="JxlDecoderSubscribeEvents(JxlDecoder*,int)" />.
 		/// </summary>
+		[Flags]
 		internal enum JxlDecoderStatus
 		{
 			/// <summary>
 			/// Function call finished successfully, or decoding is finished and there is
 			/// nothing more to be done.
+			/// <br /><br />
+			/// Note that <see cref="JxlDecoderProcessInput(JxlDecoder*)" /> will return JXL_DEC_SUCCESS if all
+			/// events that were registered with <see cref="JxlDecoderSubscribeEvents(JxlDecoder*,int)" /> were
+			/// processed, even before the end of the JPEG XL codestream.
+			/// <br /><br />
+			/// In this case, the return value <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will be the same
+			/// as it was at the last signaled event. E.g. if JXL_DEC_FULL_IMAGE was
+			/// subscribed to, then all bytes from the end of the JPEG XL codestream
+			/// (including possible boxes needed for jpeg reconstruction) will be returned
+			/// as unprocessed.
 			/// </summary>
 			JXL_DEC_SUCCESS = 0,
 			/// <summary>
@@ -1048,6 +1059,11 @@ namespace JxlSharp
 			/// all unprocessed bytes must be provided again (the address need not match,
 			/// but the contents must), and more bytes must be concatenated after the
 			/// unprocessed bytes.
+			/// In most cases, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return no unprocessed bytes
+			/// at this event, the only exceptions are if the previously set input ended
+			/// within (a) the raw codestream signature, (b) the signature box, (c) a box
+			/// header, or (d) the first 4 bytes of a brob, ftyp, or jxlp box. In any of
+			/// these cases the number of unprocessed bytes is less than 20.
 			/// </summary>
 			JXL_DEC_NEED_MORE_INPUT = 2,
 			/// <summary>
@@ -1056,6 +1072,9 @@ namespace JxlSharp
 			/// if <see cref="JxlDecoderStatus.JXL_DEC_PREVIEW_IMAGE" /> is requested and it is possible to decode a
 			/// preview image from the codestream and the preview out buffer was not yet
 			/// set. There is maximum one preview image in a codestream.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the frame header (including ToC) of the preview frame as
+			/// unprocessed.
 			/// </summary>
 			JXL_DEC_NEED_PREVIEW_OUT_BUFFER = 3,
 			/// <summary>
@@ -1073,6 +1092,8 @@ namespace JxlSharp
 			/// which can be set with <see cref="JxlDecoderSetImageOutBuffer(JxlDecoder*,JxlPixelFormat*,void*,UIntPtr)" /> or with 
 			/// <see cref="JxlDecoderSetImageOutCallback(JxlDecoder*,JxlPixelFormat*,UIntPtr,void*)" />. This event re-occurs for new frames if
 			/// there are multiple animation frames and requires setting an output again.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the frame header (including ToC) as unprocessed.
 			/// </summary>
 			JXL_DEC_NEED_IMAGE_OUT_BUFFER = 5,
 			/// <summary>
@@ -1092,6 +1113,9 @@ namespace JxlSharp
 			/// Informative event by <see cref="JxlDecoderProcessInput(JxlDecoder*)" />
 			/// "JxlDecoderProcessInput": Basic information such as image dimensions and
 			/// extra channels. This event occurs max once per image.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the basic info as unprocessed (including the last byte of basic info
+			/// if it did not end on a byte boundary).
 			/// </summary>
 			JXL_DEC_BASIC_INFO = 64,
 			/// <summary>
@@ -1109,6 +1133,9 @@ namespace JxlSharp
 			/// "JxlDecoderProcessInput": Color encoding or ICC profile from the
 			/// codestream header. This event occurs max once per image and always later
 			/// than <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO" /> and earlier than any pixel data.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the image header (which is the start of the first frame) as
+			/// unprocessed.
 			/// </summary>
 			JXL_DEC_COLOR_ENCODING = 256,
 			/// <summary>
@@ -1117,6 +1144,8 @@ namespace JxlSharp
 			/// event can only happen if the image has a preview frame encoded. This event
 			/// occurs max once for the codestream and always later than 
 			/// <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING" /> and before <see cref="JxlDecoderStatus.JXL_DEC_FRAME" />.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the preview frame as unprocessed.
 			/// </summary>
 			JXL_DEC_PREVIEW_IMAGE = 512,
 			/// <summary>
@@ -1136,6 +1165,8 @@ namespace JxlSharp
 			/// JPEG XL supports encoding a single frame as the composition of multiple
 			/// internal sub-frames also called frames, this event is not indicated for the
 			/// internal frames.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the frame header (including ToC) as unprocessed.
 			/// </summary>
 			JXL_DEC_FRAME = 1024,
 			/// <summary>
@@ -1161,6 +1192,10 @@ namespace JxlSharp
 			/// not this return status only indicates we're past this point in the
 			/// codestream. This event occurs max once per frame and always later than 
 			/// <see cref="JxlDecoderStatus.JXL_DEC_DC_IMAGE" />.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the frame (or if <see cref="JxlDecoderStatus.JXL_DEC_JPEG_RECONSTRUCTION" /> is subscribed to,
+			/// from the end of the last box that is needed for jpeg reconstruction) as
+			/// unprocessed.
 			/// </summary>
 			JXL_DEC_FULL_IMAGE = 4096,
 			/// <summary>
@@ -1172,6 +1207,8 @@ namespace JxlSharp
 			/// image will be written to the JPEG reconstruction buffer instead of pixels
 			/// to the image out buffer. This event occurs max once per image and always
 			/// before <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE" />.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the 'jbrd' box as unprocessed.
 			/// </summary>
 			JXL_DEC_JPEG_RECONSTRUCTION = 8192,
 			/// <summary>
@@ -1206,6 +1243,9 @@ namespace JxlSharp
 			/// boxes. To check whether the box is a metadata type for respectively EXIF,
 			/// XMP or JUMBF, use <see cref="JxlDecoderGetBoxType(JxlDecoder*,byte*,int)" /> and check for types "Exif",
 			/// "xml " and "jumb" respectively.
+			/// <br /><br />
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// start of the box header as unprocessed.
 			/// </summary>
 			JXL_DEC_BOX = 16384,
 			/// <summary>
@@ -1220,6 +1260,9 @@ namespace JxlSharp
 			/// <see cref="JxlDecoderSetProgressiveDetail(JxlDecoder*,JxlProgressiveDetail)" /> to configure more fine-grainedness. The
 			/// event is not guaranteed to trigger, not all images have progressive steps
 			/// or DC encoded.
+			/// In this case, <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> will return all bytes from the
+			/// end of the section that was needed to produce this progressive event as
+			/// unprocessed.
 			/// </summary>
 			JXL_DEC_FRAME_PROGRESSION = 32768
 		}
@@ -1637,6 +1680,16 @@ namespace JxlSharp
 		/// events that were already handled before, such as <see cref="JxlDecoderStatus.JXL_DEC_BASIC_INFO" />
 		/// and <see cref="JxlDecoderStatus.JXL_DEC_COLOR_ENCODING" />, since they will provide the same information
 		/// as before.
+		/// <br/>The difference to <see cref="JxlDecoderReset(JxlDecoder*)" /> is that some state is kept, namely
+		/// settings set by a call to
+		/// - <see cref="JxlDecoderSetCoalescing(JxlDecoder*,int)" />,
+		/// - <see cref="JxlDecoderSetDesiredIntensityTarget(JxlDecoder*,System.Single)" />,
+		/// - <see cref="JxlDecoderSetDecompressBoxes(JxlDecoder*,int)" />,
+		/// - <see cref="JxlDecoderSetKeepOrientation(JxlDecoder*,int)" />,
+		/// - <see cref="JxlDecoderSetUnpremultiplyAlpha(JxlDecoder*,int)" />,
+		/// - <see cref="JxlDecoderSetParallelRunner(JxlDecoder*,System.IntPtr,void*)" />,
+		/// - <see cref="JxlDecoderSetRenderSpotcolors(JxlDecoder*,int)" />, and
+		/// - <see cref="JxlDecoderSubscribeEvents(JxlDecoder*,int)" />.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -1694,6 +1747,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if the
 		/// basic info isn't yet available, and <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
+		[Obsolete]
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderDefaultPixelFormat(JxlDecoder* dec, JxlPixelFormat* format);
@@ -1783,6 +1837,25 @@ namespace JxlSharp
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetKeepOrientation(JxlDecoder* dec, int skip_reorientation);
+
+		/// <summary>
+		/// Enables or disables preserving of associated alpha channels. If
+		/// unpremul_alpha is set to JXL_FALSE then for associated alpha channel, the
+		/// pixel data is returned with premultiplied colors. If it is set to JXL_TRUE,
+		/// The colors will be unpremultiplied based on the alpha channel. This function
+		/// has no effect if the image does not have an associated alpha channel.
+		/// <br /><br />
+		/// By default, this option is disabled, and the returned pixel data "as is".
+		/// <br /><br />
+		/// This function must be called at the beginning, before decoding is performed.
+		/// </summary>
+		/// <param name="dec"> decoder object</param>
+		/// <param name="unpremul_alpha"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
+		/// <returns>
+		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
+		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[MethodImpl(MethodImplOptions.ForwardRef)]
+		public unsafe static extern JxlDecoderStatus JxlDecoderSetUnpremultiplyAlpha(JxlDecoder* dec, int unpremul_alpha);
 
 		/// <summary>
 		/// Enables or disables rendering spot colors. By default, spot colors
@@ -1902,9 +1975,10 @@ namespace JxlSharp
 		/// remaining in the data set by <see cref="JxlDecoderSetInput(JxlDecoder*,byte*,UIntPtr)" />, or 0 if no input is
 		/// set or <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> was already called. For a next call
 		/// to <see cref="JxlDecoderProcessInput(JxlDecoder*)" />, the buffer must start with these
-		/// unprocessed bytes. This value doesn't provide information about how many
-		/// bytes the decoder truly processed internally or how large the original
-		/// JPEG XL codestream or file are.</returns>
+		/// unprocessed bytes. From this value it is possible to infer the position
+		/// of certain JPEG XL codestream elements (e.g. end of headers, frame
+		/// start/end). See the documentation of individual values of 
+		/// <see cref="JxlDecoderStatus" /> for more information.</returns>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern UIntPtr JxlDecoderReleaseInput(JxlDecoder* dec);
@@ -2005,8 +2079,7 @@ namespace JxlSharp
 		/// image, <see cref="JxlDecoderGetColorAsEncodedProfile(JxlDecoder*,JxlPixelFormat*,JxlColorProfileTarget,JxlColorEncoding*)" /> should be used first.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
-		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.JXL_COLOR_PROFILE_TARGET_DATA" />, may be nullptr otherwise.</param>
+		/// <param name="unused_format"> deprecated, can be NULL</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="color_encoding"> struct to copy the information into, or NULL to only
@@ -2018,7 +2091,7 @@ namespace JxlSharp
 		/// codestream.</returns>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal unsafe static extern JxlDecoderStatus JxlDecoderGetColorAsEncodedProfile(JxlDecoder* dec, JxlPixelFormat* format, JxlColorProfileTarget target, JxlColorEncoding* color_encoding);
+		internal unsafe static extern JxlDecoderStatus JxlDecoderGetColorAsEncodedProfile(JxlDecoder* dec, JxlPixelFormat* unused_format, JxlColorProfileTarget target, JxlColorEncoding* color_encoding);
 
 		/// <summary>
 		/// Outputs the size in bytes of the ICC profile returned by 
@@ -2031,8 +2104,7 @@ namespace JxlSharp
 		/// depending of what is encoded in the codestream.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
-		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.JXL_COLOR_PROFILE_TARGET_DATA" />, may be NULL otherwise.</param>
+		/// <param name="unused_format"> deprecated, can be NULL</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="size"> variable to output the size into, or NULL to only check the
@@ -2045,7 +2117,7 @@ namespace JxlSharp
 		/// cannot be generated.</returns>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal unsafe static extern JxlDecoderStatus JxlDecoderGetICCProfileSize(JxlDecoder* dec, JxlPixelFormat* format, JxlColorProfileTarget target, UIntPtr* size);
+		internal unsafe static extern JxlDecoderStatus JxlDecoderGetICCProfileSize(JxlDecoder* dec, JxlPixelFormat* unused_format, JxlColorProfileTarget target, UIntPtr* size);
 
 		/// <summary>
 		/// Outputs ICC profile if available. The profile is only available if 
@@ -2053,8 +2125,7 @@ namespace JxlSharp
 		/// at least as many bytes as given by <see cref="JxlDecoderGetICCProfileSize(JxlDecoder*,JxlPixelFormat*,JxlColorProfileTarget,UIntPtr*)" />.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
-		/// <param name="format"> pixel format to output the data to. Only used for 
-		/// <see cref="JxlColorProfileTarget.JXL_COLOR_PROFILE_TARGET_DATA" />, may be NULL otherwise.</param>
+		/// <param name="unused_format"> deprecated, can be NULL</param>
 		/// <param name="target"> whether to get the original color profile from the metadata
 		/// or the color profile of the decoded pixels.</param>
 		/// <param name="icc_profile"> buffer to copy the ICC profile into</param>
@@ -2066,7 +2137,7 @@ namespace JxlSharp
 		/// large enough.</returns>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal unsafe static extern JxlDecoderStatus JxlDecoderGetColorAsICCProfile(JxlDecoder* dec, JxlPixelFormat* format, JxlColorProfileTarget target, byte* icc_profile, UIntPtr size);
+		internal unsafe static extern JxlDecoderStatus JxlDecoderGetColorAsICCProfile(JxlDecoder* dec, JxlPixelFormat* unused_format, JxlColorProfileTarget target, byte* icc_profile, UIntPtr size);
 
 		/// <summary>
 		/// Sets the color profile to use for <see cref="JxlColorProfileTarget.JXL_COLOR_PROFILE_TARGET_DATA" /> for the
@@ -3166,7 +3237,24 @@ namespace JxlSharp
 		/// function was called.</returns>
 		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
-		internal unsafe static extern JxlEncoderStatus JxlEncoderFrameSettingsSetOption(JxlEncoderFrameSettings* frame_settings, JxlEncoderFrameSettingId option, int value);
+		internal unsafe static extern JxlEncoderStatus JxlEncoderFrameSettingsSetOption(JxlEncoderFrameSettings* frame_settings, JxlEncoderFrameSettingId option, long value);
+
+		/// <summary>
+		/// Sets a frame-specific option of float type to the encoder options.
+		/// The JxlEncoderFrameSettingId argument determines which option is set.
+		/// </summary>
+		/// <param name="frame_settings"> set of options and metadata for this frame. Also
+		/// includes reference to the encoder object.</param>
+		/// <param name="option"> ID of the option to set.</param>
+		/// <param name="value"> Float value to set for this option.</param>
+		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR in
+		/// case of an error, such as invalid or unknown option id, or invalid integer
+		/// value for the given option. If an error is returned, the state of the
+		/// JxlEncoderFrameSettings object is still valid and is the same as before this
+		/// function was called.</returns>
+		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[MethodImpl(MethodImplOptions.ForwardRef)]
+		public unsafe static extern JxlEncoderStatus JxlEncoderFrameSettingsSetFloatOption(JxlEncoderFrameSettings* frame_settings, JxlEncoderFrameSettingId option, float value);
 
 		/// <summary>
 		/// Forces the encoder to use the box-based container format (BMFF) even

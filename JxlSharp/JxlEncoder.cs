@@ -863,9 +863,25 @@ namespace JxlSharp
 		/// value for the given option. If an error is returned, the state of the
 		/// JxlEncoderFrameSettings object is still valid and is the same as before this
 		/// function was called.</returns>
-		public JxlEncoderStatus SetOption(JxlEncoderFrameSettingId option, int value)
+		public JxlEncoderStatus SetOption(JxlEncoderFrameSettingId option, long value)
 		{
 			return (JxlEncoderStatus)frameSettings.SetOption((UnsafeNativeJxl.JxlEncoderFrameSettingId)option, value);
+		}
+
+		/// <summary>
+		/// Sets a frame-specific option of float type to the encoder options.
+		/// The JxlEncoderFrameSettingId argument determines which option is set.
+		/// </summary>
+		/// <param name="option"> ID of the option to set.</param>
+		/// <param name="value"> Float value to set for this option.</param>
+		/// <returns> <see cref="JxlEncoderStatus.Success"/> if the operation was successful, <see cref="JxlEncoderStatus.Error"/> in
+		/// case of an error, such as invalid or unknown option id, or invalid integer
+		/// value for the given option. If an error is returned, the state of the
+		/// JxlEncoderFrameSettings object is still valid and is the same as before this
+		/// function was called.</returns>
+		public JxlEncoderStatus SetFloatOption(JxlEncoderFrameSettingId option, float value)
+		{
+			return (JxlEncoderStatus)frameSettings.SetFloatOption((UnsafeNativeJxl.JxlEncoderFrameSettingId)option, value);
 		}
 
 		/// <summary>

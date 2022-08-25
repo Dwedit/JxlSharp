@@ -165,6 +165,7 @@ namespace JxlSharp
 			/// <returns>
 			///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if the
 			/// basic info isn't yet available, and <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
+			[Obsolete]
 			public JxlDecoderStatus GetDefaultPixelFormat(out JxlPixelFormat format)
 			{
 				CheckIfDisposed();
@@ -259,6 +260,27 @@ namespace JxlSharp
 				CheckIfDisposed();
 				return JxlDecoderSetKeepOrientation(dec, Convert.ToInt32(keep_orientation));
 			}
+
+			/// <summary>
+			/// Enables or disables preserving of associated alpha channels. If
+			/// unpremul_alpha is set to JXL_FALSE then for associated alpha channel, the
+			/// pixel data is returned with premultiplied colors. If it is set to JXL_TRUE,
+			/// The colors will be unpremultiplied based on the alpha channel. This function
+			/// has no effect if the image does not have an associated alpha channel.
+			/// <br /><br />
+			/// By default, this option is disabled, and the returned pixel data "as is".
+			/// <br /><br />
+			/// This function must be called at the beginning, before decoding is performed.
+			/// </summary>
+			/// <param name="unpremul_alpha"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
+			/// <returns>
+			///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
+			public JxlDecoderStatus SetUnpremultiplyAlpha(bool unpremul_alpha)
+			{
+				CheckIfDisposed();
+				return JxlDecoderSetUnpremultiplyAlpha(dec, Convert.ToInt32(unpremul_alpha));
+			}
+
 
 			/// <summary>
 			/// Enables or disables rendering spot colors. By default, spot colors
@@ -404,9 +426,10 @@ namespace JxlSharp
 			/// remaining in the data set by <see cref="JxlDecoderSetInput(JxlDecoder*,byte*,UIntPtr)" />, or 0 if no input is
 			/// set or <see cref="JxlDecoderReleaseInput(JxlDecoder*)" /> was already called. For a next call
 			/// to <see cref="JxlDecoderProcessInput(JxlDecoder*)" />, the buffer must start with these
-			/// unprocessed bytes. This value doesn't provide information about how many
-			/// bytes the decoder truly processed internally or how large the original
-			/// JPEG XL codestream or file are.</returns>
+			/// unprocessed bytes. From this value it is possible to infer the position
+			/// of certain JPEG XL codestream elements (e.g. end of headers, frame
+			/// start/end). See the documentation of individual values of 
+			/// <see cref="T:JxlSharp.UnsafeNativeJxl.JxlDecoderStatus" /> for more information.</returns>
 			public int ReleaseInput()
 			{
 				CheckIfDisposed();
