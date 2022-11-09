@@ -31,13 +31,10 @@ namespace JxlSharp
     {
         internal static readonly IntPtr libJxlModule;
         internal static readonly IntPtr JxlThreadParallelRunner;
-        internal static readonly IntPtr _libJxlThreadModule;
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal delegate void* JxlThreadParallelRunnerCreate_FUNC(JxlMemoryManager* memoryManager, UIntPtr num_worker_threads);
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal delegate void JxlThreadParallelRunnerDestroy_FUNC(void* runner_opaque);
-        internal static readonly JxlThreadParallelRunnerCreate_FUNC JxlThreadParallelRunnerCreate;
-        internal static readonly JxlThreadParallelRunnerDestroy_FUNC JxlThreadParallelRunnerDestroy;
+        internal static readonly IntPtr libJxlThreadModule;
+        internal static readonly IntPtr brotliCommonModule;
+        internal static readonly IntPtr brotliDecModule;
+        internal static readonly IntPtr brotliEncModule;
 
         private static class UnsafeNativeWin32
         {
@@ -92,50 +89,43 @@ namespace JxlSharp
             return TryLoadLibrary("", inputDllName);
         }
 
+        static IntPtr TryLoadLibraryWithThrow(string inputDllName)
+        {
+            IntPtr module = TryLoadLibrary(inputDllName);
+            if (module == IntPtr.Zero)
+            {
+                throw new DllNotFoundException("Failed to load " + inputDllName + " - Check that this file is not missing");
+            }
+            return module;
+        }
+
         /// <summary>
         /// Loads the correct version of "jxl.dll" for the executing architecture, this allows the DllImports to work
+        /// Also calls GetProcAddress for JxlThreadParallelRunner because we need a native pointer for that function
         /// </summary>
         static UnsafeNativeJxl()
         {
-            string dllName = "jxl.dll";
-            string dllName2 = "jxl_threads.dll";
+            //This function preloads the DLL files because otherwise it won't find them in the directory that contains them.
+            const string jxlDllName = "jxl.dll";
+            const string jxlThreadsDllName = "jxl_threads.dll";
+            const string brotliCommonDllName = "brotlicommon.dll";
+            const string brotliDecDllName = "brotlidec.dll";
+            const string brotliEncDllName = "brotlienc.dll";
 
-            string dllDependency1 = "brotlicommon.dll";
-            string dllDependency2 = "brotlidec.dll";
-            string dllDependency3 = "brotlienc.dll";
+            //must load brotli first
+            brotliCommonModule = TryLoadLibraryWithThrow(brotliCommonDllName);
+            brotliDecModule = TryLoadLibraryWithThrow(brotliDecDllName);
+            brotliEncModule = TryLoadLibraryWithThrow(brotliEncDllName);
+            //load jxl, and jxl_threads
+            libJxlModule = TryLoadLibraryWithThrow(jxlDllName);
+            libJxlThreadModule = TryLoadLibraryWithThrow(jxlThreadsDllName);
 
-            IntPtr module1 = TryLoadLibrary(dllDependency1);
-            IntPtr module2 = TryLoadLibrary(dllDependency2);
-            IntPtr module3 = TryLoadLibrary(dllDependency3);
-
-            libJxlModule = TryLoadLibrary(dllName);
-            if (libJxlModule == IntPtr.Zero)
+            //Get function pointer for JxlThreadParallelRunner, so we can call JxlDecoderSetParallelRunner/JxlEncoderSetParallelRunner
+            JxlThreadParallelRunner = UnsafeNativeWin32.GetProcAddress(libJxlThreadModule, "JxlThreadParallelRunner");
+            if (JxlThreadParallelRunner == IntPtr.Zero)
             {
-                throw new DllNotFoundException("Failed to load " + dllName + " - Check that this file is not missing");
+                throw new EntryPointNotFoundException("Failed to find 'JxlThreadParallelRunner' in " + jxlThreadsDllName + ", check if the DLL is okay");
             }
-            IntPtr jxlThreadParallelRunnerCreate = UnsafeNativeWin32.GetProcAddress(libJxlModule, "JxlThreadParallelRunnerCreate");
-            IntPtr jxlThreadParallelRunnerDestroy = UnsafeNativeWin32.GetProcAddress(libJxlModule, "JxlThreadParallelRunnerDestroy");
-            JxlThreadParallelRunner = UnsafeNativeWin32.GetProcAddress(libJxlModule, "JxlThreadParallelRunner");
-            if (jxlThreadParallelRunnerCreate == IntPtr.Zero ||
-                jxlThreadParallelRunnerDestroy == IntPtr.Zero ||
-                JxlThreadParallelRunner == IntPtr.Zero)
-            {
-                _libJxlThreadModule = TryLoadLibrary(dllName2);
-                if (_libJxlThreadModule != IntPtr.Zero)
-                {
-                    jxlThreadParallelRunnerCreate = UnsafeNativeWin32.GetProcAddress(_libJxlThreadModule, "JxlThreadParallelRunnerCreate");
-                    jxlThreadParallelRunnerDestroy = UnsafeNativeWin32.GetProcAddress(_libJxlThreadModule, "JxlThreadParallelRunnerDestroy");
-                    JxlThreadParallelRunner = UnsafeNativeWin32.GetProcAddress(_libJxlThreadModule, "JxlThreadParallelRunner");
-                }
-                if (jxlThreadParallelRunnerCreate == IntPtr.Zero ||
-                    jxlThreadParallelRunnerDestroy == IntPtr.Zero ||
-                    JxlThreadParallelRunner == IntPtr.Zero)
-                {
-                    throw new EntryPointNotFoundException("Failed to find one of 'JxlThreadParallelRunnerCreate', 'JxlThreadParallelRunnerDestroy', or 'JxlThreadParallelRunner' in " + dllName + " or " + dllName2 + ", check if the DLL is okay");
-                }
-            }
-            JxlThreadParallelRunnerCreate = (JxlThreadParallelRunnerCreate_FUNC)Marshal.GetDelegateForFunctionPointer(jxlThreadParallelRunnerCreate, typeof(JxlThreadParallelRunnerCreate_FUNC));
-            JxlThreadParallelRunnerDestroy = (JxlThreadParallelRunnerDestroy_FUNC)Marshal.GetDelegateForFunctionPointer(jxlThreadParallelRunnerDestroy, typeof(JxlThreadParallelRunnerDestroy_FUNC));
         }
     }
 }
