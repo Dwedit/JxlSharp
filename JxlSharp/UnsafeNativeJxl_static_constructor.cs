@@ -93,12 +93,21 @@ namespace JxlSharp
         }
 
         /// <summary>
-        /// Loads the correct version of "libjxl.dll" for the executing architecture, this allows the DllImports to work
+        /// Loads the correct version of "jxl.dll" for the executing architecture, this allows the DllImports to work
         /// </summary>
         static UnsafeNativeJxl()
         {
-            string dllName = "libjxl.dll";
+            string dllName = "jxl.dll";
             string dllName2 = "jxl_threads.dll";
+
+            string dllDependency1 = "brotlicommon.dll";
+            string dllDependency2 = "brotlidec.dll";
+            string dllDependency3 = "brotlienc.dll";
+
+            IntPtr module1 = TryLoadLibrary(dllDependency1);
+            IntPtr module2 = TryLoadLibrary(dllDependency2);
+            IntPtr module3 = TryLoadLibrary(dllDependency3);
+
             libJxlModule = TryLoadLibrary(dllName);
             if (libJxlModule == IntPtr.Zero)
             {

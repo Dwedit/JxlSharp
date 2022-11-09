@@ -1614,7 +1614,7 @@ namespace JxlSharp
 		/// <returns> the decoder library version as an integer:
 		/// MAJOR_VERSION * 1000000 + MINOR_VERSION * 1000 + PATCH_VERSION. For example,
 		/// version 1.2.3 would return 1002003.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal static extern uint JxlDecoderVersion();
 
@@ -1632,7 +1632,7 @@ namespace JxlSharp
 		/// - <see cref="JxlSignature.JXL_SIG_CODESTREAM" /> if a valid JPEG XL codestream signature was
 		/// found.
 		/// - <see cref="JxlSignature.JXL_SIG_CONTAINER" /> if a valid JPEG XL container signature was found.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlSignature JxlSignatureCheck(byte* buf, UIntPtr len);
 
@@ -1647,7 +1647,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <tt>NULL</tt> if the instance can not be allocated or initialized</returns>
 		/// <returns> pointer to initialized <see cref="JxlDecoder" /> otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoder* JxlDecoderCreate(JxlMemoryManager* memory_manager);
 
@@ -1657,7 +1657,7 @@ namespace JxlSharp
 		/// newly created with <see cref="JxlDecoderCreate(JxlMemoryManager*)" />, but the memory manager is kept.
 		/// </summary>
 		/// <param name="dec"> instance to be re-initialized.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlDecoderReset(JxlDecoder* dec);
 
@@ -1665,7 +1665,7 @@ namespace JxlSharp
 		/// Deinitializes and frees <see cref="JxlDecoder" /> instance.
 		/// </summary>
 		/// <param name="dec"> instance to be cleaned up and deallocated.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlDecoderDestroy(JxlDecoder* dec);
 
@@ -1692,7 +1692,7 @@ namespace JxlSharp
 		/// - <see cref="JxlDecoderSubscribeEvents(JxlDecoder*,int)" />.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlDecoderRewind(JxlDecoder* dec);
 
@@ -1714,7 +1714,7 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
 		/// <param name="amount"> the amount of frames to skip</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlDecoderSkipFrames(JxlDecoder* dec, UIntPtr amount);
 
@@ -1730,7 +1730,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if there is a frame to skip, and 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if the function was not called during frame processing.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSkipCurrentFrame(JxlDecoder* dec);
 
@@ -1748,7 +1748,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if the
 		/// basic info isn't yet available, and <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
 		[Obsolete]
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderDefaultPixelFormat(JxlDecoder* dec, JxlPixelFormat* format);
 
@@ -1764,7 +1764,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the runner was set, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" />
 		/// otherwise (the previous runner remains set).</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetParallelRunner(JxlDecoder* dec, IntPtr parallel_runner, void* parallel_runner_opaque);
 
@@ -1782,7 +1782,7 @@ namespace JxlSharp
 		/// <param name="dec"> decoder object</param>
 		/// <returns> the size hint in bytes if the basic info is not yet fully decoded.</returns>
 		/// <returns> 0 when the basic info is already available.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern UIntPtr JxlDecoderSizeHintBasicInfo(JxlDecoder* dec);
 
@@ -1799,7 +1799,7 @@ namespace JxlSharp
 		/// <param name="events_wanted"> bitfield of desired events.</param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSubscribeEvents(JxlDecoder* dec, int events_wanted);
 
@@ -1834,7 +1834,7 @@ namespace JxlSharp
 		/// <param name="skip_reorientation"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetKeepOrientation(JxlDecoder* dec, int skip_reorientation);
 
@@ -1853,7 +1853,7 @@ namespace JxlSharp
 		/// <param name="unpremul_alpha"> JXL_TRUE to enable, JXL_FALSE to disable.</param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		public unsafe static extern JxlDecoderStatus JxlDecoderSetUnpremultiplyAlpha(JxlDecoder* dec, int unpremul_alpha);
 
@@ -1868,7 +1868,7 @@ namespace JxlSharp
 		/// <param name="render_spotcolors"> JXL_TRUE to enable (default), JXL_FALSE to disable.</param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetRenderSpotcolors(JxlDecoder* dec, int render_spotcolors);
 
@@ -1886,7 +1886,7 @@ namespace JxlSharp
 		/// disable it.</param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if no error, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetCoalescing(JxlDecoder* dec, int coalescing);
 
@@ -1939,7 +1939,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_FULL_IMAGE" /> when all pixel information at highest detail
 		/// is available and has been output in the pixel buffer.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderProcessInput(JxlDecoder* dec);
 
@@ -1957,7 +1957,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if input was already set without releasing or 
 		/// <see cref="JxlDecoderCloseInput(JxlDecoder*)" /> was already called, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetInput(JxlDecoder* dec, byte* data, UIntPtr size);
 
@@ -1979,7 +1979,7 @@ namespace JxlSharp
 		/// of certain JPEG XL codestream elements (e.g. end of headers, frame
 		/// start/end). See the documentation of individual values of 
 		/// <see cref="JxlDecoderStatus" /> for more information.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern UIntPtr JxlDecoderReleaseInput(JxlDecoder* dec);
 
@@ -1999,7 +1999,7 @@ namespace JxlSharp
 		/// at once), before the final <see cref="JxlDecoderProcessInput(JxlDecoder*)" /> calls.
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlDecoderCloseInput(JxlDecoder* dec);
 
@@ -2014,7 +2014,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" />
 		/// in case of other error conditions.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetBasicInfo(JxlDecoder* dec, JxlBasicInfo* info);
 
@@ -2030,7 +2030,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" />
 		/// in case of other error conditions.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetExtraChannelInfo(JxlDecoder* dec, UIntPtr index, JxlExtraChannelInfo* info);
 
@@ -2048,7 +2048,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" />
 		/// in case of other error conditions.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetExtraChannelName(JxlDecoder* dec, UIntPtr index, byte* name, UIntPtr size);
 
@@ -2089,7 +2089,7 @@ namespace JxlSharp
 		/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> in
 		/// case the encoded structured color profile does not exist in the
 		/// codestream.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetColorAsEncodedProfile(JxlDecoder* dec, JxlPixelFormat* unused_format, JxlColorProfileTarget target, JxlColorEncoding* color_encoding);
 
@@ -2115,7 +2115,7 @@ namespace JxlSharp
 		/// input data to determine whether an ICC profile is available or what its
 		/// size is, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> in case the ICC profile is not available and
 		/// cannot be generated.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetICCProfileSize(JxlDecoder* dec, JxlPixelFormat* unused_format, JxlColorProfileTarget target, UIntPtr* size);
 
@@ -2135,7 +2135,7 @@ namespace JxlSharp
 		/// available, <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if the profile doesn't exist or the output size is not
 		/// large enough.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetColorAsICCProfile(JxlDecoder* dec, JxlPixelFormat* unused_format, JxlColorProfileTarget target, byte* icc_profile, UIntPtr size);
 
@@ -2173,7 +2173,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the preference was set successfully, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetPreferredColorProfile(JxlDecoder* dec, JxlColorEncoding* color_encoding);
 
@@ -2189,7 +2189,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the preference was set successfully, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetDesiredIntensityTarget(JxlDecoder* dec, float desired_intensity_target);
 
@@ -2205,7 +2205,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// information not available yet.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderPreviewOutBufferSize(JxlDecoder* dec, JxlPixelFormat* format, UIntPtr* size);
 
@@ -2224,7 +2224,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// size too small.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetPreviewOutBuffer(JxlDecoder* dec, JxlPixelFormat* format, void* buffer, UIntPtr size);
 
@@ -2240,7 +2240,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> in
 		/// case of other error conditions.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetFrameHeader(JxlDecoder* dec, JxlFrameHeader* header);
 
@@ -2256,7 +2256,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, 
 		/// <see cref="JxlDecoderStatus.JXL_DEC_NEED_MORE_INPUT" /> if not yet available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> in
 		/// case of other error conditions.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetFrameName(JxlDecoder* dec, byte* name, UIntPtr size);
 
@@ -2272,7 +2272,7 @@ namespace JxlSharp
 		/// <param name="blend_info"> struct to copy the information into</param>
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetExtraChannelBlendInfo(JxlDecoder* dec, UIntPtr index, JxlBlendInfo* blend_info);
 
@@ -2290,7 +2290,7 @@ namespace JxlSharp
 		/// <br /><br />
 		/// @deprecated The DC feature in this form will be removed. Use 
 		/// <see cref="JxlDecoderFlushImage(JxlDecoder*)" /> for progressive rendering.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		[Obsolete]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderDCOutBufferSize(JxlDecoder* dec, JxlPixelFormat* format, UIntPtr* size);
@@ -2313,7 +2313,7 @@ namespace JxlSharp
 		/// <br /><br />
 		/// @deprecated The DC feature in this form will be removed. Use 
 		/// <see cref="JxlDecoderFlushImage(JxlDecoder*)" /> for progressive rendering.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		[Obsolete]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetDCOutBuffer(JxlDecoder* dec, JxlPixelFormat* format, void* buffer, UIntPtr size);
@@ -2333,7 +2333,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// information not available yet.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderImageOutBufferSize(JxlDecoder* dec, JxlPixelFormat* format, UIntPtr* size);
 
@@ -2353,15 +2353,15 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// size too small.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetImageOutBuffer(JxlDecoder* dec, JxlPixelFormat* format, void* buffer, UIntPtr size);
 
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetImageOutCallback(JxlDecoder* dec, JxlPixelFormat* format, UIntPtr/*delegate*<void*, UIntPtr, UIntPtr, UIntPtr, void*, void>*/ callback, void* opaque);
 
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetMultithreadedImageOutCallback(JxlDecoder* dec, JxlPixelFormat* format, UIntPtr/*delegate*<void*, UIntPtr, UIntPtr, void*>*/ init_callback, UIntPtr/*delegate*<void*, UIntPtr, UIntPtr, UIntPtr, UIntPtr, void*, void>*/ run_callback, UIntPtr/*delegate*<void*, void>*/ destroy_callback, void* init_opaque);
 
@@ -2380,7 +2380,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// information not available yet or invalid index.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderExtraChannelBufferSize(JxlDecoder* dec, JxlPixelFormat* format, UIntPtr* size, uint index);
 
@@ -2413,7 +2413,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// size too small or invalid index.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetExtraChannelBuffer(JxlDecoder* dec, JxlPixelFormat* format, void* buffer, UIntPtr size, uint index);
 
@@ -2435,7 +2435,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if output buffer was already set and 
 		/// <see cref="JxlDecoderReleaseJPEGBuffer(JxlDecoder*)" /> was not called on it, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" />
 		/// otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetJPEGBuffer(JxlDecoder* dec, byte* data, UIntPtr size);
 
@@ -2454,7 +2454,7 @@ namespace JxlSharp
 		/// <returns> the amount of bytes the decoder has not yet written to of the data
 		/// set by <see cref="JxlDecoderSetJPEGBuffer(JxlDecoder*,byte*,UIntPtr)" />, or 0 if no buffer is set or 
 		/// <see cref="JxlDecoderReleaseJPEGBuffer(JxlDecoder*)" /> was already called.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern UIntPtr JxlDecoderReleaseJPEGBuffer(JxlDecoder* dec);
 
@@ -2480,7 +2480,7 @@ namespace JxlSharp
 		///     <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if output buffer was already set and 
 		/// <see cref="JxlDecoderReleaseBoxBuffer(JxlDecoder*)" /> was not called on it, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" />
 		/// otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetBoxBuffer(JxlDecoder* dec, byte* data, UIntPtr size);
 
@@ -2499,7 +2499,7 @@ namespace JxlSharp
 		/// <returns> the amount of bytes the decoder has not yet written to of the data
 		/// set by <see cref="JxlDecoderSetBoxBuffer(JxlDecoder*,byte*,UIntPtr)" />, or 0 if no buffer is set or 
 		/// <see cref="JxlDecoderReleaseBoxBuffer(JxlDecoder*)" /> was already called.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern UIntPtr JxlDecoderReleaseBoxBuffer(JxlDecoder* dec);
 
@@ -2523,7 +2523,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if decompressed mode is set and Brotli is not
 		/// available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetDecompressBoxes(JxlDecoder* dec, int decompress);
 
@@ -2592,7 +2592,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> if the value is available, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if
 		/// not, for example the JXL file does not use the container format.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetBoxType(JxlDecoder* dec, byte* type, int decompressed);
 
@@ -2613,7 +2613,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> if no box size is available, <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" />
 		/// otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderGetBoxSizeRaw(JxlDecoder* dec, ulong* size);
 
@@ -2628,7 +2628,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <see cref="JxlDecoderStatus.JXL_DEC_SUCCESS" /> on success, <see cref="JxlDecoderStatus.JXL_DEC_ERROR" /> on error, such as
 		/// an invalid value for the progressive detail.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderSetProgressiveDetail(JxlDecoder* dec, JxlProgressiveDetail detail);
 
@@ -2639,7 +2639,7 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="dec"> decoder object</param>
 		/// <returns> The intended downsampling ratio, can be 1, 2, 4 or 8.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern UIntPtr JxlDecoderGetIntendedDownsamplingRatio(JxlDecoder* dec);
 
@@ -2659,7 +2659,7 @@ namespace JxlSharp
 		/// data was available yet even for flush, or no output buffer was set yet.
 		/// This error is not fatal, it only indicates no flushed image is available
 		/// right now. Regular decoding can still be performed.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlDecoderStatus JxlDecoderFlushImage(JxlDecoder* dec);
 
@@ -2669,7 +2669,7 @@ namespace JxlSharp
 		/// <returns> the encoder library version as an integer:
 		/// MAJOR_VERSION * 1000000 + MINOR_VERSION * 1000 + PATCH_VERSION. For example,
 		/// version 1.2.3 would return 1002003.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal static extern uint JxlEncoderVersion();
 
@@ -2684,7 +2684,7 @@ namespace JxlSharp
 		/// <returns>
 		///     <tt>NULL</tt> if the instance can not be allocated or initialized</returns>
 		/// <returns> pointer to initialized JxlEncoder otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoder* JxlEncoderCreate(JxlMemoryManager* memory_manager);
 
@@ -2694,7 +2694,7 @@ namespace JxlSharp
 		/// newly created with JxlEncoderCreate, but the memory manager is kept.
 		/// </summary>
 		/// <param name="enc"> instance to be re-initialized.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderReset(JxlEncoder* enc);
 
@@ -2702,7 +2702,7 @@ namespace JxlSharp
 		/// Deinitializes and frees JxlEncoder instance.
 		/// </summary>
 		/// <param name="enc"> instance to be cleaned up and deallocated.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderDestroy(JxlEncoder* enc);
 
@@ -2714,7 +2714,7 @@ namespace JxlSharp
 		/// <param name="enc"> encoder object.</param>
 		/// <param name="cms"> structure representing a CMS implementation. See JxlCmsInterface
 		/// for more details.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderSetCms(JxlEncoder* enc, JxlCmsInterface cms);
 
@@ -2729,7 +2729,7 @@ namespace JxlSharp
 		/// <param name="parallel_runner_opaque"> opaque pointer for parallel_runner.</param>
 		/// <returns> JXL_ENC_SUCCESS if the runner was set, JXL_ENC_ERROR
 		/// otherwise (the previous runner remains set).</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetParallelRunner(JxlEncoder* enc, IntPtr parallel_runner, void* parallel_runner_opaque);
 
@@ -2739,7 +2739,7 @@ namespace JxlSharp
 		/// <param name="enc"> encoder object.</param>
 		/// <returns> the JxlEncoderError that caused the (last) JXL_ENC_ERROR to be
 		/// returned.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderError JxlEncoderGetError(JxlEncoder* enc);
 
@@ -2767,7 +2767,7 @@ namespace JxlSharp
 		/// <returns> JXL_ENC_SUCCESS when encoding finished and all events handled.</returns>
 		/// <returns> JXL_ENC_ERROR when encoding failed, e.g. invalid input.</returns>
 		/// <returns> JXL_ENC_NEED_MORE_OUTPUT more output buffer is necessary.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderProcessOutput(JxlEncoder* enc, byte** next_out, UIntPtr* avail_out);
 
@@ -2803,7 +2803,7 @@ namespace JxlSharp
 		/// <param name="frame_header"> frame header data to set. Object owned by the caller and
 		/// does not need to be kept in memory, its information is copied internally.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetFrameHeader(JxlEncoderFrameSettings* frame_settings, JxlFrameHeader* frame_header);
 
@@ -2817,7 +2817,7 @@ namespace JxlSharp
 		/// <param name="index"> index of the extra channel to use.</param>
 		/// <param name="blend_info"> blend info to set for the extra channel</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetExtraChannelBlendInfo(JxlEncoderFrameSettings* frame_settings, UIntPtr index, JxlBlendInfo* blend_info);
 
@@ -2839,7 +2839,7 @@ namespace JxlSharp
 		/// <param name="frame_name"> name of the next frame to be encoded, as a UTF-8 encoded C
 		/// string (zero terminated). Owned by the caller, and copied internally.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetFrameName(JxlEncoderFrameSettings* frame_settings, byte* frame_name);
 
@@ -2868,7 +2868,7 @@ namespace JxlSharp
 		/// are copied internally.</param>
 		/// <param name="size"> size of buffer in bytes.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderAddJPEGFrame(JxlEncoderFrameSettings* frame_settings, byte* buffer, UIntPtr size);
 
@@ -2928,7 +2928,7 @@ namespace JxlSharp
 		/// <param name="size"> size of buffer in bytes. This size should match what is implied
 		/// by the frame dimensions and the pixel format.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderAddImageFrame(JxlEncoderFrameSettings* frame_settings, JxlPixelFormat* pixel_format, void* buffer, UIntPtr size);
 
@@ -2954,7 +2954,7 @@ namespace JxlSharp
 		/// by the frame dimensions and the pixel format.</param>
 		/// <param name="index"> index of the extra channel to use.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetExtraChannelBuffer(JxlEncoderFrameSettings* frame_settings, JxlPixelFormat* pixel_format, void* buffer, UIntPtr size, uint index);
 
@@ -3026,7 +3026,7 @@ namespace JxlSharp
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error, such as when
 		/// using this function without JxlEncoderUseContainer, or adding a box type
 		/// that would result in an invalid file format.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderAddBox(JxlEncoder* enc, byte* type, byte* contents, UIntPtr size, int compress_box);
 
@@ -3040,7 +3040,7 @@ namespace JxlSharp
 		/// This setting can only be set at the beginning, before encoding starts.
 		/// </summary>
 		/// <param name="enc"> encoder object.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderUseBoxes(JxlEncoder* enc);
 
@@ -3058,7 +3058,7 @@ namespace JxlSharp
 		/// use <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> instead to close both at once.
 		/// </summary>
 		/// <param name="enc"> encoder object.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderCloseBoxes(JxlEncoder* enc);
 
@@ -3073,7 +3073,7 @@ namespace JxlSharp
 		/// use <see cref="JxlEncoderCloseInput(JxlEncoder*)" /> instead to close both at once.
 		/// </summary>
 		/// <param name="enc"> encoder object.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderCloseFrames(JxlEncoder* enc);
 
@@ -3090,7 +3090,7 @@ namespace JxlSharp
 		/// correctly.
 		/// </summary>
 		/// <param name="enc"> encoder object.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderCloseInput(JxlEncoder* enc);
 
@@ -3106,7 +3106,7 @@ namespace JxlSharp
 		/// copied internally.</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR or
 		/// JXL_ENC_NOT_SUPPORTED otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetColorEncoding(JxlEncoder* enc, JxlColorEncoding* color);
 
@@ -3122,7 +3122,7 @@ namespace JxlSharp
 		/// <param name="size"> size of the icc_profile buffer in bytes</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR or
 		/// JXL_ENC_NOT_SUPPORTED otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetICCProfile(JxlEncoder* enc, byte* icc_profile, UIntPtr size);
 
@@ -3134,7 +3134,7 @@ namespace JxlSharp
 		/// other extra channels.
 		/// </summary>
 		/// <param name="info"> global image metadata. Object owned by the caller.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderInitBasicInfo(JxlBasicInfo* info);
 
@@ -3147,7 +3147,7 @@ namespace JxlSharp
 		/// be set, for composite still blend settings must be set.
 		/// </summary>
 		/// <param name="frame_header"> frame metadata. Object owned by the caller.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderInitFrameHeader(JxlFrameHeader* frame_header);
 
@@ -3157,7 +3157,7 @@ namespace JxlSharp
 		/// are assigned to the struct fields.
 		/// </summary>
 		/// <param name="blend_info"> blending info. Object owned by the caller.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderInitBlendInfo(JxlBlendInfo* blend_info);
 
@@ -3175,7 +3175,7 @@ namespace JxlSharp
 		/// contents are copied internally.</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful,
 		/// JXL_ENC_ERROR or JXL_ENC_NOT_SUPPORTED otherwise</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetBasicInfo(JxlEncoder* enc, JxlBasicInfo* info);
 
@@ -3188,7 +3188,7 @@ namespace JxlSharp
 		/// <param name="type"> type of the extra channel.</param>
 		/// <param name="info"> global extra channel metadata. Object owned by the caller and its
 		/// contents are copied internally.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlEncoderInitExtraChannelInfo(JxlExtraChannelType type, JxlExtraChannelInfo* info);
 
@@ -3201,7 +3201,7 @@ namespace JxlSharp
 		/// <param name="info"> global extra channel metadata. Object owned by the caller and its
 		/// contents are copied internally.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetExtraChannelInfo(JxlEncoder* enc, UIntPtr index, JxlExtraChannelInfo* info);
 
@@ -3218,7 +3218,7 @@ namespace JxlSharp
 		/// <param name="size"> size of the name buffer in bytes, not counting the terminating
 		/// character.</param>
 		/// <returns> JXL_ENC_SUCCESS on success, JXL_ENC_ERROR on error</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetExtraChannelName(JxlEncoder* enc, UIntPtr index, byte* name, UIntPtr size);
 
@@ -3235,7 +3235,7 @@ namespace JxlSharp
 		/// value for the given option. If an error is returned, the state of the
 		/// JxlEncoderFrameSettings object is still valid and is the same as before this
 		/// function was called.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderFrameSettingsSetOption(JxlEncoderFrameSettings* frame_settings, JxlEncoderFrameSettingId option, long value);
 
@@ -3252,7 +3252,7 @@ namespace JxlSharp
 		/// value for the given option. If an error is returned, the state of the
 		/// JxlEncoderFrameSettings object is still valid and is the same as before this
 		/// function was called.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		public unsafe static extern JxlEncoderStatus JxlEncoderFrameSettingsSetFloatOption(JxlEncoderFrameSettings* frame_settings, JxlEncoderFrameSettingId option, float value);
 
@@ -3274,7 +3274,7 @@ namespace JxlSharp
 		/// container format, false to only output it when necessary.</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR
 		/// otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderUseContainer(JxlEncoder* enc, int use_container);
 
@@ -3291,7 +3291,7 @@ namespace JxlSharp
 		/// <param name="store_jpeg_metadata"> true if the encoder should store JPEG metadata.</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR
 		/// otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderStoreJPEGMetadata(JxlEncoder* enc, int store_jpeg_metadata);
 
@@ -3329,7 +3329,7 @@ namespace JxlSharp
 		/// <param name="level"> the level value to set, must be -1, 5, or 10.</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR
 		/// otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetCodestreamLevel(JxlEncoder* enc, int level);
 
@@ -3352,7 +3352,7 @@ namespace JxlSharp
 		/// larger than even level 10 supports), 5 if level 5 is supported, 10 if setting
 		/// the codestream level to 10 is required.
 		/// </returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern int JxlEncoderGetRequiredCodestreamLevel(JxlEncoder* enc);
 
@@ -3373,7 +3373,7 @@ namespace JxlSharp
 		/// <param name="lossless"> whether to override options for lossless mode</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR
 		/// otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetFrameLossless(JxlEncoderFrameSettings* frame_settings, int lossless);
 
@@ -3381,7 +3381,7 @@ namespace JxlSharp
 		/// DEPRECATED: use JxlEncoderSetFrameLossless instead.
 		/// </summary>
 		[Obsolete]
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderOptionsSetLossless(JxlEncoderFrameSettings* frame_settings, int lossless);
 
@@ -3394,7 +3394,7 @@ namespace JxlSharp
 		/// <br /><br />
 		/// DEPRECATED: use JxlEncoderFrameSettingsSetOption(frame_settings,
 		/// JXL_ENC_FRAME_SETTING_EFFORT, effort) instead.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		[Obsolete]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderOptionsSetEffort(JxlEncoderFrameSettings* frame_settings, int effort);
@@ -3408,7 +3408,7 @@ namespace JxlSharp
 		/// <br /><br />
 		/// DEPRECATED: use JxlEncoderFrameSettingsSetOption(frame_settings,
 		/// JXL_ENC_FRAME_SETTING_DECODING_SPEED, tier) instead.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		[Obsolete]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderOptionsSetDecodingSpeed(JxlEncoderFrameSettings* frame_settings, int tier);
@@ -3426,14 +3426,14 @@ namespace JxlSharp
 		/// <param name="distance"> the distance value to set.</param>
 		/// <returns> JXL_ENC_SUCCESS if the operation was successful, JXL_ENC_ERROR
 		/// otherwise.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderSetFrameDistance(JxlEncoderFrameSettings* frame_settings, float distance);
 
 		/// <summary>
 		/// DEPRECATED: use JxlEncoderSetFrameDistance instead.
 		/// </summary>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		[Obsolete]
 		internal unsafe static extern JxlEncoderStatus JxlEncoderOptionsSetDistance(JxlEncoderFrameSettings* A_0, float A_1);
@@ -3452,14 +3452,14 @@ namespace JxlSharp
 		/// <param name="source"> source options to copy initial values from, or NULL to get
 		/// defaults initialized to defaults.</param>
 		/// <returns> the opaque struct pointer identifying a new set of encoder options.</returns>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern JxlEncoderFrameSettings* JxlEncoderFrameSettingsCreate(JxlEncoder* enc, JxlEncoderFrameSettings* source);
 
 		/// <summary>
 		/// DEPRECATED: use JxlEncoderFrameSettingsCreate instead.
 		/// </summary>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		[Obsolete]
 		internal unsafe static extern JxlEncoderFrameSettings* JxlEncoderOptionsCreate(JxlEncoder* A_0, JxlEncoderFrameSettings* A_1);
@@ -3469,7 +3469,7 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="color_encoding"> color encoding instance.</param>
 		/// <param name="is_gray"> whether the color encoding should be gray scale or color.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlColorEncodingSetToSRGB(JxlColorEncoding* color_encoding, int is_gray);
 
@@ -3478,14 +3478,14 @@ namespace JxlSharp
 		/// </summary>
 		/// <param name="color_encoding"> color encoding instance.</param>
 		/// <param name="is_gray"> whether the color encoding should be gray scale or color.</param>
-		[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		[MethodImpl(MethodImplOptions.ForwardRef)]
 		internal unsafe static extern void JxlColorEncodingSetToLinearSRGB(JxlColorEncoding* color_encoding, int is_gray);
 
 		///// <summary>
 		///// Parallel runner internally using std::thread. Use as JxlParallelRunner.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal unsafe static extern int JxlResizableParallelRunner(void* runner_opaque, void* jpegxl_opaque, IntPtr init, IntPtr func, uint start_range, uint end_range);
 
@@ -3494,35 +3494,35 @@ namespace JxlSharp
 		///// runner. The runner will execute tasks on the calling thread until
 		///// <see cref="JxlResizableParallelRunnerSetThreads(void*,UIntPtr)" /> is called.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal unsafe static extern void* JxlResizableParallelRunnerCreate(JxlMemoryManager* memory_manager);
 
 		///// <summary>
 		///// Changes the number of threads for JxlResizableParallelRunner.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal unsafe static extern void JxlResizableParallelRunnerSetThreads(void* runner_opaque, UIntPtr num_threads);
 
 		///// <summary>
 		///// Suggests a number of threads to use for an image of given size.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal static extern uint JxlResizableParallelRunnerSuggestThreads(ulong xsize, ulong ysize);
 
 		///// <summary>
 		///// Destroys the runner created by JxlResizableParallelRunnerCreate.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal unsafe static extern void JxlResizableParallelRunnerDestroy(void* runner_opaque);
 
 		/////// <summary>
 		/////// Parallel runner internally using std::thread. Use as JxlParallelRunner.
 		/////// </summary>
-		////[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		////[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		////[MethodImpl(MethodImplOptions.ForwardRef)]
 		////internal unsafe static extern int JxlThreadParallelRunner(void* runner_opaque, void* jpegxl_opaque, IntPtr init, IntPtr func, uint start_range, uint end_range);
 
@@ -3530,14 +3530,14 @@ namespace JxlSharp
 		///// Creates the runner for JxlThreadParallelRunner. Use as the opaque
 		///// runner.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal unsafe static extern void* JxlThreadParallelRunnerCreate(JxlMemoryManager* memory_manager, UIntPtr num_worker_threads);
 
 		///// <summary>
 		///// Destroys the runner created by JxlThreadParallelRunnerCreate.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal unsafe static extern void JxlThreadParallelRunnerDestroy(void* runner_opaque);
 
@@ -3545,7 +3545,7 @@ namespace JxlSharp
 		///// Returns a default num_worker_threads value for
 		///// JxlThreadParallelRunnerCreate.
 		///// </summary>
-		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[DllImport("jxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 		//[MethodImpl(MethodImplOptions.ForwardRef)]
 		//internal static extern UIntPtr JxlThreadParallelRunnerDefaultNumWorkerThreads();
 	}
