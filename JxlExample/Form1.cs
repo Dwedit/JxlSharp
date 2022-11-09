@@ -148,7 +148,7 @@ namespace JxlExample
 
 		private void SaveFileAs()
 		{
-			if (String.IsNullOrEmpty(this.loadedFileName))
+			if (String.IsNullOrEmpty(this.loadedFileName) && this.pictureBox1.Image == null)
 			{
 				return;
 			}
@@ -165,7 +165,7 @@ namespace JxlExample
 			{
 				Bitmap bitmap = (Bitmap)this.pictureBox1.Image;
 				string ext = Path.GetExtension(fileName).ToLowerInvariant();
-				string sourceExt = Path.GetExtension(loadedFileName);
+				string sourceExt = Path.GetExtension(loadedFileName ?? "");
 				if (ext == ".jxl" && sourceExt == ".jpg")
 				{
 					byte[] jpegBytes = File.ReadAllBytes(loadedFileName);
@@ -262,6 +262,38 @@ namespace JxlExample
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			this.Close();
+		}
+
+		private void pasteToolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+			PasteImage();
+		}
+
+		private void PasteImage()
+		{
+			this.loadedFileName = "";
+			try
+			{
+				var image = Clipboard.GetImage();
+				var bitmap = image as Bitmap;
+				if (bitmap != null)
+				{
+					if (this.pictureBox1.Image != null)
+					{
+						this.pictureBox1.Image.Dispose();
+						this.pictureBox1.Image = null;
+					}
+					this.pictureBox1.Image = bitmap;
+				}
+				else if (image != null)
+				{
+					image.Dispose();
+				}
+			}
+			catch
+			{
+
+			}
 		}
 	}
 }

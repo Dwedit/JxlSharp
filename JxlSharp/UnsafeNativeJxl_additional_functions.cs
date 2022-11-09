@@ -121,6 +121,72 @@ namespace JxlSharp
 			}
 		}
 
+		///// <summary>
+		///// Parallel runner internally using std::thread. Use as JxlParallelRunner.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal unsafe static extern int JxlResizableParallelRunner(void* runner_opaque, void* jpegxl_opaque, IntPtr init, IntPtr func, uint start_range, uint end_range);
+
+		///// <summary>
+		///// Creates the runner for JxlResizableParallelRunner. Use as the opaque
+		///// runner. The runner will execute tasks on the calling thread until
+		///// <see cref="JxlResizableParallelRunnerSetThreads(void*,UIntPtr)" /> is called.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal unsafe static extern void* JxlResizableParallelRunnerCreate(JxlMemoryManager* memory_manager);
+
+		///// <summary>
+		///// Changes the number of threads for JxlResizableParallelRunner.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal unsafe static extern void JxlResizableParallelRunnerSetThreads(void* runner_opaque, UIntPtr num_threads);
+
+		///// <summary>
+		///// Suggests a number of threads to use for an image of given size.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal static extern uint JxlResizableParallelRunnerSuggestThreads(ulong xsize, ulong ysize);
+
+		///// <summary>
+		///// Destroys the runner created by JxlResizableParallelRunnerCreate.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal unsafe static extern void JxlResizableParallelRunnerDestroy(void* runner_opaque);
+
+		/////// <summary>
+		/////// Parallel runner internally using std::thread. Use as JxlParallelRunner.
+		/////// </summary>
+		////[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		////[MethodImpl(MethodImplOptions.ForwardRef)]
+		////internal unsafe static extern int JxlThreadParallelRunner(void* runner_opaque, void* jpegxl_opaque, IntPtr init, IntPtr func, uint start_range, uint end_range);
+
+		///// <summary>
+		///// Creates the runner for JxlThreadParallelRunner. Use as the opaque
+		///// runner.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal unsafe static extern void* JxlThreadParallelRunnerCreate(JxlMemoryManager* memory_manager, UIntPtr num_worker_threads);
+
+		///// <summary>
+		///// Destroys the runner created by JxlThreadParallelRunnerCreate.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal unsafe static extern void JxlThreadParallelRunnerDestroy(void* runner_opaque);
+
+		///// <summary>
+		///// Returns a default num_worker_threads value for
+		///// JxlThreadParallelRunnerCreate.
+		///// </summary>
+		//[DllImport("libjxl.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+		//[MethodImpl(MethodImplOptions.ForwardRef)]
+		//internal static extern UIntPtr JxlThreadParallelRunnerDefaultNumWorkerThreads();
 
 	}
 }

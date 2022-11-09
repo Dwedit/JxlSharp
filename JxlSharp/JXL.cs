@@ -665,6 +665,10 @@ namespace JxlSharp
 				CreateBasicInfo(bitmap, out basicInfo, out pixelFormat, out colorEncoding);
 				bool hasAlpha = basicInfo.AlphaBits > 0;
 				byte[] bitmapCopy = CopyBitmapAndBgrSwap(bitmap, hasAlpha);
+				if (lossyMode != JxlLossyMode.Lossless)
+				{
+					basicInfo.UsesOriginalProfile = false;
+				}
 				status = encoder.SetBasicInfo(basicInfo);
 				status = encoder.SetColorEncoding(colorEncoding);
 				foreach (var pair in settings)
