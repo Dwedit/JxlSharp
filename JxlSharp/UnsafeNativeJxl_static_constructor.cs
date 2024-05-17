@@ -32,6 +32,7 @@ namespace JxlSharp
         internal static readonly IntPtr libJxlModule;
         internal static readonly IntPtr JxlThreadParallelRunner;
         internal static readonly IntPtr libJxlThreadModule;
+        internal static readonly IntPtr libJxlCmsModule;
         internal static readonly IntPtr brotliCommonModule;
         internal static readonly IntPtr brotliDecModule;
         internal static readonly IntPtr brotliEncModule;
@@ -108,6 +109,7 @@ namespace JxlSharp
             //This function preloads the DLL files because otherwise it won't find them in the directory that contains them.
             const string jxlDllName = "jxl.dll";
             const string jxlThreadsDllName = "jxl_threads.dll";
+            const string jxlCmsDllName = "jxl_cms.dll";
             const string brotliCommonDllName = "brotlicommon.dll";
             const string brotliDecDllName = "brotlidec.dll";
             const string brotliEncDllName = "brotlienc.dll";
@@ -117,8 +119,9 @@ namespace JxlSharp
             brotliDecModule = TryLoadLibraryWithThrow(brotliDecDllName);
             brotliEncModule = TryLoadLibraryWithThrow(brotliEncDllName);
             //load jxl, and jxl_threads
-            libJxlModule = TryLoadLibraryWithThrow(jxlDllName);
             libJxlThreadModule = TryLoadLibraryWithThrow(jxlThreadsDllName);
+            libJxlCmsModule = TryLoadLibraryWithThrow(jxlCmsDllName);
+            libJxlModule = TryLoadLibraryWithThrow(jxlDllName);
 
             //Get function pointer for JxlThreadParallelRunner, so we can call JxlDecoderSetParallelRunner/JxlEncoderSetParallelRunner
             JxlThreadParallelRunner = UnsafeNativeWin32.GetProcAddress(libJxlThreadModule, "JxlThreadParallelRunner");
